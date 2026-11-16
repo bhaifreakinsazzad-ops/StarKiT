@@ -269,13 +269,399 @@
   opacity: 1;
 }
 
-/* 4. Triple-Layer Luxury Glass Surfaces */
-.glass-surface, .drawer, .summary-panel, .notice {
+/* 4. Triple-Layer Luxury Glass Surfaces & High-Contrast Ergonomics */
+.glass-surface {
   background: rgba(23, 0, 0, 0.88) !important;
   backdrop-filter: blur(28px) saturate(200%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
   border: 1px solid rgba(197, 168, 128, 0.22) !important;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Luxury Dark Cart Drawer */
+.drawer {
+  background: #170000 !important;
+  color: #ffffff !important;
+  border-left: 1px solid #44161b !important;
+  box-shadow: -25px 0 70px rgba(0, 0, 0, 0.65) !important;
+}
+.drawer-head {
+  border-bottom: 1px solid #331014 !important;
+}
+.drawer-head h2 {
+  color: #ffffff !important;
+}
+.drawer-head .pill {
+  background: rgba(197, 168, 128, 0.18) !important;
+  color: #c5a880 !important;
+  border: 1px solid rgba(197, 168, 128, 0.3) !important;
+}
+.drawer-head .close-btn {
+  color: #ded3cc !important;
+}
+.drawer-head .close-btn:hover {
+  color: #ffffff !important;
+}
+.cart-line {
+  border-bottom: 1px solid #331014 !important;
+}
+.cart-line img {
+  background: #2a0b10 !important;
+  border: 1px solid #44161b;
+  border-radius: 4px;
+}
+.cart-line h4 {
+  color: #ffffff !important;
+  font-size: 1.05rem;
+}
+.cart-line .small {
+  color: #c8b6b7 !important;
+}
+.cart-line b {
+  color: #c5a880 !important;
+  font-size: 1.15rem;
+}
+.qty button {
+  background: #260a0e !important;
+  color: #ffffff !important;
+  border: 1px solid #5b1a24 !important;
+  border-radius: 3px;
+  font-weight: 700;
+}
+.qty button:hover {
+  background: #5b1a24 !important;
+}
+.qty span {
+  color: #ffffff !important;
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+.qty .remove {
+  color: #e9b9b6 !important;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+.drawer-foot {
+  background: #110000 !important;
+  border-top: 1px solid #331014 !important;
+  color: #ffffff !important;
+}
+.drawer-foot .summary {
+  color: #ffffff !important;
+}
+.drawer-foot .summary span:last-child {
+  color: #c5a880 !important;
+}
+.drawer-foot .hint {
+  color: #c8b6b7 !important;
+}
+.empty-cart h3 {
+  color: #ffffff !important;
+}
+.empty-cart .muted {
+  color: #c8b6b7 !important;
+}
+
+/* High-Contrast Checkout Surfaces */
+.summary-panel {
+  background: #ffffff !important;
+  color: #170000 !important;
+  border: 1px solid #ded9d3 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
+  border-radius: 6px;
+}
+.summary-panel h2 {
+  color: #170000 !important;
+  border-bottom: 2px solid #170000;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.summary-item {
+  color: #170000 !important;
+  border-bottom: 1px solid #ded9d3 !important;
+}
+.summary-item strong {
+  color: #170000 !important;
+}
+.summary-item small {
+  color: #776d6b !important;
+}
+.notice {
+  background: #fdfbf7 !important;
+  color: #170000 !important;
+  border: 1px solid #e0d6cf !important;
+  border-left: 4px solid #170000 !important;
+  border-radius: 4px;
+}
+
+/* Dynamic Free Delivery & Bundle Meter in Cart */
+.cart-meter-wrap {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f7f5f1;
+  margin-bottom: 7px;
+}
+.meter-badge {
+  background: #5b1a24;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+}
+.meter-badge.unlocked {
+  background: #15803d;
+}
+.meter-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #be555c 0%, #c5a880 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.meter-fill.full {
+  background: linear-gradient(90deg, #15803d 0%, #22c55e 100%);
+}
+
+/* Quantity Stepper on Product Details */
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d3c8c0;
+  background: #fff;
+  border-radius: 4px;
+  height: 48px;
+  margin-right: 12px;
+}
+.qty-stepper button {
+  width: 44px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.qty-stepper button:hover {
+  background: #f4eee9;
+}
+.qty-stepper input {
+  width: 44px;
+  height: 100%;
+  border: 0;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--ink);
+  -moz-appearance: textfield;
+}
+.qty-stepper input::-webkit-outer-spin-button,
+.qty-stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* VIP Pre-Release Waitlist Box */
+.vip-waitlist-box {
+  background: rgba(68, 22, 27, 0.4);
+  border: 1px solid rgba(197, 168, 128, 0.4);
+  padding: 16px;
+  border-radius: 6px;
+  margin-top: 16px;
+}
+.vip-waitlist-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.vip-waitlist-form input {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #cfc5bf;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  border-radius: 3px;
+}
+.vip-waitlist-form button {
+  white-space: nowrap;
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  background: #c5a880;
+  color: #170000;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.vip-waitlist-form button:hover {
+  background: #d6be99;
+}
+
+/* Size Recommender Modal */
+.fit-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 120;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.fit-modal.open {
+  display: flex;
+}
+.fit-modal-card {
+  background: #ffffff;
+  color: #170000;
+  max-width: 650px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+  border: 1px solid #c5a880;
+  position: relative;
+}
+.fit-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #ded9d3;
+  background: #170000;
+  color: #fff;
+}
+.fit-modal-head h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+}
+.fit-modal-body {
+  padding: 24px;
+}
+.fit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 16px 0;
+}
+.fit-table th, .fit-table td {
+  padding: 10px 12px;
+  border: 1px solid #ded9d3;
+  text-align: center;
+}
+.fit-table th {
+  background: #f4eee9;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.fit-calc-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+.fit-calc-result {
+  background: #170000;
+  color: #ffffff;
+  padding: 16px;
+  border-radius: 6px;
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fit-trigger-link {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: #5b1a24;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.fit-trigger-link:hover {
+  color: #170000;
+}
+
+/* Floating WhatsApp Concierge Pill */
+.floating-whatsapp-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #25d366;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.25s;
+}
+.floating-whatsapp-pill:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 40px rgba(37, 211, 102, 0.55);
+  color: #ffffff;
+}
+
+/* Sticky Mobile Add-to-Bag Bar */
+.sticky-mobile-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #170000;
+  color: #ffffff;
+  border-top: 1px solid #44161b;
+  padding: 12px 18px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 45;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.3);
+}
+@media (max-width: 800px) {
+  .sticky-mobile-bar.visible {
+    display: flex;
+  }
 }
 
 /* 5. Animated Metallic Shimmer for Badges */

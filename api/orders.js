@@ -233,8 +233,11 @@ export default async function handler(req, res) {
       const unitPrice = item ? item.price_bdt : 1490;
       return acc + (unitPrice * r.quantity);
     }, 0);
-    const fallbackShipping = fallbackSubtotal >= 3000 ? 0 : (zone === 'dhaka' ? 80 : 150);
-    const fallbackTotal = fallbackSubtotal + fallbackShipping;
+    const hoodieQty = rows.filter(r => r.sku.startsWith('STK-H')).reduce((acc, r) => acc + r.quantity, 0);
+    const bundleDiscount = hoodieQty >= 3 ? 300 : (hoodieQty === 2 ? 150 : 0);
+    const netSubtotal = Math.max(0, fallbackSubtotal - bundleDiscount);
+    const fallbackShipping = (netSubtotal >= 3000 || bundleDiscount > 0) ? 0 : (zone === 'dhaka' ? 80 : 150);
+    const fallbackTotal = netSubtotal + fallbackShipping;
 
     // Dispatch Meta Conversions API (CAPI) Purchase Event
     sendMetaConversionEvent({
@@ -254,6 +257,7 @@ export default async function handler(req, res) {
     return json(res, 201, {
       reference: fallbackRef,
       subtotal_bdt: fallbackSubtotal,
+      discount_bdt: bundleDiscount,
       shipping_bdt: fallbackShipping,
       total_bdt: fallbackTotal,
       status: 'pending_confirmation',
@@ -330,8 +334,11 @@ export default async function handler(req, res) {
       });
     }
 
-    const shipping = subtotal >= 3000 ? 0 : (zone === 'dhaka' ? 80 : 150);
-    const total = subtotal + shipping;
+    const hoodieQty = rows.filter(r => r.sku.startsWith('STK-H')).reduce((acc, r) => acc + r.quantity, 0);
+    const bundleDiscount = hoodieQty >= 3 ? 300 : (hoodieQty === 2 ? 150 : 0);
+    const netSubtotal = Math.max(0, subtotal - bundleDiscount);
+    const shipping = (netSubtotal >= 3000 || bundleDiscount > 0) ? 0 : (zone === 'dhaka' ? 80 : 150);
+    const total = netSubtotal + shipping;
 
     const { data: insertedOrder, error: insertError } = await supabase
       .from('store_orders')

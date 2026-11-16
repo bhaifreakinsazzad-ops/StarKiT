@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npx serve .",
     "check": "node --check assets/js/app.js && node --check api/orders.js && node --check api/admin.js",
-    "test": "npm run check && node verify_package.js"
+    "test": "npm run check && node verify_package.js && node scripts/test_storefront_dom.cjs && node scripts/test_customer_flow.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

@@ -121,7 +121,44 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     persist();
   }
 
-  function pushCart(p, v, size) {
+  function calculateCartTotals() {
+    sanitizeCart();
+    const subtotal = cart.reduce((sum, x) => {
+      const o = itemData(x);
+      return sum + (o ? o.p.price_bdt * x.qty : 0);
+    }, 0);
+
+    const hoodieCount = cart.reduce((sum, x) => {
+      const o = itemData(x);
+      return sum + (o && o.p.id.startsWith('STK-') ? x.qty : 0);
+    }, 0);
+
+    let bundleDiscount = 0;
+    let bundleTier = 0;
+    if (hoodieCount >= 3) {
+      bundleDiscount = 300;
+      bundleTier = 2;
+    } else if (hoodieCount === 2) {
+      bundleDiscount = 150;
+      bundleTier = 1;
+    }
+
+    const freeThreshold = cfg.free_shipping_threshold || 3000;
+    const isFreeShipping = subtotal >= freeThreshold || bundleTier > 0;
+    const netTotal = Math.max(0, subtotal - bundleDiscount);
+
+    return {
+      subtotal,
+      hoodieCount,
+      bundleDiscount,
+      bundleTier,
+      freeThreshold,
+      isFreeShipping,
+      netTotal
+    };
+  }
+
+  function pushCart(p, v, size, qty = 1) {
     if (!editable(p, v)) {
       message('Preview only — ordering opens after product approval.', 'error');
       return;
@@ -130,21 +167,22 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       message('Please choose an available size.', 'error');
       return;
     }
+    const addQty = Math.max(1, Math.min(20, parseInt(qty, 10) || 1));
     let x = cart.find((x) => x.sku === v.sku && x.size === size);
     if (x) {
-      x.qty = Math.min(20, x.qty + 1);
+      x.qty = Math.min(20, x.qty + addQty);
     } else {
-      cart.push({ product_id: p.id, sku: v.sku, size, qty: 1 });
+      cart.push({ product_id: p.id, sku: v.sku, size, qty: addQty });
     }
     persist();
     toggleCart(true);
-    message(`Added "${p.name}" to bag`, 'success');
+    message(`Added "${p.name}" (${size}) × ${addQty} to bag`, 'success');
     trackMeta('AddToCart', {
       content_name: p.name,
       content_category: p.collection,
       content_ids: [v.sku],
       content_type: 'product',
-      value: p.price_bdt,
+      value: p.price_bdt * addQty,
       currency: 'BDT'
     });
   }
@@ -170,9 +208,54 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     return p && v ? { p, v } : null;
   }
 
+  function renderCartMeter(totals) {
+    const { subtotal, hoodieCount, bundleTier, freeThreshold, isFreeShipping } = totals;
+    let meterText = '';
+    let badgeText = '';
+    let progressPct = 0;
+    let isUnlocked = false;
+
+    if (isFreeShipping || subtotal >= freeThreshold) {
+      isUnlocked = true;
+      progressPct = 100;
+      if (bundleTier === 2) {
+        meterText = '🔥 SUPER BUNDLE UNLOCKED · ৳300 OFF + FREE DELIVERY!';
+        badgeText = 'TIER 2 ACTIVE';
+      } else if (bundleTier === 1) {
+        meterText = '🎉 BUNDLE DISCOUNT UNLOCKED · ৳150 OFF + FREE DELIVERY!';
+        badgeText = 'TIER 1 ACTIVE';
+      } else {
+        meterText = '🎉 FREE NATIONWIDE DELIVERY UNLOCKED!';
+        badgeText = 'FREE SHIPPING';
+      }
+    } else {
+      progressPct = Math.min(100, Math.round((subtotal / freeThreshold) * 100));
+      const needed = freeThreshold - subtotal;
+      if (hoodieCount === 1) {
+        meterText = `Add 1 more hoodie for ৳150 OFF + Free Delivery! (or ৳${needed.toLocaleString()} more)`;
+        badgeText = '1/2 TO BUNDLE';
+      } else {
+        meterText = `Add ৳${needed.toLocaleString()} more for FREE Delivery nationwide!`;
+        badgeText = `${progressPct}% UNLOCKED`;
+      }
+    }
+
+    return `
+      <div class="cart-meter-wrap">
+        <div class="meter-header">
+          <span>${meterText}</span>
+          <span class="meter-badge ${isUnlocked ? 'unlocked' : ''}">${badgeText}</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill ${isUnlocked ? 'full' : ''}" style="width: ${progressPct}%"></div>
+        </div>
+      </div>
+    `;
+  }
+
   function renderCart() {
     const wrap = $('#cartItems');
-    const subtotal = $('#cartSubtotal');
+    const subtotalEl = $('#cartSubtotal');
     const foot = $('#cartFoot');
     if (!wrap) return;
     sanitizeCart();
@@ -181,6 +264,10 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       if (foot) foot.hidden = true;
       return;
     }
+
+    const totals = calculateCartTotals();
+    const meterHtml = renderCartMeter(totals);
+
     const lines = cart
       .map((x, i) => {
         const o = itemData(x);
@@ -190,13 +277,34 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         return `<div class="cart-line"><img src="${asset(im?.url)}" alt="${safe(p.name)}"><div><h4>${safe(p.name)}</h4><div class="small">${safe(v.color)} · ${safe(x.size)} · ${safe(v.sku)}</div><b>${price(p.price_bdt * x.qty)}</b><div class="qty"><button type="button" data-qty="${i},-1" aria-label="Decrease quantity">−</button><span>${x.qty}</span><button type="button" data-qty="${i},1" aria-label="Increase quantity">+</button><button type="button" class="remove" data-remove="${i}">Remove</button></div></div></div>`;
       })
       .join('');
-    wrap.innerHTML = lines;
-    const total = cart.reduce((sum, x) => {
-      const o = itemData(x);
-      return sum + (o ? o.p.price_bdt * x.qty : 0);
-    }, 0);
-    if (subtotal) subtotal.textContent = price(total);
-    if (foot) foot.hidden = false;
+
+    wrap.innerHTML = meterHtml + lines;
+
+    if (subtotalEl) {
+      if (totals.bundleDiscount > 0) {
+        subtotalEl.innerHTML = `<span style="text-decoration:line-through;color:#887;font-size:0.95rem;margin-right:6px;">${price(totals.subtotal)}</span> <span style="color:#c5a880;">${price(totals.netTotal)}</span> <span style="font-size:0.75rem;color:#22c55e;display:block;">(৳${totals.bundleDiscount} BUNDLE SAVINGS APPLIED)</span>`;
+      } else {
+        subtotalEl.textContent = price(totals.subtotal);
+      }
+    }
+
+    if (foot) {
+      foot.hidden = false;
+      const waCartBtn = $('#cartWhatsAppBtn');
+      if (waCartBtn) {
+        const waBagSummary = cart
+          .map((x) => {
+            const o = itemData(x);
+            return o ? `• ${o.p.name} (${o.v.color}, Size ${x.size}) × ${x.qty}` : '';
+          })
+          .filter(Boolean)
+          .join('\n');
+        const waMsg = encodeURIComponent(
+          `Hello StarkiT! I would like to order my shopping bag:\n${waBagSummary}\nTotal: ৳${totals.netTotal.toLocaleString()} (Cash on Delivery). Please confirm!`
+        );
+        waCartBtn.href = `https://wa.me/8801778307704?text=${waMsg}`;
+      }
+    }
   }
 
   function addFav(id) {
@@ -436,6 +544,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
     let curr = null;
     let selectedSize = null;
+    let selectedQty = 1;
 
     const gallery = $('#detailGallery');
     const thumbs = $('#detailThumbs');
@@ -444,6 +553,91 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     const status = $('#purchaseStatus');
     const purchase = $('#purchaseBtn');
     const whatsappBtn = $('#whatsappBtn');
+
+    function updateWhatsAppUrl() {
+      if (!whatsappBtn) return;
+      if (v.status === 'PROVISIONAL') {
+        whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
+          `Hello StarkiT! I am interested in the upcoming "${p.name}" in ${v.color} (${v.sku}). Please notify me when pre-orders open!`
+        )}`;
+        whatsappBtn.textContent = `💬 INQUIRE ABOUT ${v.color.toUpperCase()} PRE-RELEASE`;
+        whatsappBtn.style.borderColor = '#c5a880';
+        whatsappBtn.style.color = '#c5a880';
+      } else {
+        const sizeText = selectedSize ? ` (Size: ${selectedSize}, Qty: ${selectedQty})` : ` (Qty: ${selectedQty})`;
+        whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
+          `Hello StarkiT! I would like to order "${p.name}" in ${v.color}${sizeText} (SKU: ${v.sku}, Price: ৳${(p.price_bdt * selectedQty).toLocaleString()}) via Cash on Delivery.`
+        )}`;
+        whatsappBtn.textContent = '💬 ORDER VIA WHATSAPP (01778307704)';
+        whatsappBtn.style.borderColor = '#25D366';
+        whatsappBtn.style.color = '#128C7E';
+      }
+    }
+
+    function updatePurchaseBtn() {
+      if (!purchase) return;
+      if (cfg.mode === 'preview') {
+        purchase.disabled = true;
+        purchase.textContent = 'PREVIEW — ORDERING NOT YET OPEN';
+        status.textContent = 'The product and artwork are shown for internal review.';
+      } else if (v.status === 'PROVISIONAL' || !editable(p, v)) {
+        purchase.disabled = true;
+        purchase.textContent = v.status === 'PROVISIONAL' ? 'COLORWAY IN DEVELOPMENT · NOT FOR SALE' : 'NOT AVAILABLE';
+        purchase.style.opacity = '0.6';
+        purchase.style.cursor = 'not-allowed';
+        status.textContent = v.status === 'PROVISIONAL'
+          ? 'Purchasing is paused until production sample verification.'
+          : 'This variant is not approved or has no verified stock.';
+      } else if (v.available_sizes.length === 1 || selectedSize) {
+        purchase.disabled = false;
+        purchase.style.opacity = '1';
+        purchase.style.cursor = 'pointer';
+        const qtyText = selectedQty > 1 ? ` (${selectedQty})` : '';
+        purchase.textContent = `ADD TO BAG${qtyText} · ${price(p.price_bdt * selectedQty)}`;
+        status.textContent = '100% Cash on Delivery nationwide · Parcel inspection at delivery.';
+      } else {
+        purchase.disabled = false;
+        purchase.style.opacity = '1';
+        purchase.style.cursor = 'pointer';
+        purchase.textContent = 'SELECT SIZE TO ADD TO BAG';
+        status.textContent = 'Select an available size to continue.';
+      }
+      updateWhatsAppUrl();
+    }
+
+    // Insert Quantity Stepper if not already present
+    if (purchase && !$('#detailQtyInput')) {
+      const stepperWrap = document.createElement('div');
+      stepperWrap.style.display = 'flex';
+      stepperWrap.style.gap = '10px';
+      stepperWrap.style.alignItems = 'center';
+      stepperWrap.style.marginTop = '20px';
+
+      const stepper = document.createElement('div');
+      stepper.className = 'qty-stepper';
+      stepper.innerHTML = `
+        <button type="button" id="qtyDecBtn" aria-label="Decrease quantity">−</button>
+        <input type="number" id="detailQtyInput" value="1" min="1" max="10" readonly aria-label="Quantity">
+        <button type="button" id="qtyIncBtn" aria-label="Increase quantity">+</button>
+      `;
+      stepperWrap.appendChild(stepper);
+
+      purchase.parentNode.insertBefore(stepperWrap, purchase);
+      purchase.style.marginTop = '0';
+      purchase.style.flex = '1';
+      stepperWrap.appendChild(purchase);
+
+      $('#qtyDecBtn')?.addEventListener('click', () => {
+        selectedQty = Math.max(1, selectedQty - 1);
+        $('#detailQtyInput').value = selectedQty;
+        updatePurchaseBtn();
+      });
+      $('#qtyIncBtn')?.addEventListener('click', () => {
+        selectedQty = Math.min(10, selectedQty + 1);
+        $('#detailQtyInput').value = selectedQty;
+        updatePurchaseBtn();
+      });
+    }
 
     function setGallery(view) {
       if (!v.gallery || v.gallery.length === 0) {
@@ -508,64 +702,243 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
               <p style="margin:6px 0 0;font-size:0.78rem;line-height:1.5;color:#ded3cc;">
                 This planned colorway slot (${safe(v.color)}) has not yet completed physical garment sample production. Measurement size charts and inventory remain paused until seller authorization.
               </p>
+            </div>
+            <div class="vip-waitlist-box">
+              <div style="font-size:0.75rem;font-weight:800;color:#c5a880;letter-spacing:0.12em;text-transform:uppercase;">VIP EARLY ACCESS WAITLIST</div>
+              <p style="font-size:0.75rem;color:#ded3cc;margin:6px 0 0;line-height:1.5;">Enter your WhatsApp/Mobile number to get notified 24 hours before the ${safe(v.color)} colorway drops.</p>
+              <form class="vip-waitlist-form" id="vipWaitlistForm">
+                <input type="tel" id="vipPhone" placeholder="01XXXXXXXXX" required>
+                <button type="submit">JOIN WAITLIST ↗</button>
+              </form>
+              <div id="vipSuccessMsg" style="display:none;font-size:0.75rem;color:#22c55e;margin-top:8px;font-weight:700;">✓ You are on the VIP waitlist! We will notify you via WhatsApp on drop day.</div>
             </div>`;
+
+          const vipForm = $('#vipWaitlistForm');
+          vipForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const ph = $('#vipPhone')?.value.trim();
+            if (ph) {
+              try {
+                const leads = JSON.parse(localStorage.getItem('starkit_vip_leads') || '[]');
+                leads.push({ phone: ph, sku: v.sku, color: v.color, product: p.name, time: new Date().toISOString() });
+                localStorage.setItem('starkit_vip_leads', JSON.stringify(leads));
+              } catch (err) {}
+              $('#vipSuccessMsg').style.display = 'block';
+              vipForm.style.display = 'none';
+              message(`Added ${ph} to VIP drop list for ${v.color}!`, 'success');
+            }
+          });
         } else if (v.available_sizes.length) {
           const isSingle = v.available_sizes.length === 1;
           if (isSingle) selectedSize = v.available_sizes[0];
-          sizeWrapper.innerHTML = `<p class="smallcaps">${isSingle ? 'SIZE / SPECIFICATION' : 'AVAILABLE SIZES'}</p><div class="variant-buttons">${v.available_sizes.map((s) => `<button type="button" data-size="${safe(s)}" class="color-chip ${isSingle ? 'selected' : ''}">${safe(s)}</button>`).join('')}</div>`;
+          const isHoodie = p.id.startsWith('STK-');
+          const fitLinkHtml = isHoodie
+            ? `<button type="button" class="fit-trigger-link" id="openFitModalBtn">📏 FIT FINDER &amp; SIZE CHART</button>`
+            : '';
+          sizeWrapper.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <p class="smallcaps" style="margin:0;">${isSingle ? 'SIZE / SPECIFICATION' : 'AVAILABLE SIZES'}</p>
+              ${fitLinkHtml}
+            </div>
+            <div class="variant-buttons">
+              ${v.available_sizes.map((s) => `<button type="button" data-size="${safe(s)}" class="color-chip ${isSingle ? 'selected' : ''}">${safe(s)}</button>`).join('')}
+            </div>`;
         } else {
           sizeWrapper.innerHTML = '<div class="notice">Size chart and stock availability are awaiting seller verification.</div>';
         }
       }
 
-      if (cfg.mode === 'preview') {
-        purchase.disabled = true;
-        purchase.textContent = 'PREVIEW — ORDERING NOT YET OPEN';
-        status.textContent = 'The product and artwork are shown for internal review.';
-      } else if (v.status === 'PROVISIONAL' || !editable(p, v)) {
-        purchase.disabled = true;
-        purchase.textContent = v.status === 'PROVISIONAL' ? 'COLORWAY IN DEVELOPMENT · NOT FOR SALE' : 'NOT AVAILABLE';
-        purchase.style.opacity = '0.6';
-        purchase.style.cursor = 'not-allowed';
-        status.textContent = v.status === 'PROVISIONAL'
-          ? 'Purchasing is paused until production sample verification.'
-          : 'This variant is not approved or has no verified stock.';
-      } else if (v.available_sizes.length === 1) {
-        purchase.disabled = false;
-        purchase.style.opacity = '1';
-        purchase.style.cursor = 'pointer';
-        purchase.textContent = `ADD TO BAG · ${price(p.price_bdt)}`;
-        status.textContent = '100% Cash on Delivery nationwide · Parcel inspection at delivery.';
-      } else {
-        purchase.disabled = false;
-        purchase.style.opacity = '1';
-        purchase.style.cursor = 'pointer';
-        purchase.textContent = 'SELECT SIZE TO ADD TO BAG';
-        status.textContent = 'Select an available size to continue.';
-      }
-
-      if (whatsappBtn) {
-        if (v.status === 'PROVISIONAL') {
-          whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
-            `Hello StarkiT! I am interested in the upcoming "${p.name}" in ${v.color} (${v.sku}). Please notify me when pre-orders open!`
-          )}`;
-          whatsappBtn.textContent = `💬 INQUIRE ABOUT ${v.color.toUpperCase()} PRE-RELEASE`;
-          whatsappBtn.style.borderColor = '#c5a880';
-          whatsappBtn.style.color = '#c5a880';
-        } else {
-          whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
-            `Hello StarkiT! I would like to order "${p.name}" in ${v.color} (SKU: ${v.sku}, Price: ৳${p.price_bdt}) via Cash on Delivery.`
-          )}`;
-          whatsappBtn.textContent = '💬 ORDER VIA WHATSAPP (01778307704)';
-          whatsappBtn.style.borderColor = '#25D366';
-          whatsappBtn.style.color = '#128C7E';
-        }
-      }
-
+      updatePurchaseBtn();
       setGallery(v.gallery[0]?.view || 'front');
     }
 
     chooseVariant(v.sku);
+
+    // Setup Fit Finder Modal
+    if (p.id.startsWith('STK-')) {
+      let modal = $('#fitModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fitModal';
+        modal.className = 'fit-modal';
+        modal.innerHTML = `
+          <div class="fit-modal-card">
+            <div class="fit-modal-head">
+              <div>
+                <h3 style="font-family:'Afacad Flux',sans-serif;font-weight:900;">STARKIT · FIT FINDER &amp; SIZE SPECIFICATIONS</h3>
+                <span style="font-size:0.7rem;letter-spacing:0.12em;color:#c5a880;text-transform:uppercase;">DHAKA STREETWEAR SIZING CALCULATOR</span>
+              </div>
+              <button type="button" id="closeFitModalBtn" style="background:transparent;border:0;color:#fff;font-size:1.8rem;cursor:pointer;line-height:1;">×</button>
+            </div>
+            <div class="fit-modal-body">
+              <h4 style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#5b1a24;margin-bottom:8px;">1. SMART SIZE CALCULATOR</h4>
+              <p style="font-size:0.82rem;color:#665;margin:0 0 12px;line-height:1.5;">Choose your height, body build, and desired styling drape to see your recommended size in our 330–350 GSM combed cotton fleece silhouette:</p>
+              <div class="fit-calc-controls">
+                <div>
+                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Height</label>
+                  <select id="fitHeight" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                    <option value="160">Under 5'5" (Under 165 cm)</option>
+                    <option value="168" selected>5'5" – 5'7" (165–172 cm)</option>
+                    <option value="175">5'8" – 5'10" (173–179 cm)</option>
+                    <option value="183">5'11"+ (180+ cm)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Body Build</label>
+                  <select id="fitBuild" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                    <option value="slim">Slim / Lean</option>
+                    <option value="regular" selected>Regular / Athletic</option>
+                    <option value="broad">Broad / Heavy</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Desired Drape</label>
+                  <select id="fitDrape" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                    <option value="standard" selected>Standard Streetwear Fit</option>
+                    <option value="oversized">Oversized Silhouette</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="fit-calc-result" id="fitCalcResult">
+                <div>
+                  <div style="font-size:0.7rem;letter-spacing:0.14em;color:#c5a880;text-transform:uppercase;font-weight:800;">Recommended Size</div>
+                  <div id="fitRecSize" style="font-size:1.45rem;font-weight:900;letter-spacing:0.04em;">SIZE L (42" Chest × 28.5" Length)</div>
+                  <div style="font-size:0.75rem;color:#c8b6b7;">Heavyweight 330–350 GSM Combed Cotton Fleece</div>
+                </div>
+                <button type="button" id="applyFitSizeBtn" class="btn btn-light" style="min-height:38px;padding:8px 16px;font-size:0.72rem;letter-spacing:0.1em;border-radius:3px;">APPLY SIZE L ↗</button>
+              </div>
+
+              <div style="margin-top:24px;">
+                <h4 style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#5b1a24;margin-bottom:8px;">2. PHYSICAL MEASUREMENT SPECIFICATIONS (INCHES)</h4>
+                <table class="fit-table">
+                  <thead>
+                    <tr>
+                      <th>Size</th>
+                      <th>Chest (Circumference)</th>
+                      <th>Body Length</th>
+                      <th>Sleeve Length</th>
+                      <th>Shoulder Width</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><strong>M</strong></td><td>40 inches</td><td>27.5 inches</td><td>24.5 inches</td><td>19.0 inches</td></tr>
+                    <tr><td><strong>L</strong></td><td>42 inches</td><td>28.5 inches</td><td>25.5 inches</td><td>20.0 inches</td></tr>
+                    <tr><td><strong>XL</strong></td><td>44 inches</td><td>29.5 inches</td><td>26.5 inches</td><td>21.0 inches</td></tr>
+                    <tr><td><strong>XXL</strong></td><td>46 inches</td><td>30.5 inches</td><td>27.5 inches</td><td>22.0 inches</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div style="background:#f4eee9;border-left:4px solid #170000;padding:12px 16px;margin-top:16px;font-size:0.8rem;line-height:1.5;">
+                <strong>✓ 7-Day Easy Size Exchange:</strong> If your hoodie doesn't fit exactly the way you like, exchange it within 7 days anywhere in Bangladesh. Contact concierge via call or WhatsApp at <strong>01778307704</strong>.
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelector('#closeFitModalBtn')?.addEventListener('click', () => modal.classList.remove('open'));
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.classList.remove('open');
+        });
+
+        const updateRec = () => {
+          const h = parseInt($('#fitHeight').value, 10);
+          const b = $('#fitBuild').value;
+          const d = $('#fitDrape').value;
+          let idx = 1;
+          if (h <= 163) idx = 0;
+          else if (h <= 170) idx = 1;
+          else if (h <= 178) idx = 2;
+          else idx = 3;
+
+          if (b === 'broad') idx = Math.min(3, idx + 1);
+          if (b === 'slim' && idx > 0) idx -= 1;
+          if (d === 'oversized') idx = Math.min(3, idx + 1);
+
+          const table = [
+            { s: 'M', c: '40"', l: '27.5"' },
+            { s: 'L', c: '42"', l: '28.5"' },
+            { s: 'XL', c: '44"', l: '29.5"' },
+            { s: 'XXL', c: '46"', l: '30.5"' }
+          ];
+          const choice = table[idx];
+          $('#fitRecSize').textContent = `SIZE ${choice.s} (${choice.c} Chest × ${choice.l} Length)`;
+          $('#applyFitSizeBtn').textContent = `APPLY SIZE ${choice.s} ↗`;
+          $('#applyFitSizeBtn').dataset.targetSize = choice.s;
+        };
+
+        $('#fitHeight')?.addEventListener('change', updateRec);
+        $('#fitBuild')?.addEventListener('change', updateRec);
+        $('#fitDrape')?.addEventListener('change', updateRec);
+
+        $('#applyFitSizeBtn')?.addEventListener('click', (e) => {
+          const sz = e.target.dataset.targetSize || 'L';
+          const chip = sizeWrapper?.querySelector(`[data-size="${sz}"]`);
+          if (chip) chip.click();
+          modal.classList.remove('open');
+          message(`Recommended Size ${sz} selected!`, 'success');
+        });
+      }
+
+      document.addEventListener('click', (e) => {
+        if (e.target.closest('#openFitModalBtn') || e.target.closest('[data-open-fit-finder]')) {
+          modal.classList.add('open');
+        }
+      });
+    }
+
+    // Sticky Mobile Add-to-Bag Bar
+    let stickyBar = $('#stickyMobileBar');
+    if (!stickyBar) {
+      stickyBar = document.createElement('div');
+      stickyBar.id = 'stickyMobileBar';
+      stickyBar.className = 'sticky-mobile-bar';
+      stickyBar.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
+          <img id="stickyThumb" src="" alt="" style="width:38px;height:46px;object-fit:contain;background:#2a0b10;border-radius:3px;flex-shrink:0;">
+          <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <div id="stickyTitle" style="font-weight:800;font-size:0.8rem;color:#fff;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="stickyPrice" style="color:#c5a880;font-weight:800;font-size:0.82rem;"></div>
+          </div>
+        </div>
+        <button id="stickyAddBtn" class="btn" style="min-height:38px;padding:6px 16px;font-size:0.72rem;letter-spacing:0.08em;background:#c5a880;color:#170000;border:0;font-weight:800;border-radius:3px;flex-shrink:0;">
+          ADD TO BAG
+        </button>
+      `;
+      document.body.appendChild(stickyBar);
+
+      $('#stickyAddBtn')?.addEventListener('click', () => {
+        if (!selectedSize && v.available_sizes.length > 1) {
+          message('Please select a size first.', 'error');
+          window.scrollTo({ top: purchase.offsetTop - 120, behavior: 'smooth' });
+        } else {
+          purchase.click();
+        }
+      });
+    }
+
+    function updateStickyBar() {
+      const thumbImg = first(p, v);
+      const stImg = $('#stickyThumb');
+      if (stImg) stImg.src = asset(thumbImg?.url);
+      const stTitle = $('#stickyTitle');
+      if (stTitle) stTitle.textContent = p.name + (selectedSize ? ` (${selectedSize})` : '');
+      const stPrice = $('#stickyPrice');
+      if (stPrice) stPrice.textContent = price(p.price_bdt * selectedQty);
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!purchase) return;
+      const rect = purchase.getBoundingClientRect();
+      if (rect.bottom < 0) {
+        stickyBar.classList.add('visible');
+        updateStickyBar();
+      } else {
+        stickyBar.classList.remove('visible');
+      }
+    }, { passive: true });
 
     colors?.addEventListener('click', (e) => {
       const b = e.target.closest('[data-variant]');
@@ -582,13 +955,11 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       if (!b) return;
       selectedSize = b.dataset.size;
       $$('[data-size]', sizeWrapper).forEach((x) => x.classList.toggle('selected', x === b));
-      if (editable(p, v)) {
-        purchase.textContent = `ADD TO BAG · ${price(p.price_bdt)}`;
-        status.textContent = 'Stock and current price will be checked again at checkout.';
-      }
+      updatePurchaseBtn();
+      updateStickyBar();
     });
 
-    purchase?.addEventListener('click', () => pushCart(p, v, selectedSize));
+    purchase?.addEventListener('click', () => pushCart(p, v, selectedSize, selectedQty));
 
     gallery?.addEventListener('click', () => {
       if (!curr) return;
@@ -624,6 +995,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     const zoneSelect = $('#zone');
 
     function renderCheckoutSummary() {
+      const totals = calculateCartTotals();
       const rows = cart
         .map((x) => {
           const o = itemData(x);
@@ -632,21 +1004,42 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         })
         .join('');
       summary.innerHTML = rows || '<p>There are no items in your bag.</p>';
-      const sub = cart.reduce((a, x) => {
-        const o = itemData(x);
-        return a + (o ? o.p.price_bdt * x.qty : 0);
-      }, 0);
-      const zone = zoneSelect ? zoneSelect.value : 'dhaka';
-      const freeThreshold = cfg.free_shipping_threshold || 3000;
-      const baseShipping = zone === 'dhaka' ? cfg.delivery_dhaka || 80 : cfg.delivery_outside || 150;
-      const shipping = sub >= freeThreshold && sub > 0 ? 0 : baseShipping;
-      const grandTotal = sub + (sub > 0 ? shipping : 0);
 
-      total.innerHTML = `<div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:5px;"><span>Subtotal:</span><span>${price(sub)}</span></div><div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:5px;"><span>Delivery (${zone === 'dhaka' ? 'Dhaka Metro' : 'Outside Dhaka'}):</span><span>${shipping === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(shipping)}</span></div><div style="display:flex;justify-content:space-between;font-size:1.35rem;font-weight:900;border-top:1px solid #ded9d3;padding-top:10px;margin-top:6px;"><span>TOTAL DUE:</span><span>${price(grandTotal)}</span></div>`;
+      const zone = zoneSelect ? zoneSelect.value : 'dhaka';
+      const baseShipping = zone === 'dhaka' ? cfg.delivery_dhaka || 80 : cfg.delivery_outside || 150;
+      const isFree = totals.isFreeShipping || totals.subtotal >= (cfg.free_shipping_threshold || 3000);
+      const shipping = isFree && cart.length > 0 ? 0 : baseShipping;
+      const grandTotal = Math.max(0, totals.netTotal + (cart.length > 0 ? shipping : 0));
+
+      let discountHtml = '';
+      if (totals.bundleDiscount > 0) {
+        discountHtml = `<div style="font-size:0.92rem;color:#15803d;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:700;"><span>Bundle Offer (${totals.hoodieCount} Hoodies):</span><span>-${price(totals.bundleDiscount)}</span></div>`;
+      }
+
+      total.innerHTML = `
+        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;"><span>Subtotal:</span><span>${price(totals.subtotal)}</span></div>
+        ${discountHtml}
+        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;"><span>Delivery (${zone === 'dhaka' ? 'Dhaka Metro' : 'Outside Dhaka'}):</span><span>${shipping === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(shipping)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:1.35rem;font-weight:900;border-top:1px solid #ded9d3;padding-top:10px;margin-top:6px;color:#170000;"><span>TOTAL PAYABLE (COD):</span><span>${price(grandTotal)}</span></div>
+      `;
     }
 
     renderCheckoutSummary();
-    zoneSelect?.addEventListener('change', renderCheckoutSummary);
+    zoneSelect?.addEventListener('change', () => {
+      const distInput = $('#district');
+      if (distInput && zoneSelect.value === 'dhaka' && !distInput.value) {
+        distInput.value = 'Dhaka';
+      }
+      renderCheckoutSummary();
+    });
+
+    // Real-time phone validation
+    const phoneInput = $('#custPhone');
+    phoneInput?.addEventListener('input', (e) => {
+      const cleanPhone = e.target.value.replace(/[\s-]/g, '');
+      const isValid = /^(?:\+?880|0)1[3-9]\d{8}$/.test(cleanPhone);
+      phoneInput.style.borderColor = isValid ? '#15803d' : cleanPhone.length > 3 ? '#be555c' : '#cfc5bf';
+    });
 
     if (cart.length > 0) {
       trackMeta('InitiateCheckout', {
@@ -721,13 +1114,14 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         } catch (netErr) {
           console.warn('API direct connection fallback:', netErr);
           const fallbackRef = 'STK-' + generateUUID().replace(/-/g, '').substring(0, 10).toUpperCase();
-          const sub = itemsSnapshot.reduce((a, b) => a + b.line_total_bdt, 0);
-          const ship = sub >= 3000 ? 0 : body.customer.zone === 'dhaka' ? 80 : 150;
+          const totals = calculateCartTotals();
+          const ship = (totals.isFreeShipping || totals.subtotal >= 3000) ? 0 : body.customer.zone === 'dhaka' ? 80 : 150;
           data = {
             reference: fallbackRef,
-            subtotal_bdt: sub,
+            subtotal_bdt: totals.subtotal,
+            discount_bdt: totals.bundleDiscount,
             shipping_bdt: ship,
-            total_bdt: sub + ship,
+            total_bdt: totals.netTotal + ship,
             status: 'pending_confirmation'
           };
         }
@@ -742,6 +1136,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
           zone: body.customer.zone,
           notes: body.customer.notes,
           subtotal_bdt: data.subtotal_bdt,
+          discount_bdt: data.discount_bdt || 0,
           shipping_bdt: data.shipping_bdt,
           total_bdt: data.total_bdt,
           status: data.status || 'pending_confirmation',
@@ -778,19 +1173,162 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
           { eventID: data.reference }
         );
 
-        const waText = encodeURIComponent(
-          `Hello StarkiT! I just placed a Cash on Delivery order: Ref ${data.reference} for ${body.customer.name} (${body.customer.phone}). Total: ৳${data.total_bdt.toLocaleString()}. Please confirm!`
-        );
-
-        form.innerHTML = `<div class="notice" style="background:#fff;border:2px solid #170000;padding:28px;text-align:left;"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><span style="font-size:2rem;">🎉</span><div><h2 style="margin:0;font-size:1.8rem;">ORDER CONFIRMED!</h2><p style="margin:2px 0;color:#776d6b;font-weight:750;">CASH ON DELIVERY · DHAKA</p></div></div><p style="font-size:1.05rem;line-height:1.6;">Thank you, <strong>${safe(body.customer.name)}</strong>. Your order has been registered.</p><div style="background:#f4eee9;padding:16px;margin:18px 0;border-left:4px solid #170000;font-size:0.92rem;line-height:1.7;"><div>Order Reference: <strong style="font-size:1.2rem;letter-spacing:0.08em;">${safe(data.reference)}</strong></div><div>Contact Phone: <strong>${safe(body.customer.phone)}</strong></div><div>Delivery Destination: <strong>${safe(body.customer.address)}, ${safe(body.customer.district)}</strong></div><div>Estimated Delivery: <strong>${body.customer.zone === 'dhaka' ? '2–3 Business Days' : '3–5 Business Days'}</strong></div><div style="font-size:1.25rem;font-weight:900;margin-top:6px;color:#170000;">Total Payable Upon Delivery: ৳${data.total_bdt.toLocaleString()}</div></div><div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;"><a href="https://wa.me/8801778307704?text=${waText}" target="_blank" class="btn" style="background:#25D366;border-color:#25D366;color:#fff;flex:1;text-align:center;">💬 CONFIRM VIA WHATSAPP ↗</a><a href="${ROOT}shop.html" class="btn btn-outline" style="flex:1;text-align:center;">CONTINUE SHOPPING ↗</a></div></div>`;
-        summary.innerHTML = '';
-        total.textContent = '—';
+        // Redirect to dedicated luxury Order Confirmation Receipt Page
+        window.location.href = `${ROOT}order-confirmation.html?ref=${encodeURIComponent(data.reference)}`;
       } catch (err) {
         message(err.message, 'error');
         btn.disabled = false;
         btn.textContent = 'CONFIRM CASH ON DELIVERY ORDER';
       }
     });
+  }
+
+  function renderConfirmation() {
+    const container = $('#confirmationContainer');
+    if (!container) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref');
+
+    let order = null;
+    try {
+      const orders = JSON.parse(localStorage.getItem('starkit_orders') || '[]');
+      if (refParam) {
+        order = orders.find((o) => o.reference === refParam);
+      }
+      if (!order && orders.length > 0) {
+        order = orders[0];
+      }
+    } catch (e) {}
+
+    if (!order) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:50px 20px;background:#fff;border:1px solid #ded9d3;border-radius:8px;">
+          <h2 style="font-size:2rem;font-weight:900;margin-bottom:12px;">ORDER NOT FOUND IN CURRENT BROWSER</h2>
+          <p style="color:#776d6b;line-height:1.6;max-width:480px;margin:auto;">If you placed an order recently, our support team has received it and will contact you via phone or WhatsApp for confirmation.</p>
+          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="${ROOT}shop.html" class="btn">Explore Collection ↗</a>
+            <a href="https://wa.me/8801778307704" target="_blank" class="btn btn-outline" style="border-color:#25d366;color:#128c7e;">💬 Contact Concierge</a>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const itemsHtml = (order.items || [])
+      .map((i) => {
+        return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;">
+          <div>
+            <div style="font-weight:800;font-size:0.95rem;">${safe(i.product_name)}</div>
+            <div style="font-size:0.75rem;color:#776d6b;">${safe(i.color)} · Size ${safe(i.size)} × ${i.quantity}</div>
+          </div>
+          <div style="font-weight:800;font-size:1rem;color:#170000;">${price(i.line_total_bdt || i.unit_price_bdt * i.quantity)}</div>
+        </div>
+      `;
+      })
+      .join('');
+
+    const waText = encodeURIComponent(
+      `Hello StarkiT! I would like to confirm my Cash on Delivery order: Ref ${order.reference} for ${order.customer_name} (${order.customer_phone}). Total Payable: ৳${Number(order.total_bdt).toLocaleString()}.`
+    );
+
+    let discountRow = '';
+    if (order.discount_bdt > 0) {
+      discountRow = `
+        <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#15803d;margin-bottom:6px;font-weight:700;">
+          <span>Bundle Offer Savings:</span><span>-${price(order.discount_bdt)}</span>
+        </div>
+      `;
+    }
+
+    container.innerHTML = `
+      <div style="background:#fff;border:1px solid #ded9d3;border-radius:8px;padding:clamp(24px, 4vw, 42px);box-shadow:0 12px 35px rgba(0,0,0,0.06);">
+        <div style="text-align:center;border-bottom:1px solid #eee;padding-bottom:24px;margin-bottom:24px;">
+          <div style="font-size:2.8rem;margin-bottom:8px;">🎉</div>
+          <span class="pill pill-dark" style="background:#15803d;margin-bottom:10px;">ORDER CONFIRMED · CASH ON DELIVERY</span>
+          <h1 style="font-size:clamp(2rem, 3.8vw, 2.8rem);font-weight:900;letter-spacing:-0.04em;margin:10px 0 6px;">THANK YOU, ${safe(order.customer_name).toUpperCase()}!</h1>
+          <p style="color:#776d6b;font-size:0.95rem;max-width:500px;margin:auto;line-height:1.5;">Your order is registered with StarkiT Dhaka HQ. Our delivery concierge will call or message to confirm dispatch.</p>
+        </div>
+
+        <div style="background:#f4eee9;border:1px solid #e0d6cf;border-left:4px solid #170000;border-radius:4px;padding:18px;margin-bottom:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+          <div>
+            <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#887;font-weight:800;">Official Order Reference</div>
+            <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.06em;color:#170000;" id="orderRefText">${safe(order.reference)}</div>
+          </div>
+          <button type="button" class="btn btn-outline" id="copyRefBtn" style="min-height:38px;padding:8px 16px;font-size:0.72rem;letter-spacing:0.1em;border-radius:3px;">📋 COPY REFERENCE</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:20px;margin-bottom:26px;">
+          <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;">
+            <h4 style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:#887;margin-bottom:8px;">DELIVERY DESTINATION</h4>
+            <div style="font-weight:800;font-size:0.95rem;color:#170000;">${safe(order.customer_name)}</div>
+            <div style="font-size:0.85rem;color:#554;margin-top:2px;">Phone: <strong>${safe(order.customer_phone)}</strong></div>
+            <div style="font-size:0.85rem;color:#554;margin-top:2px;line-height:1.4;">${safe(order.shipping_address)}, ${safe(order.district)}</div>
+          </div>
+          <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;">
+            <h4 style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:#887;margin-bottom:8px;">DELIVERY TIMELINE &amp; PAYMENT</h4>
+            <div style="font-weight:800;font-size:0.95rem;color:#170000;">${order.zone === 'dhaka' ? 'Dhaka Metro (24–48 Hours)' : 'Nationwide Courier (3–5 Days)'}</div>
+            <div style="font-size:0.85rem;color:#554;margin-top:2px;">Method: <strong>Cash on Delivery (Pay at Doorstep)</strong></div>
+            <div style="font-size:0.85rem;color:#15803d;font-weight:700;margin-top:4px;">✓ Parcel inspection permitted upon delivery</div>
+          </div>
+        </div>
+
+        <h3 style="font-size:1.15rem;font-weight:900;letter-spacing:0.02em;margin-bottom:12px;border-bottom:2px solid #170000;padding-bottom:8px;">ORDERED ITEMS</h3>
+        <div style="margin-bottom:24px;">
+          ${itemsHtml}
+        </div>
+
+        <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;margin-bottom:28px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#665;margin-bottom:6px;">
+            <span>Subtotal:</span><span>${price(order.subtotal_bdt)}</span>
+          </div>
+          ${discountRow}
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#665;margin-bottom:6px;">
+            <span>Delivery Fee:</span><span>${order.shipping_bdt === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(order.shipping_bdt)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:1.4rem;font-weight:900;color:#170000;border-top:1px solid #ded9d3;padding-top:10px;margin-top:6px;">
+            <span>TOTAL PAYABLE UPON DELIVERY:</span><span style="color:#170000;">${price(order.total_bdt)}</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="https://wa.me/8801778307704?text=${waText}" target="_blank" class="btn" style="background:#25d366;border-color:#25d366;color:#fff;flex:1;text-align:center;min-height:48px;">
+            💬 CONFIRM VIA WHATSAPP (01778307704) ↗
+          </a>
+          <button type="button" class="btn btn-outline" id="printReceiptBtn" style="flex:1;min-height:48px;">
+            🖨️ PRINT RECEIPT
+          </button>
+          <a href="${ROOT}shop.html" class="btn btn-outline" style="flex:1;text-align:center;min-height:48px;">
+            CONTINUE SHOPPING ↗
+          </a>
+        </div>
+      </div>
+    `;
+
+    $('#copyRefBtn')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(order.reference).then(() => {
+        message('Order reference copied to clipboard!', 'success');
+      });
+    });
+
+    $('#printReceiptBtn')?.addEventListener('click', () => {
+      window.print();
+    });
+  }
+
+  function setupWhatsAppConcierge() {
+    if ($('#floatingWhatsAppPill')) return;
+    const pill = document.createElement('a');
+    pill.id = 'floatingWhatsAppPill';
+    pill.className = 'floating-whatsapp-pill';
+    pill.href =
+      'https://wa.me/8801778307704?text=' +
+      encodeURIComponent('Hello StarkiT Concierge! I have a question about Drop 01 designs and nationwide delivery.');
+    pill.target = '_blank';
+    pill.rel = 'noopener noreferrer';
+    pill.setAttribute('aria-label', 'Chat with StarkiT Customer Concierge on WhatsApp');
+    pill.innerHTML = `<span>💬</span><span>WhatsApp (01778307704)</span>`;
+    document.body.appendChild(pill);
   }
 
   function init() {
@@ -870,6 +1408,8 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     setupGrid();
     setupDetail();
     checkout();
+    renderConfirmation();
+    setupWhatsAppConcierge();
     reveal();
     sanitizeCart();
 
