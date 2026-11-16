@@ -31,6 +31,99 @@ function validPhone(v) {
 
 const clean = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 
+/**
+ * Dispatches a server-side Conversions API (CAPI) event to Meta Graph API.
+ * Uses SHA-256 hashed customer identifiers for maximum Event Match Quality (EMQ).
+ */
+async function sendMetaConversionEvent({
+  eventName = 'Purchase',
+  eventId,
+  eventSourceUrl = 'https://starkit.store/checkout.html',
+  customer,
+  totalBdt,
+  items = [],
+  req
+}) {
+  const pixelId = process.env.META_PIXEL_ID || '1390081606323661';
+  const accessToken =
+    process.env.META_ACCESS_TOKEN ||
+    'EAAMeeTDHXlcBTNf2tyMplwmR5qLvKB5ZAtoihPXBa4Maq2mY375fpZCL2AjJ7LlZBJ2WqIDAfmmp9Hi5jZC8pB0sghkcrqZBZA3X7J6Am9xfAsUcO29XhZA2UEUMvKmMz66q7gIoi3mddfEf30wnpJGZBuNFVtswE47XBxiPRzeQdSIysnRBI1Ibo5XcZA51jWQZDZD';
+  const testCode = process.env.META_TEST_EVENT_CODE || 'TEST30949';
+
+  if (!pixelId || !accessToken) return;
+
+  function sha256(val) {
+    if (!val) return null;
+    return crypto.createHash('sha256').update(String(val).trim().toLowerCase()).digest('hex');
+  }
+
+  let rawPhone = String(customer?.phone || '').replace(/[\s+-]/g, '');
+  if (rawPhone.startsWith('0')) {
+    rawPhone = '88' + rawPhone;
+  }
+  const hashedPhone = sha256(rawPhone);
+
+  const nameParts = String(customer?.name || '').trim().split(/\s+/);
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+  const hashedFn = sha256(firstName);
+  const hashedLn = lastName ? sha256(lastName) : null;
+
+  const forwarded = req?.headers ? req.headers['x-forwarded-for'] : null;
+  const clientIp = forwarded ? forwarded.split(',')[0].trim() : req?.socket?.remoteAddress;
+  const userAgent = req?.headers ? req.headers['user-agent'] : '';
+
+  const userData = {
+    client_user_agent: userAgent || ''
+  };
+  if (hashedPhone) userData.ph = [hashedPhone];
+  if (hashedFn) userData.fn = [hashedFn];
+  if (hashedLn) userData.ln = [hashedLn];
+  if (clientIp) userData.client_ip_address = clientIp;
+
+  const payload = {
+    data: [
+      {
+        event_name: eventName,
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: eventId,
+        event_source_url: eventSourceUrl,
+        action_source: 'website',
+        user_data: userData,
+        custom_data: {
+          currency: 'BDT',
+          value: Number(totalBdt || 0),
+          order_id: eventId,
+          content_type: 'product',
+          contents: items.map((i) => ({
+            id: i.sku,
+            quantity: i.quantity,
+            item_price: i.unit_price_bdt || 1490
+          }))
+        }
+      }
+    ]
+  };
+
+  if (testCode) {
+    payload.test_event_code = testCode;
+  }
+
+  try {
+    const url = `https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${accessToken}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    console.log(`[Meta CAPI] Event ${eventName} (${eventId}) sent. Status: ${res.status}`, data);
+    return data;
+  } catch (err) {
+    console.warn('[Meta CAPI] Error dispatching event:', err.message);
+  }
+}
+
 export default async function handler(req, res) {
   // CORS Preflight & Method Validation
   if (req.method === 'OPTIONS') {
@@ -128,13 +221,28 @@ export default async function handler(req, res) {
       return acc + (unitPrice * r.quantity);
     }, 0);
     const fallbackShipping = fallbackSubtotal >= 3000 ? 0 : (zone === 'dhaka' ? 80 : 150);
-    
+    const fallbackTotal = fallbackSubtotal + fallbackShipping;
+
+    // Dispatch Meta Conversions API (CAPI) Purchase Event
+    sendMetaConversionEvent({
+      eventName: 'Purchase',
+      eventId: fallbackRef,
+      customer: { name, phone, address, district, zone },
+      totalBdt: fallbackTotal,
+      items: rows.map(r => ({
+        sku: r.sku,
+        quantity: r.quantity,
+        unit_price_bdt: (SKU_CATALOG.get(r.sku)?.price_bdt || 1490)
+      })),
+      req
+    }).catch(e => console.warn('Meta CAPI background warning:', e));
+
     console.warn('Orders API running in direct receipt mode (SUPABASE_SERVICE_ROLE_KEY not yet bound)');
     return json(res, 201, {
       reference: fallbackRef,
       subtotal_bdt: fallbackSubtotal,
       shipping_bdt: fallbackShipping,
-      total_bdt: fallbackSubtotal + fallbackShipping,
+      total_bdt: fallbackTotal,
       status: 'pending_confirmation',
       mode: 'direct_capture',
       message: 'Order received. Customer support will call to confirm delivery.'
@@ -159,6 +267,19 @@ export default async function handler(req, res) {
     });
 
     if (!error && order) {
+      sendMetaConversionEvent({
+        eventName: 'Purchase',
+        eventId: order.reference,
+        customer: { name, phone, address, district, zone },
+        totalBdt: order.total_bdt,
+        items: rows.map(r => ({
+          sku: r.sku,
+          quantity: r.quantity,
+          unit_price_bdt: (SKU_CATALOG.get(r.sku)?.price_bdt || 1490)
+        })),
+        req
+      }).catch(e => console.warn('Meta CAPI background warning:', e));
+
       return json(res, 201, order);
     }
 
@@ -232,6 +353,16 @@ export default async function handler(req, res) {
         }))
       );
     }
+
+    // Dispatch Meta Conversions API (CAPI) Purchase Event
+    sendMetaConversionEvent({
+      eventName: 'Purchase',
+      eventId: insertedOrder.reference,
+      customer: { name, phone, address, district, zone },
+      totalBdt: insertedOrder.total_bdt,
+      items: lineItemsToInsert,
+      req
+    }).catch(e => console.warn('Meta CAPI background warning:', e));
 
     return json(res, 201, {
       reference: insertedOrder.reference,

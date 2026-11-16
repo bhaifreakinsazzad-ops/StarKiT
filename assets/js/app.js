@@ -87,6 +87,16 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     message.timer = setTimeout(() => (t.hidden = true), 3200);
   }
 
+  function trackMeta(eventName, params = {}, options = {}) {
+    if (typeof window.fbq === 'function') {
+      try {
+        window.fbq('track', eventName, params, options);
+      } catch (e) {
+        console.warn('Meta Pixel tracking error:', e);
+      }
+    }
+  }
+
   function closePopups() {
     document.body.classList.remove('locked');
     $('#overlay')?.classList.remove('open');
@@ -129,6 +139,14 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     persist();
     toggleCart(true);
     message(`Added "${p.name}" to bag`, 'success');
+    trackMeta('AddToCart', {
+      content_name: p.name,
+      content_category: p.collection,
+      content_ids: [v.sku],
+      content_type: 'product',
+      value: p.price_bdt,
+      currency: 'BDT'
+    });
   }
 
   function removeItem(index) {
@@ -407,6 +425,15 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     if (!p) return;
 
     let v = p.variants[0];
+    trackMeta('ViewContent', {
+      content_name: p.name,
+      content_category: p.collection,
+      content_ids: [v?.sku || p.id],
+      content_type: 'product',
+      value: p.price_bdt,
+      currency: 'BDT'
+    });
+
     let curr = null;
     let selectedSize = null;
 
@@ -563,6 +590,17 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     renderCheckoutSummary();
     zoneSelect?.addEventListener('change', renderCheckoutSummary);
 
+    if (cart.length > 0) {
+      trackMeta('InitiateCheckout', {
+        num_items: cart.reduce((s, i) => s + i.qty, 0),
+        value: cart.reduce((sum, x) => {
+          const o = itemData(x);
+          return sum + (o ? o.p.price_bdt * x.qty : 0);
+        }, 0),
+        currency: 'BDT'
+      });
+    }
+
     const btn = $('#checkoutSubmit');
     const hasInvalid = cart.some((x) => {
       const o = itemData(x);
@@ -663,6 +701,25 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         persist();
         updateBadge();
 
+        // Track Meta Pixel Purchase with deduplication EventID
+        trackMeta(
+          'Purchase',
+          {
+            content_type: 'product',
+            content_ids: itemsSnapshot.map((x) => x.sku),
+            contents: itemsSnapshot.map((x) => ({
+              id: x.sku,
+              quantity: x.quantity,
+              item_price: x.unit_price_bdt
+            })),
+            num_items: itemsSnapshot.reduce((s, x) => s + x.quantity, 0),
+            value: data.total_bdt,
+            currency: 'BDT',
+            order_id: data.reference
+          },
+          { eventID: data.reference }
+        );
+
         const waText = encodeURIComponent(
           `Hello StarkiT! I just placed a Cash on Delivery order: Ref ${data.reference} for ${body.customer.name} (${body.customer.phone}). Total: ৳${data.total_bdt.toLocaleString()}. Please confirm!`
         );
@@ -710,6 +767,13 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     });
 
     document.addEventListener('click', (e) => {
+      const wa = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"]');
+      if (wa) {
+        trackMeta('Contact', {
+          content_name: 'WhatsApp Customer Care / Order Confirmation',
+          content_category: 'Lead'
+        });
+      }
       const f = e.target.closest('[data-fav]');
       if (f) addFav(f.dataset.fav);
       const r = e.target.closest('[data-reset-filters]');

@@ -12,5 +12,7 @@ window.STARKIT_CONFIG = {
   delivery_dhaka: 80,
   delivery_outside: 150,
   free_shipping_threshold: 3000,
-  supabase_url: 'https://cahxfaizkqcufhctqlhi.supabase.co'
+  supabase_url: 'https://cahxfaizkqcufhctqlhi.supabase.co',
+  meta_pixel_id: '1390081606323661',
+  meta_dataset_id: '1390081606323661'
 };
