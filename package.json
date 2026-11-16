@@ -1,0 +1,18 @@
+{
+  "name": "starkit-drop01-store",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "StarkiT — WEAR YOUR WORLD. | Drop 01 Full Storefront, Lookbook & Vercel/Supabase COD API",
+  "scripts": {
+    "start": "npx serve .",
+    "check": "node --check assets/js/app.js && node --check api/orders.js",
+    "test": "npm run check && node verify_package.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

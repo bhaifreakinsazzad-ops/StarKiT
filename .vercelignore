@@ -1,0 +1,10 @@
+# Internal documents and raw source references must not ship to public hosting.
+docs/**
+supabase/**
+build_catalog.py
+generate_site.py
+README.md
+README_BN.md
+.env.example
+*.zip
+verify_package.py

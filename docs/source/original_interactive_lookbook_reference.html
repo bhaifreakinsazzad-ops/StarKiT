@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarkiT — WEAR YOUR WORLD. | Interactive Lookbook Store</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Afacad Flux (Primary Brand Typeface) & Hind Siliguri (Bangla Copy) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons, Three.js & Anime.js -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Afacad Flux', 'Hind Siliguri', sans-serif;
+            background-color: #F6F5F3;
+            color: #170000;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .font-bangla {
+            font-family: 'Hind Siliguri', 'Afacad Flux', sans-serif;
+        }
+        /* StarkiT High-Contrast Studio Stage (Exact Reference Studio Gradient) */
+        .studio-stage {
+            background: radial-gradient(circle at 42% 48%, #FFFFFF 0%, #F4F3F1 60%, #E7E6E3 100%);
+            perspective: 1400px;
+        }
+
+        /* Three.js Interactive WebGL Background Canvas */
+        #threeStudioCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.55;
+        }
+
+        /* Model Card Smooth GPU Transforms & 3D Tilt */
+        .model-node {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            will-change: transform, filter, opacity;
+            transition: filter 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
+            transform-origin: center center;
+            transform-style: preserve-3d;
+        }
+
+        .look-card-surface {
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* Kinetic Typography Split Character Helpers */
+        .kinetic-char {
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        /* Realistic Studio Floor Shadow beneath each model */
+        .model-floor-shadow {
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56%;
+            height: 20px;
+            background: radial-gradient(ellipse at center, rgba(23, 0, 0, 0.28) 0%, rgba(23, 0, 0, 0.1) 48%, rgba(23, 0, 0, 0) 78%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Interactive Hotspot Pulse Pin */
+        @keyframes pulseRing {
+            0% { transform: scale(0.95); opacity: 0.85; }
+            70% { transform: scale(2.2); opacity: 0; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        .hotspot-pulse::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 9999px;
+            border: 1.5px solid #FFFFFF;
+            animation: pulseRing 2.1s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+        }
+
+        /* Custom Thin Scrollbar */
+        .thin-scroll::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .thin-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .thin-scroll::-webkit-scrollbar-thumb {
+            background: rgba(23, 0, 0, 0.16);
+            border-radius: 9999px;
+        }
+        .thin-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(23, 0, 0, 0.35);
+        }
+
+        /* Arabic + Latin Bilingual Brandmark */
+        .starkit-arabic {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 0.95;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col justify-between bg-[#F6F5F3] text-[#170000]">
+
+    <!-- Top Brand Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 px-5 sm:px-10 py-3.5 sm:py-4 flex items-center justify-between pointer-events-none">
+        <!-- StarkiT Bilingual Brand Logo (Brandbook Page 03: ستاركيت | STΛRKIT) -->
+        <div class="pointer-events-auto flex items-center gap-3.5">
+            <button onclick="resetToHome()" class="group flex items-center gap-3 text-left focus:outline-none">
+                <div class="bg-[#170000] text-white px-3.5 py-1.5 rounded-xl flex flex-col items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <span class="starkit-arabic text-base sm:text-lg leading-none" dir="rtl">ستاركيت</span>
+                    <span class="text-[8px] font-bold tracking-[0.34em] uppercase mt-0.5 pl-[0.34em]">STΛRKIT</span>
+                </div>
+                <div class="hidden sm:flex flex-col">
+                    <span class="text-xs font-extrabold tracking-[0.18em] uppercase text-[#170000]">DROP 01 / GRAPHIC ARCHIVE</span>
+                    <span class="text-[11px] font-medium tracking-[0.12em] text-[#170000]/55 uppercase">WEAR YOUR WORLD. • DHAKA</span>
+                </div>
+            </button>
+        </div>
+
+        <!-- Collection Filter Pills (Desktop) -->
+        <nav class="hidden xl:flex items-center gap-1 bg-white/85 backdrop-blur-md border border-[#170000]/10 p-1 rounded-full shadow-sm pointer-events-auto">
+            <button onclick="filterCollection('All')" data-filter="All" class="filter-pill active-pill px-4 py-1.5 rounded-full text-xs font-bold tracking-wide bg-[#170000] text-white transition-all">
+                All Looks (11)
+            </button>
+            <button onclick="filterCollection('Bangla Heritage')" data-filter="Bangla Heritage" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#170000]/70 hover:text-[#170000] transition-all">
+                Bangla Heritage
+            </button>
+            <button onclick="filterCollection('Anime Archive')" data-filter="Anime Archive" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#170000]/70 hover:text-[#170000] transition-all">
+                Anime Archive
+            </button>
+            <button onclick="filterCollection('Playful Street')" data-filter="Playful Street" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#170000]/70 hover:text-[#170000] transition-all">
+                Playful Street
+            </button>
+            <button onclick="filterCollection('Moto Culture')" data-filter="Moto Culture" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#170000]/70 hover:text-[#170000] transition-all">
+                Moto Culture
+            </button>
+            <button onclick="filterCollection('City Stories')" data-filter="City Stories" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#170000]/70 hover:text-[#170000] transition-all">
+                City & Statement
+            </button>
+        </nav>
+
+        <!-- Right Controls: Catalog Drawer, Currency, Support & Bag -->
+        <div class="pointer-events-auto flex items-center gap-2 sm:gap-2.5">
+            <!-- Browse Full 11-Product Grid -->
+            <button onclick="toggleArchiveModal(true)" class="hidden md:flex items-center gap-1.5 bg-white/85 backdrop-blur-md border border-[#170000]/10 px-3.5 py-2 rounded-full text-xs font-bold text-[#170000] hover:bg-[#170000] hover:text-white transition-all shadow-sm">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                <span>Catalog (11)</span>
+            </button>
+
+            <!-- Currency Switcher (BDT Default for Bangladesh Market) -->
+            <button id="currencyToggle" onclick="toggleCurrency()" class="bg-white/85 backdrop-blur-md border border-[#170000]/10 px-3 py-2 rounded-full text-xs font-bold tracking-wider text-[#170000] hover:bg-white transition-all shadow-sm">
+                BDT ৳
+            </button>
+
+            <!-- Mobile Look Drawer Toggle -->
+            <button onclick="toggleMobileSidebar()" class="lg:hidden relative bg-white/90 backdrop-blur-md border border-[#170000]/10 px-3 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                <span>In Look</span>
+                <span id="mobileLookCount" class="bg-[#170000] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">3</span>
+            </button>
+
+            <!-- Shopping Bag Trigger -->
+            <button onclick="toggleCartDrawer(true)" class="relative bg-[#170000] text-white px-4 py-2 rounded-full text-xs font-bold tracking-wide flex items-center gap-2 hover:bg-[#2d0505] active:scale-95 transition-all shadow-md">
+                <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Bag</span>
+                <span id="cartBadge" class="bg-white text-[#170000] text-[10px] font-extrabold px-1.5 py-0.2 rounded-full min-w-[18px] text-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Interactive Stage -->
+    <main class="relative w-full h-full flex flex-col lg:flex-row studio-stage select-none">
+        
+        <!-- Left / Center Stage: 3D Carousel & Focus View -->
+        <section id="stageArea" class="relative flex-1 h-full flex flex-col justify-between overflow-hidden cursor-grab active:cursor-grabbing">
+            
+            <!-- Three.js Real-Time Spatial Studio Canvas -->
+            <canvas id="threeStudioCanvas"></canvas>
+
+            <!-- Dynamic Editorial Headline (Top Left) -->
+            <!-- Dynamic Editorial Headline (Top Left - Exact Reference Placement) -->
+            <div class="pt-20 sm:pt-24 px-5 sm:px-10 lg:px-14 z-20 pointer-events-none flex flex-col items-start">
+                <div class="flex items-center gap-2 mb-1">
+                    <span id="lookIndexTag" class="text-[11px] font-bold tracking-[0.2em] uppercase text-[#170000]/45">LOOK 01 / 11</span>
+                    <span class="text-[#170000]/25">•</span>
+                    <span id="lookCategoryTag" class="text-[11px] font-bold tracking-[0.15em] uppercase text-[#170000]/70">BANGLA HERITAGE</span>
+                </div>
+                
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h1 id="stageHeadline" class="text-3xl sm:text-5xl lg:text-[52px] font-extrabold tracking-tight text-[#170000] leading-[0.98]" style="perspective: 600px;">
+                        Try the Look.
+                    </h1>
+                    <!-- Back to Carousel Button (Visible in Focus Mode) -->
+                    <button id="backToLooksBtn" onclick="exitFocusMode()" class="hidden pointer-events-auto ml-1 bg-white/95 hover:bg-[#170000] hover:text-white text-[#170000] border border-[#170000]/15 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide items-center gap-1.5 shadow-sm transition-all">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                        <span>All Looks</span>
+                    </button>
+                </div>
+
+                <p id="stageSubheadline" class="mt-1 text-xs sm:text-sm text-[#170000]/60 max-w-md font-medium font-bangla">
+                    Drag or scroll across looks. Click the center model to inspect & shop pieces.
+                </p>
+
+                <!-- Mobile Collection Selector Strip -->
+                <div class="xl:hidden mt-3 flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 pointer-events-auto thin-scroll">
+                    <button onclick="filterCollection('All')" data-filter="All" class="filter-pill px-3 py-1 rounded-full text-[11px] font-bold bg-[#170000] text-white shrink-0">All (11)</button>
+                    <button onclick="filterCollection('Bangla Heritage')" data-filter="Bangla Heritage" class="filter-pill px-3 py-1 rounded-full text-[11px] font-semibold bg-white/85 text-[#170000]/80 shrink-0">Bangla Heritage</button>
+                    <button onclick="filterCollection('Anime Archive')" data-filter="Anime Archive" class="filter-pill px-3 py-1 rounded-full text-[11px] font-semibold bg-white/85 text-[#170000]/80 shrink-0">Anime Archive</button>
+                    <button onclick="filterCollection('Playful Street')" data-filter="Playful Street" class="filter-pill px-3 py-1 rounded-full text-[11px] font-semibold bg-white/85 text-[#170000]/80 shrink-0">Playful Street</button>
+                    <button onclick="filterCollection('Moto Culture')" data-filter="Moto Culture" class="filter-pill px-3 py-1 rounded-full text-[11px] font-semibold bg-white/85 text-[#170000]/80 shrink-0">Moto Culture</button>
+                    <button onclick="filterCollection('City Stories')" data-filter="City Stories" class="filter-pill px-3 py-1 rounded-full text-[11px] font-semibold bg-white/85 text-[#170000]/80 shrink-0">City & Statement</button>
+                </div>
+            </div>
+
+            <!-- Interactive 3D Carousel Viewport -->
+            <div id="carouselViewport" class="relative z-10 flex-1 w-full h-full flex items-center justify-center overflow-hidden">
+                <!-- Models / Look Cards dynamically positioned via Physics Engine -->
+                <div id="modelsContainer" class="relative w-full h-full"></div>
+
+                <!-- Interactive Garment Hotspots Overlay (Shown when Focused on a Look) -->
+                <div id="hotspotOverlay" class="hidden absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
+                    <div id="hotspotBounds" class="relative w-[290px] sm:w-[350px] lg:w-[390px] h-[68vh] max-h-[610px]">
+                        <!-- Dynamic Hotspot Pins injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Stage Controls: Navigation Arrows, Front/Back View Toggle & Gesture Hint -->
+            <div class="pb-5 sm:pb-7 px-5 sm:px-10 lg:px-14 z-20 flex items-center justify-between pointer-events-none">
+                <div class="flex items-center gap-2 pointer-events-auto">
+                    <button id="inspectLookBtn" onclick="enterFocusMode()" class="bg-white/95 hover:bg-[#170000] hover:text-white text-[#170000] border border-[#170000]/15 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all">
+                        <i data-lucide="scan" class="w-3.5 h-3.5"></i>
+                        <span>Focus & Shop Pins</span>
+                    </button>
+
+                    <!-- Front / Back Graphic Quick Flip -->
+                    <div class="bg-white/90 backdrop-blur-md border border-[#170000]/10 p-1 rounded-full flex items-center shadow-sm">
+                        <button id="viewFrontBtn" onclick="setStageView('front')" class="px-3 py-1 rounded-full text-[11px] font-bold bg-[#170000] text-white transition-all">Model Look</button>
+                        <button id="viewBackBtn" onclick="setStageView('back')" class="px-3 py-1 rounded-full text-[11px] font-bold text-[#170000]/65 hover:text-[#170000] transition-all">Back Graphic</button>
+                    </div>
+                </div>
+
+                <!-- Carousel Step Controls -->
+                <div id="carouselControls" class="flex items-center gap-2 pointer-events-auto">
+                    <button onclick="stepCarousel(-1)" aria-label="Previous Look" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-[#170000] hover:text-white border border-[#170000]/15 flex items-center justify-center shadow-sm transition-all active:scale-90">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="stepCarousel(1)" aria-label="Next Look" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-[#170000] hover:text-white border border-[#170000]/15 flex items-center justify-center shadow-sm transition-all active:scale-90">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Editorial Panel: "In this look" Sidebar -->
+        <aside id="lookSidebar" class="fixed lg:static inset-y-0 right-0 z-40 w-[88vw] max-w-[395px] lg:w-[395px] xl:w-[425px] h-full bg-white/95 lg:bg-white/85 backdrop-blur-xl border-l border-[#170000]/10 flex flex-col justify-between transform translate-x-full lg:translate-x-0 transition-transform duration-300 ease-out shadow-2xl lg:shadow-none">
+            
+            <!-- Sidebar Header -->
+            <div class="pt-5 lg:pt-20 px-6 pb-3.5 border-b border-[#170000]/8 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-base font-extrabold tracking-tight text-[#170000]">In this look</h2>
+                        <span id="sidebarItemCount" class="text-[11px] font-bold text-[#170000]/55 bg-[#170000]/6 px-2 py-0.5 rounded-full">3 items</span>
+                    </div>
+                    <p id="sidebarLookSubtitle" class="text-xs text-[#170000]/55 mt-0.5">StarkiT Drop 01 Complete Outfit</p>
+                </div>
+
+                <!-- Pagination Dots (Matching top-right dots in reference video) -->
+                <div class="flex items-center gap-2">
+                    <div id="lookPaginationDots" class="flex items-center gap-1"></div>
+                    <button onclick="toggleMobileSidebar(false)" class="lg:hidden p-1.5 rounded-full hover:bg-[#170000]/5 text-[#170000]">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Garment Items List -->
+            <div id="lookItemsList" class="flex-1 overflow-y-auto px-6 py-3.5 space-y-3 thin-scroll">
+                <!-- Garment cards dynamically rendered here -->
+            </div>
+
+            <!-- Sidebar Footer: Complete the Look Total + Add Full Look CTA -->
+            <div class="p-5 sm:p-6 bg-white border-t border-[#170000]/10 space-y-3">
+                <!-- Colorway Selector (for multi-variant hoodies like SHINOBI SUNSET & COLLECTIVE VOICE) -->
+                <div id="variantSwitcherRow" class="hidden items-center justify-between pb-1">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-[#170000]/55">Hoodie Colorway</span>
+                    <div id="variantSwatches" class="flex items-center gap-1.5"></div>
+                </div>
+
+                <!-- Restore Removed Items Helper -->
+                <div id="restoreBar" class="hidden items-center justify-between text-xs bg-[#F6F5F3] px-3 py-2 rounded-xl border border-[#170000]/8">
+                    <span class="text-[#170000]/70 font-medium">Piece removed from look</span>
+                    <button onclick="restoreRemovedPieces()" class="font-bold text-[#170000] underline hover:opacity-75">Restore all</button>
+                </div>
+
+                <div class="flex items-baseline justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-[#170000]/55 block">Complete the look</span>
+                        <span class="text-[11px] text-[#170000]/45">Cash on Delivery across Bangladesh</span>
+                    </div>
+                    <div class="text-right">
+                        <span id="lookTotalPrice" class="text-2xl font-extrabold tracking-tight text-[#170000]">৳3,970</span>
+                    </div>
+                </div>
+
+                <button id="addFullLookBtn" onclick="addFullLookToBag()" class="w-full py-3.5 px-5 rounded-xl bg-[#170000] hover:bg-[#2c0303] active:scale-[0.99] text-white font-bold text-xs tracking-[0.14em] uppercase flex items-center justify-center gap-2.5 transition-all shadow-lg shadow-[#170000]/15">
+                    <span>Add full look to bag</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+
+                <!-- Support Contact from Brand Metadata -->
+                <div class="pt-1 flex items-center justify-between text-[11px] text-[#170000]/50">
+                    <span>Direct Order & Fit Help:</span>
+                    <a href="tel:01778307704" class="font-bold text-[#170000] hover:underline flex items-center gap-1">
+                        <i data-lucide="phone" class="w-3 h-3"></i>
+                        <span>01778-307704</span>
+                    </a>
+                </div>
+
+                <!-- Master Drive Brand & Media Archive Quick Links -->
+                <div class="pt-2 border-t border-[#170000]/8 flex items-center justify-between gap-1 text-[10px] font-bold text-[#170000]/65">
+                    <a href="https://drive.google.com/drive/folders/1BtHaX3c4OVfYPzPpyOQ7qt7It0oYYCev?usp=drive_link" target="_blank" rel="noopener" class="hover:text-[#170000] underline">Brand & Catalog</a>
+                    <span>•</span>
+                    <a href="https://drive.google.com/drive/folders/14txXLJ_WsA8RfUEAcWiRF2r2TOV3t_KN?usp=drive_link" target="_blank" rel="noopener" class="hover:text-[#170000] underline">Library Index</a>
+                    <span>•</span>
+                    <a href="https://drive.google.com/drive/folders/1ySsUi5C4I5CZROCJskh77vokSGLw0SmV?usp=drive_link" target="_blank" rel="noopener" class="hover:text-[#170000] underline">Refs</a>
+                    <span>•</span>
+                    <a href="https://drive.google.com/file/d/1UFL7XWTgFfXhilJ1rmI1KdGBBzxyNoyh/view?usp=drive_link" target="_blank" rel="noopener" class="hover:text-[#170000] underline">Media Pack</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Backdrop for Sidebar -->
+        <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-[#170000]/30 backdrop-blur-xs z-30 hidden lg:hidden"></div>
+    </main>
+
+    <!-- Product Quick-View & Multi-Angle Gallery Modal -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#170000]/50 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-[#170000]/10 flex flex-col sm:flex-row">
+            <!-- Product Multi-View Image Preview -->
+            <div class="sm:w-1/2 bg-[#F6F5F3] p-5 flex flex-col items-center justify-between relative min-h-[290px]">
+                <div class="w-full flex items-center justify-between z-10">
+                    <span id="modalSkuBadge" class="px-2.5 py-1 rounded-full bg-[#170000] text-white text-[10px] font-bold tracking-wider">STK-H001</span>
+                    <span id="modalDropBadge" class="px-2.5 py-1 rounded-full bg-white text-[#170000] text-[10px] font-bold border border-[#170000]/10">DROP 01</span>
+                </div>
+
+                <img id="modalProductImg" src="" alt="Product Preview" class="max-h-[240px] w-auto object-contain rounded-xl my-3 transition-transform duration-300 hover:scale-105">
+
+                <!-- View Switcher Pills (Front / Back / Detail) -->
+                <div id="modalViewPills" class="flex items-center gap-1.5 flex-wrap justify-center z-10"></div>
+            </div>
+
+            <!-- Product Specs & Size Picker -->
+            <div class="sm:w-1/2 p-6 sm:p-7 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <span id="modalCategory" class="text-[11px] font-bold uppercase tracking-widest text-[#170000]/50">BANGLA HERITAGE</span>
+                            <h3 id="modalTitle" class="text-2xl font-extrabold text-[#170000] mt-0.5 leading-tight">FOLK ROUTE</h3>
+                        </div>
+                        <button onclick="closeProductModal()" class="p-1.5 rounded-full hover:bg-[#170000]/5 text-[#170000]/60 hover:text-[#170000]">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <p id="modalPrice" class="text-xl font-extrabold text-[#170000] mt-2">৳1,390</p>
+                    <p id="modalDescEn" class="text-xs text-[#170000]/75 mt-2.5 leading-relaxed"></p>
+                    <p id="modalDescBn" class="text-xs font-bangla text-[#170000]/65 mt-1 leading-relaxed"></p>
+
+                    <!-- Fabric Spec Pill -->
+                    <div class="mt-3 p-2.5 rounded-xl bg-[#F6F5F3] border border-[#170000]/8 text-[11px] text-[#170000]/75">
+                        <span class="font-bold text-[#170000]">Fabric & Build:</span> One-side brushed fleece; combed compact cotton; 330–350 GSM.
+                    </div>
+
+                    <!-- Product Drive Asset Folder Link -->
+                    <a id="modalDriveFolderLink" href="https://drive.google.com/drive/folders/1BtHaX3c4OVfYPzPpyOQ7qt7It0oYYCev?usp=drive_link" target="_blank" rel="noopener" class="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-[#170000] hover:underline">
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
+                        <span>Open Drive Asset Folder</span>
+                    </a>
+
+                    <!-- Size Selection -->
+                    <div class="mt-4">
+                        <div class="flex items-center justify-between text-xs mb-2">
+                            <span class="font-bold text-[#170000]">Select Size</span>
+                            <span class="text-[#170000]/50">Relaxed Street Fit</span>
+                        </div>
+                        <div id="modalSizeButtons" class="grid grid-cols-4 gap-2"></div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-[#170000]/10 flex flex-col gap-2">
+                    <button onclick="addSingleModalItemToBag()" class="w-full py-3 rounded-xl bg-[#170000] hover:bg-[#2d0404] text-white font-bold text-xs uppercase tracking-wider transition-all">
+                        Add Item to Bag
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete 11-Product Drop 01 Archive Catalog Modal -->
+    <div id="archiveModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#170000]/55 backdrop-blur-sm">
+        <div class="bg-[#F6F5F3] rounded-3xl max-w-5xl w-full max-h-[88vh] overflow-hidden shadow-2xl border border-[#170000]/10 flex flex-col">
+            <div class="p-6 bg-white border-b border-[#170000]/10 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-md bg-[#170000] text-white text-[10px] font-bold tracking-widest">STΛRKIT</span>
+                        <span class="text-xs font-bold text-[#170000]/55 uppercase tracking-widest">DROP 01 / THE GRAPHIC ARCHIVE</span>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-[#170000] mt-1">All 11 Graphic Hoodies & 15 SKUs</h3>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="https://drive.google.com/drive/folders/1BtHaX3c4OVfYPzPpyOQ7qt7It0oYYCev?usp=drive_link" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-full bg-[#F6F5F3] hover:bg-[#170000] hover:text-white text-[11px] font-bold transition-all">Brand & Catalog</a>
+                    <a href="https://drive.google.com/drive/folders/14txXLJ_WsA8RfUEAcWiRF2r2TOV3t_KN?usp=drive_link" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-full bg-[#F6F5F3] hover:bg-[#170000] hover:text-white text-[11px] font-bold transition-all">Library Index</a>
+                    <a href="https://drive.google.com/drive/folders/1ySsUi5C4I5CZROCJskh77vokSGLw0SmV?usp=drive_link" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-full bg-[#F6F5F3] hover:bg-[#170000] hover:text-white text-[11px] font-bold transition-all">Original Refs</a>
+                    <a href="https://drive.google.com/file/d/1UFL7XWTgFfXhilJ1rmI1KdGBBzxyNoyh/view?usp=drive_link" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-full bg-[#170000] text-white text-[11px] font-bold hover:opacity-90 transition-all">Complete Media</a>
+                    <button onclick="toggleArchiveModal(false)" class="p-2 rounded-full hover:bg-[#170000]/8 text-[#170000]">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="archiveGridContainer" class="flex-1 overflow-y-auto p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 thin-scroll">
+                <!-- Populated dynamically with all 11 StarkiT products -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide-Out Shopping Bag & Bangladesh COD Checkout Drawer -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 hidden">
+        <div onclick="toggleCartDrawer(false)" class="absolute inset-0 bg-[#170000]/40 backdrop-blur-xs transition-opacity"></div>
+        <div class="absolute inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl flex flex-col justify-between">
+            
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-[#170000]/10 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#170000] text-white flex items-center justify-center font-extrabold text-sm">S</div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-[#170000] leading-none">StarkiT Bag</h3>
+                        <span id="cartHeaderCount" class="text-xs font-medium text-[#170000]/55">0 items selected</span>
+                    </div>
+                </div>
+                <button onclick="toggleCartDrawer(false)" class="p-2 rounded-full hover:bg-[#170000]/5 text-[#170000]">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Free Nationwide Delivery Progress Bar -->
+            <div class="px-6 py-3 bg-[#F6F5F3] border-b border-[#170000]/8">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span id="shippingMsg" class="font-semibold text-[#170000]/80">Add ৳3,000 for FREE Nationwide Delivery</span>
+                    <span id="shippingPct" class="font-bold text-[#170000]">0%</span>
+                </div>
+                <div class="w-full h-1.5 bg-[#170000]/10 rounded-full overflow-hidden">
+                    <div id="shippingBar" class="h-full bg-[#170000] rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4 thin-scroll">
+                <!-- Cart items injected here -->
+            </div>
+
+            <!-- Cart Footer & Bangladesh Checkout -->
+            <div id="cartFooter" class="p-6 border-t border-[#170000]/10 bg-[#F6F5F3]/70 space-y-3.5">
+                <!-- Delivery Zone Selector -->
+                <div class="flex items-center justify-between text-xs bg-white p-2.5 rounded-xl border border-[#170000]/10">
+                    <span class="font-bold text-[#170000]">Delivery Zone:</span>
+                    <div class="flex items-center gap-1.5">
+                        <button id="zoneDhakaBtn" onclick="setDeliveryZone('dhaka')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#170000] text-white">Inside Dhaka (৳70)</button>
+                        <button id="zoneOutsideBtn" onclick="setDeliveryZone('outside')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#F6F5F3] text-[#170000]">Outside Dhaka (৳130)</button>
+                    </div>
+                </div>
+
+                <!-- Promo Code Input -->
+                <div class="flex gap-2">
+                    <input id="promoInput" type="text" placeholder="Promo code (try STARKIT10)" class="flex-1 px-3.5 py-2 rounded-xl bg-white border border-[#170000]/15 text-xs font-medium focus:outline-none focus:border-[#170000]">
+                    <button onclick="applyPromoCode()" class="px-4 py-2 rounded-xl bg-white border border-[#170000]/15 hover:bg-[#170000] hover:text-white text-xs font-bold transition-all">Apply</button>
+                </div>
+
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between text-[#170000]/65">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal" class="font-semibold text-[#170000]">৳0</span>
+                    </div>
+                    <div id="discountRow" class="hidden justify-between text-emerald-700 font-semibold">
+                        <span>Promo (STARKIT10 - 10%)</span>
+                        <span id="cartDiscount">-৳0</span>
+                    </div>
+                    <div class="flex justify-between text-[#170000]/65">
+                        <span>Delivery Charge</span>
+                        <span id="cartShipping" class="font-semibold text-[#170000]">৳70</span>
+                    </div>
+                    <div class="pt-2 border-t border-[#170000]/10 flex justify-between text-sm font-extrabold text-[#170000]">
+                        <span>Total Payable (COD)</span>
+                        <span id="cartTotal">৳0</span>
+                    </div>
+                </div>
+
+                <button onclick="handleCheckout()" class="w-full py-3.5 rounded-xl bg-[#170000] hover:bg-[#2c0303] text-white font-bold text-xs uppercase tracking-[0.14em] flex items-center justify-center gap-2 transition-all shadow-lg">
+                    <span>Confirm Cash on Delivery Order</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
+        <div class="bg-[#170000] text-white px-5 py-2.5 rounded-full shadow-2xl text-xs font-bold tracking-wide flex items-center gap-2 border border-white/15">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="toastMessage">Added to bag</span>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ============================================================================
+         * 1. STARKIT BRAND & DROP 01 CATALOG CONFIGURATION
+         * ============================================================================
+         */
+        function refreshIcons() {
+            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+
+        const CURRENCY_CONFIG = {
+            BDT: { symbol: '৳', rate: 1 },
+            USD: { symbol: '$', rate: 0.0084 }
+        };
+
+        // Master Brand & Media Links provided by user
+        const STARKIT_DRIVE_RESOURCES = {
+            brandAndCatalog: 'https://drive.google.com/drive/folders/1BtHaX3c4OVfYPzPpyOQ7qt7It0oYYCev?usp=drive_link',
+            libraryIndex: 'https://drive.google.com/drive/folders/14txXLJ_WsA8RfUEAcWiRF2r2TOV3t_KN?usp=drive_link',
+            originalReference: 'https://drive.google.com/drive/folders/1ySsUi5C4I5CZROCJskh77vokSGLw0SmV?usp=drive_link',
+            completeMediaPack: 'https://drive.google.com/file/d/1UFL7XWTgFfXhilJ1rmI1KdGBBzxyNoyh/view?usp=drive_link'
+        };
+
+        // Helper to generate direct Google Drive image URLs + bespoke SVG Studio Garment artwork
+        function driveImg(fileId) {
+            return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+        }
+
+        // Bespoke Graphic Artwork Motif per StarkiT Product ID so every single hoodie is visually unique
+        function getProductGraphicMotif(productId, cx, cy, accentHex, textHex) {
+            switch (productId) {
+                case 'STK-H001': // SHINOBI SUNSET (Crimson Sun + Kunai/Clouds)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 8}" r="28" fill="#DC2626" fill-opacity="0.88"/>
+                        <path d="M${cx - 34} ${cy + 6} Q${cx} ${cy - 8} ${cx + 34} ${cy + 6}" stroke="${textHex}" stroke-width="2.5" fill="none"/>
+                        <polygon points="${cx},${cy - 28} ${cx + 5},${cy + 14} ${cx - 5},${cy + 14}" fill="${textHex}" fill-opacity="0.9"/>
+                    `;
+                case 'STK-H002': // PEACE BRO CLUB (Playful Cat Ears & Peace Sign)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 4}" r="24" fill="#FACC15" fill-opacity="0.25" stroke="#FACC15" stroke-width="2"/>
+                        <polygon points="${cx - 18},${cy - 18} ${cx - 10},${cy - 32} ${cx - 2},${cy - 20}" fill="#FACC15"/>
+                        <polygon points="${cx + 18},${cy - 18} ${cx + 10},${cy - 32} ${cx + 2},${cy - 20}" fill="#FACC15"/>
+                        <circle cx="${cx - 8}" cy="${cy - 6}" r="3" fill="${textHex}"/>
+                        <circle cx="${cx + 8}" cy="${cy - 6}" r="3" fill="${textHex}"/>
+                    `;
+                case 'STK-H003': // FOLK ROUTE (Bangladesh Heritage Painted Bus Motif)
+                    return `
+                        <rect x="${cx - 32}" y="${cy - 24}" width="64" height="34" rx="7" fill="#E11D48" stroke="#FACC15" stroke-width="2.5"/>
+                        <rect x="${cx - 24}" y="${cy - 18}" width="18" height="12" rx="2" fill="#38BDF8"/>
+                        <rect x="${cx + 4}" y="${cy - 18}" width="18" height="12" rx="2" fill="#38BDF8"/>
+                        <circle cx="${cx - 18}" cy="${cy + 12}" r="6" fill="#170000" stroke="#FACC15" stroke-width="2"/>
+                        <circle cx="${cx + 18}" cy="${cy + 12}" r="6" fill="#170000" stroke="#FACC15" stroke-width="2"/>
+                    `;
+                case 'STK-H004': // THE RIDER CODE (Moto Twin-Headlight & Wing Crest)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 6}" r="24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="6 3"/>
+                        <path d="M${cx - 34} ${cy - 6} L${cx - 12} ${cy - 14} L${cx - 12} ${cy + 2} Z M${cx + 34} ${cy - 6} L${cx + 12} ${cy - 14} L${cx + 12} ${cy + 2} Z" fill="#F59E0B"/>
+                        <circle cx="${cx}" cy="${cy - 6}" r="10" fill="#FDE68A"/>
+                    `;
+                case 'STK-H005': // MOONLIT HERO (Cinematic Crescent & Impact Fist)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 8}" r="27" fill="#F8FAFC" fill-opacity="0.9"/>
+                        <circle cx="${cx + 9}" cy="${cy - 12}" r="21" fill="#170000"/>
+                        <line x1="${cx - 26}" y1="${cy + 14}" x2="${cx + 26}" y2="${cy - 26}" stroke="#EF4444" stroke-width="2.5"/>
+                    `;
+                case 'STK-H006': // CELLULOID NIGHTS (Retro Bangla Cinema Film Strip)
+                    return `
+                        <rect x="${cx - 30}" y="${cy - 24}" width="60" height="36" rx="4" fill="#F59E0B" fill-opacity="0.22" stroke="#F59E0B" stroke-width="2"/>
+                        <line x1="${cx - 10}" y1="${cy - 24}" x2="${cx - 10}" y2="${cy + 12}" stroke="#F59E0B" stroke-width="2"/>
+                        <line x1="${cx + 10}" y1="${cy - 24}" x2="${cx + 10}" y2="${cy + 12}" stroke="#F59E0B" stroke-width="2"/>
+                        <polygon points="${cx - 4},${cy - 12} ${cx + 7},${cy - 6} ${cx - 4},${cy}" fill="#F59E0B"/>
+                    `;
+                case 'STK-H007': // DHAKA AFTERGLOW (Rickshaw Wheel & Sunset Arch)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 6}" r="25" fill="#FB923C" fill-opacity="0.35" stroke="#FDBA74" stroke-width="2.5"/>
+                        <line x1="${cx - 25}" y1="${cy - 6}" x2="${cx + 25}" y2="${cy - 6}" stroke="#FDBA74" stroke-width="1.5"/>
+                        <line x1="${cx}" y1="${cy - 31}" x2="${cx}" y2="${cy + 19}" stroke="#FDBA74" stroke-width="1.5"/>
+                        <circle cx="${cx}" cy="${cy - 6}" r="7" fill="#EA580C"/>
+                    `;
+                case 'STK-H008': // COLLECTIVE VOICE (Bold Typographic Emblem Shield)
+                    return `
+                        <polygon points="${cx},${cy - 30} ${cx + 28},${cy - 14} ${cx + 22},${cy + 14} ${cx - 22},${cy + 14} ${cx - 28},${cy - 14}" fill="${accentHex}" fill-opacity="0.28" stroke="${textHex}" stroke-width="2"/>
+                        <circle cx="${cx}" cy="${cy - 6}" r="10" fill="#DC2626"/>
+                    `;
+                case 'STK-H009': // RICKSHAW BLOOM (Vibrant Floral Mandala)
+                    return `
+                        <circle cx="${cx}" cy="${cy - 6}" r="11" fill="#FACC15"/>
+                        <circle cx="${cx - 15}" cy="${cy - 14}" r="8" fill="#EC4899" fill-opacity="0.85"/>
+                        <circle cx="${cx + 15}" cy="${cy - 14}" r="8" fill="#10B981" fill-opacity="0.85"/>
+                        <circle cx="${cx - 14}" cy="${cy + 6}" r="8" fill="#3B82F6" fill-opacity="0.85"/>
+                        <circle cx="${cx + 14}" cy="${cy + 6}" r="8" fill="#F97316" fill-opacity="0.85"/>
+                    `;
+                case 'STK-H010': // CHEESE CHASE (Golden Swiss Cheese Wedge)
+                    return `
+                        <polygon points="${cx - 28},${cy + 8} ${cx + 28},${cy + 8} ${cx + 14},${cy - 22} ${cx - 22},${cy - 12}" fill="#FACC15" stroke="#CA8A04" stroke-width="2"/>
+                        <circle cx="${cx - 8}" cy="${cy - 2}" r="4.5" fill="#CA8A04"/>
+                        <circle cx="${cx + 10}" cy="${cy + 1}" r="3.5" fill="#CA8A04"/>
+                    `;
+                case 'STK-H011': // NIGHT CIRCUIT (Checkerboard & Racing Flame)
+                    return `
+                        <rect x="${cx - 28}" y="${cy - 20}" width="56" height="24" rx="4" fill="#EF4444" fill-opacity="0.85"/>
+                        <rect x="${cx - 24}" y="${cy - 16}" width="10" height="8" fill="#FFFFFF"/>
+                        <rect x="${cx - 4}" y="${cy - 16}" width="10" height="8" fill="#FFFFFF"/>
+                        <rect x="${cx + 16}" y="${cy - 16}" width="8" height="8" fill="#FFFFFF"/>
+                        <rect x="${cx - 14}" y="${cy - 8}" width="10" height="8" fill="#FFFFFF"/>
+                        <rect x="${cx + 6}" y="${cy - 8}" width="10" height="8" fill="#FFFFFF"/>
+                    `;
+                default:
+                    return `<circle cx="${cx}" cy="${cy - 6}" r="22" fill="${accentHex}" fill-opacity="0.25"/>`;
+            }
+        }
+
+        function generateStudioSvg(type, title, subtitle, bgHex, fgHex, productId = '') {
+            const safeTitle = String(title || '').replace(/[<>&'"]/g, '');
+            const safeSub = String(subtitle || '').replace(/[<>&'"]/g, '');
+            let silhouette = '';
+            let motif = '';
+
+            if (type === 'bottoms') {
+                silhouette = `
+                    <path d="M185 130 L315 130 L345 500 L268 500 L250 265 L232 500 L155 500 Z" fill="${bgHex}" stroke="${fgHex}" stroke-width="3" stroke-opacity="0.25"/>
+                    <path d="M205 145 L200 490 M295 145 L300 490" stroke="${fgHex}" stroke-opacity="0.16" stroke-width="2" stroke-dasharray="6 6"/>
+                `;
+            } else if (type === 'footwear') {
+                silhouette = `
+                    <path d="M120 360 Q175 315 245 340 L375 375 Q395 405 375 425 L115 425 Q100 395 120 360 Z" fill="${bgHex}" stroke="${fgHex}" stroke-width="3" stroke-opacity="0.25"/>
+                    <rect x="115" y="412" width="265" height="14" rx="7" fill="#FFFFFF" stroke="#170000" stroke-width="2"/>
+                `;
+            } else {
+                silhouette = `<path d="M195 115 Q250 92 305 115 L385 165 L355 245 L325 225 L325 465 L175 465 L175 225 L145 245 L115 165 Z" fill="${bgHex}" stroke="${fgHex}" stroke-width="3" stroke-opacity="0.25"/>`;
+                motif = getProductGraphicMotif(productId, 250, 215, '#E11D48', fgHex);
+            }
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="500" height="620" viewBox="0 0 500 620">
+                <rect width="500" height="620" rx="28" fill="#F6F5F3"/>
+                ${silhouette}
+                ${motif}
+                <text x="250" y="305" text-anchor="middle" fill="${fgHex}" font-family="sans-serif" font-weight="800" font-size="18" letter-spacing="2">${safeTitle}</text>
+                <text x="250" y="330" text-anchor="middle" fill="${fgHex}" fill-opacity="0.72" font-family="sans-serif" font-weight="700" font-size="11" letter-spacing="3">${safeSub}</text>
+                <text x="250" y="565" text-anchor="middle" fill="#170000" fill-opacity="0.45" font-family="sans-serif" font-weight="800" font-size="11" letter-spacing="4">STΛRKIT • DROP 01</text>
+            </svg>`;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
+        // Full-Body Studio Editorial Model Generator with Bespoke Graphic Artwork per Hoodie
+        function generateFullBodyModelSvg(hoodieTitle, sku, hoodieHex, textHex, pantsHex, shoeHex, productId = '') {
+            const safeTitle = String(hoodieTitle || '').replace(/[<>&'"]/g, '');
+            const safeSku = String(sku || '').replace(/[<>&'"]/g, '');
+            const chestMotif = getProductGraphicMotif(productId, 220, 182, '#E11D48', textHex);
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="440" height="760" viewBox="0 0 440 760">
+                <defs>
+                    <linearGradient id="denimGrad_${safeSku}" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="${pantsHex}"/>
+                        <stop offset="50%" stop-color="${pantsHex}" stop-opacity="0.88"/>
+                        <stop offset="100%" stop-color="#0F172A"/>
+                    </linearGradient>
+                </defs>
+
+                <!-- Studio Model Head & Hair -->
+                <ellipse cx="220" cy="76" rx="23" ry="28" fill="#D8B49C"/>
+                <path d="M196 72 Q196 42 220 42 Q244 42 244 72 Q238 56 220 56 Q202 56 196 72 Z" fill="#170000"/>
+                <rect x="210" y="100" width="20" height="22" rx="6" fill="#C9A288"/>
+
+                <!-- Wide-Leg Baggy Streetwear Denim / Cargo Trousers -->
+                <path d="M158 365 L282 365 L302 688 L234 688 L220 475 L206 688 L138 688 Z" fill="url(#denimGrad_${safeSku})"/>
+                <path d="M178 380 L166 682 M262 380 L274 682" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="2"/>
+                <path d="M152 540 Q185 552 206 538 M234 545 Q265 556 290 540" stroke="#000000" stroke-opacity="0.22" stroke-width="2.5" fill="none"/>
+
+                <!-- Low-Top Studio Sneakers -->
+                <path d="M134 686 L204 686 L208 712 Q168 718 124 712 Q122 696 134 686 Z" fill="${shoeHex}" stroke="#170000" stroke-width="2"/>
+                <path d="M236 686 L306 686 Q318 696 316 712 Q272 718 232 712 Z" fill="${shoeHex}" stroke="#170000" stroke-width="2"/>
+                <rect x="124" y="707" width="84" height="6" rx="3" fill="#FFFFFF" stroke="#170000" stroke-width="1.5"/>
+                <rect x="232" y="707" width="84" height="6" rx="3" fill="#FFFFFF" stroke="#170000" stroke-width="1.5"/>
+
+                <!-- Oversized 350 GSM Drop-Shoulder Hoodie -->
+                <path d="M174 120 Q220 105 266 120 L330 165 L312 355 L284 352 L286 382 L154 382 L156 352 L128 355 L110 165 Z" fill="${hoodieHex}" stroke="#170000" stroke-opacity="0.15" stroke-width="2"/>
+                <path d="M192 120 Q220 144 248 120" fill="none" stroke="${textHex}" stroke-opacity="0.35" stroke-width="3"/>
+                <line x1="208" y1="134" x2="206" y2="176" stroke="${textHex}" stroke-opacity="0.65" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="232" y1="134" x2="234" y2="176" stroke="${textHex}" stroke-opacity="0.65" stroke-width="2.5" stroke-linecap="round"/>
+
+                <!-- Bespoke Chest Graphic Artwork -->
+                ${chestMotif}
+
+                <!-- Relaxed Crossed / Pocket Arms Silhouette -->
+                <path d="M124 225 Q175 258 265 248 L295 272 Q220 296 136 274 Z" fill="${hoodieHex}" stroke="${textHex}" stroke-opacity="0.18" stroke-width="2"/>
+
+                <!-- Garment Title & SKU Badge -->
+                <rect x="164" y="294" width="112" height="36" rx="8" fill="${textHex}" fill-opacity="0.09"/>
+                <text x="220" y="310" text-anchor="middle" fill="${textHex}" font-family="sans-serif" font-weight="800" font-size="10.5" letter-spacing="1.4">${safeTitle}</text>
+                <text x="220" y="323" text-anchor="middle" fill="${textHex}" fill-opacity="0.72" font-family="sans-serif" font-weight="700" font-size="7.5" letter-spacing="2.2">STΛRKIT • ${safeSku}</text>
+            </svg>`;
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        }
+
+        function fallbackHoodieCard(title, sku, bgHex, textHex, productId = '') {
+            return generateStudioSvg('hoodie', title, sku, bgHex, textHex, productId);
+        }
+
+        // Complete 11 Products & 15 Variants mapped with user-provided Drive Folder URLs & Unique Artwork
+        const STARKIT_CATALOG = [
+            {
+                id: 'STK-H003',
+                name: 'FOLK ROUTE',
+                sourceDesign: 'Folk Art Bus',
+                collection: 'Bangla Heritage',
+                editorial: 'THE ROAD IS CULTURE',
+                priceBDT: 1390,
+                copyEn: 'A celebration of the colors, craft and character of Bangladesh’s iconic painted transport.',
+                copyBn: 'বাংলাদেশের রঙিন বাস আর্টকে নতুন স্ট্রিটওয়্যার ক্যানভাসে আনা হয়েছে।',
+                detailBadge: 'Multicolor Heritage Art',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1NZsxFJoRGuFEJFJ1vsR6iQFS3RkPw9CW?usp=drive_link',
+                featured: true,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H003-BLK',
+                        frontImg: driveImg('1QlxPg0j0Cl4Brh_MsxuSC0XM6MCG6-qd'),
+                        backImg: driveImg('1O2JKMmBOqnwC_fGTooAihr1z7BMmYVPe'),
+                        compositeImg: driveImg('1z00rO-4cv4IOMINOIVoaJfIXrqjI_iEt'),
+                        modelLookSvg: generateFullBodyModelSvg('FOLK ROUTE', 'STK-H003-BLK', '#170000', '#FFFFFF', '#3B5978', '#FFFFFF', 'STK-H003'),
+                        fallback: fallbackHoodieCard('FOLK ROUTE', 'STK-H003-BLK', '#170000', '#FFFFFF', 'STK-H003')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B001',
+                        sku: 'STK-B001-IND',
+                        name: 'Dhaka Wide-Leg Raw Denim',
+                        category: 'Bottoms',
+                        priceBDT: 1690,
+                        color: 'Vintage Indigo',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'WIDE-LEG DENIM', 'VINTAGE INDIGO', '#3B5978', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '52%' }
+                    },
+                    {
+                        id: 'STK-F001',
+                        sku: 'STK-F001-WHT',
+                        name: 'STΛRKIT Court Low Runners',
+                        category: 'Footwear',
+                        priceBDT: 2290,
+                        color: 'Pure White / Jet Black',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'COURT RUNNERS', 'PURE WHITE', '#FFFFFF', '#170000'),
+                        hotspot: { top: '91%', left: '46%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H001',
+                name: 'SHINOBI SUNSET',
+                sourceDesign: 'Naruto Legacy',
+                collection: 'Anime Archive',
+                editorial: 'THE SHINOBI LEGACY',
+                priceBDT: 1590,
+                copyEn: 'Bold Japanese-inspired storytelling meets a dramatic crimson-sun composition.',
+                copyBn: 'ক্রিমসন সান, শক্তিশালী ব্যাক আর্ট ও স্লিভ ডিটেইলে স্টেটমেন্ট লুক।',
+                detailBadge: 'Front + Back + Sleeve Art',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1qtzNUmQEcWkFn9rpROcj5xr-2dvRahXG?usp=drive_link',
+                featured: true,
+                variants: [
+                    {
+                        color: 'Cream',
+                        hex: '#F3EFE6',
+                        sku: 'STK-H001-CRM',
+                        frontImg: driveImg('1JoTezauzowkep9A99mLHQ4HsFaOvn7K9'),
+                        backImg: driveImg('1KFPAb5tnocw40WpXvaxFuVQ0PnRrkKJE'),
+                        compositeImg: driveImg('1mZDhj6JlA_3UDqj7NhE1eiRz9eIfn6N_'),
+                        modelLookSvg: generateFullBodyModelSvg('SHINOBI SUNSET', 'STK-H001-CRM', '#ECE7DD', '#170000', '#647D96', '#170000', 'STK-H001'),
+                        fallback: fallbackHoodieCard('SHINOBI SUNSET', 'STK-H001-CRM', '#F3EFE6', '#170000', 'STK-H001')
+                    },
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H001-BLK',
+                        frontImg: driveImg('1ym10dEx8uF1Sw8AcQiozQqNdLhGUmCX-'),
+                        backImg: driveImg('1yl_Yd6FnSPIgSaGsoqVSkbstu_ThOSsw'),
+                        compositeImg: driveImg('195vMdS-g0W9sUJf0trdjxQSeLMnZB38f'),
+                        modelLookSvg: generateFullBodyModelSvg('SHINOBI SUNSET', 'STK-H001-BLK', '#170000', '#FFFFFF', '#7D95AB', '#FFFFFF', 'STK-H001'),
+                        fallback: fallbackHoodieCard('SHINOBI SUNSET', 'STK-H001-BLK', '#170000', '#FFFFFF', 'STK-H001')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B002',
+                        sku: 'STK-B002-BLK',
+                        name: 'Utility Parachute Cargo Pants',
+                        category: 'Bottoms',
+                        priceBDT: 1550,
+                        color: 'Jet Black',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'PARACHUTE CARGO', 'JET BLACK', '#170000', '#FFFFFF'),
+                        hotspot: { top: '64%', left: '47%' }
+                    },
+                    {
+                        id: 'STK-F002',
+                        sku: 'STK-F002-CRM',
+                        name: 'Kinetic Chunky Street Trainers',
+                        category: 'Footwear',
+                        priceBDT: 2490,
+                        color: 'Cream / Crimson',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'KINETIC TRAINERS', 'CREAM / CRIMSON', '#F3EFE6', '#170000'),
+                        hotspot: { top: '91%', left: '54%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H009',
+                name: 'RICKSHAW BLOOM',
+                sourceDesign: 'Rickshaw Bloom',
+                collection: 'Bangla Heritage',
+                editorial: 'ROOTED IN COLOR',
+                priceBDT: 1490,
+                copyEn: 'A joyful expression of floral rickshaw art, inspired by local craft.',
+                copyBn: 'রঙিন রিকশাচিত্র, ফুলের নকশা ও ঐতিহ্যের প্রাণবন্ত প্রকাশ।',
+                detailBadge: 'Colorful Back + Sleeve Flowers',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1SMaKxW61pqZKPXrCS06OUk3lRS3okqP8?usp=drive_link',
+                featured: true,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H009-BLK',
+                        frontImg: driveImg('16A5CQEY0m4NV8q6F_w-doMhRrKTeGAHg'),
+                        backImg: driveImg('1qW6r5bUiE461ZpKYC8ene7MHkEn3EVvB'),
+                        compositeImg: driveImg('1TgMaAIj7kwk4PKkFbY4SfFeweNJc-zVf'),
+                        modelLookSvg: generateFullBodyModelSvg('RICKSHAW BLOOM', 'STK-H009-BLK', '#26292E', '#FFFFFF', '#2C4257', '#FFFFFF', 'STK-H009'),
+                        fallback: fallbackHoodieCard('RICKSHAW BLOOM', 'STK-H009-BLK', '#170000', '#FFFFFF', 'STK-H009')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B003',
+                        sku: 'STK-B003-WSH',
+                        name: 'Washed Charcoal Baggy Jeans',
+                        category: 'Bottoms',
+                        priceBDT: 1650,
+                        color: 'Washed Smoke',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'BAGGY JEANS', 'WASHED SMOKE', '#334155', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '51%' }
+                    },
+                    {
+                        id: 'STK-F003',
+                        sku: 'STK-F003-BLK',
+                        name: 'Urban Skate Suede Lows',
+                        category: 'Footwear',
+                        priceBDT: 2190,
+                        color: 'Jet Black',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '41',
+                        image: generateStudioSvg('footwear', 'SKATE SUEDE LOWS', 'JET BLACK', '#170000', '#FFFFFF'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H007',
+                name: 'DHAKA AFTERGLOW',
+                sourceDesign: 'Aesthetic Dhaka',
+                collection: 'City Stories',
+                editorial: 'OUR CITY. OUR STORY.',
+                priceBDT: 1490,
+                copyEn: 'Rickshaw colors and city memories captured in warm cocoa tones.',
+                copyBn: 'রিকশা, নগর স্মৃতি এবং পুরোনো ঢাকার অনুভূতি—চকলেট ব্রাউন বেসে।',
+                detailBadge: 'Cityscape + Heritage Print',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1nAWGQp0DVvR1ccwaITSSYV3b5t3aNLun?usp=drive_link',
+                featured: true,
+                variants: [
+                    {
+                        color: 'Chocolate Brown',
+                        hex: '#4B2E24',
+                        sku: 'STK-H007-BRN',
+                        frontImg: driveImg('1pDHBWgvxXF5j-p-k5A0i9ogNywNq9ISN'),
+                        backImg: driveImg('1SrjQHKyHMLP6bk0mdYUgAmNLD84eDz1E'),
+                        compositeImg: driveImg('1_sZc67I6ywzFCMi-gBzmHu0_Kfa8blaC'),
+                        modelLookSvg: generateFullBodyModelSvg('DHAKA AFTERGLOW', 'STK-H007-BRN', '#563125', '#FFFFFF', '#58626B', '#170000', 'STK-H007'),
+                        fallback: fallbackHoodieCard('DHAKA AFTERGLOW', 'STK-H007-BRN', '#4B2E24', '#FFFFFF', 'STK-H007')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B004',
+                        sku: 'STK-B004-CRM',
+                        name: 'Heavy Twill Relaxed Chinos',
+                        category: 'Bottoms',
+                        priceBDT: 1490,
+                        color: 'Warm Cream',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'TWILL CHINOS', 'WARM CREAM', '#F3EFE6', '#170000'),
+                        hotspot: { top: '63%', left: '49%' }
+                    },
+                    {
+                        id: 'STK-F002',
+                        sku: 'STK-F002-CRM',
+                        name: 'Kinetic Chunky Street Trainers',
+                        category: 'Footwear',
+                        priceBDT: 2490,
+                        color: 'Cream / Cocoa',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'KINETIC TRAINERS', 'CREAM / COCOA', '#F3EFE6', '#4B2E24'),
+                        hotspot: { top: '91%', left: '52%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H002',
+                name: 'PEACE BRO CLUB',
+                sourceDesign: 'Peace Bro Cat',
+                collection: 'Playful Street',
+                editorial: 'GOOD VIBES ONLY',
+                priceBDT: 1290,
+                copyEn: 'A laid-back graphic with unmistakable street energy.',
+                copyBn: 'অল-ব্ল্যাক বেসে প্লেফুল ক্যাট আর্ট—ক্যাজুয়াল ডেইলি স্টাইলের জন্য।',
+                detailBadge: 'Bold Back Graphic',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1qtzNUmQEcWkFn9rpROcj5xr-2dvRahXG?usp=drive_link',
+                featured: true,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H002-BLK',
+                        frontImg: driveImg('1-WNN5trHTAyA5zBcNqqv5sJ2qhs7gJ2h'),
+                        backImg: driveImg('198MRX-LlrBX_SuhP_2T5c1D1t-y7afVQ'),
+                        compositeImg: driveImg('14i65ruAeG9EhgUS__LYiBe_0aediXO2R'),
+                        modelLookSvg: generateFullBodyModelSvg('PEACE BRO CLUB', 'STK-H002-BLK', '#170000', '#FFFFFF', '#8AA6C1', '#FFFFFF', 'STK-H002'),
+                        fallback: fallbackHoodieCard('PEACE BRO CLUB', 'STK-H002-BLK', '#170000', '#FFFFFF', 'STK-H002')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B001',
+                        sku: 'STK-B001-IND',
+                        name: 'Dhaka Wide-Leg Raw Denim',
+                        category: 'Bottoms',
+                        priceBDT: 1690,
+                        color: 'Light Ice Wash',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'WIDE-LEG DENIM', 'LIGHT ICE WASH', '#CBD5E1', '#170000'),
+                        hotspot: { top: '63%', left: '52%' }
+                    },
+                    {
+                        id: 'STK-F001',
+                        sku: 'STK-F001-WHT',
+                        name: 'STΛRKIT Court Low Runners',
+                        category: 'Footwear',
+                        priceBDT: 2290,
+                        color: 'Pure White',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'COURT RUNNERS', 'PURE WHITE', '#FFFFFF', '#170000'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H004',
+                name: 'THE RIDER CODE',
+                sourceDesign: 'Royal Enfield Rider',
+                collection: 'Moto Culture',
+                editorial: 'RIDE YOUR OWN LINE',
+                priceBDT: 1690,
+                copyEn: 'A detailed moto-led statement with a rich maroon silhouette.',
+                copyBn: 'মেরুন রঙে মোটরসাইকেল-অনুপ্রাণিত গ্রাফিক ও সাহসী স্লিভ ডিটেইল।',
+                detailBadge: 'Large Graphic + Sleeve Detail',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1gxKPiboPAXx1tqKZufQt-zvQx97SVmnP?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Maroon',
+                        hex: '#5B1A24',
+                        sku: 'STK-H004-MRN',
+                        frontImg: driveImg('1-Nw96yaC7Sf91JeXpcGV-l9eSNOKC1n8'),
+                        backImg: driveImg('1CtXaxe-bhIzQ1tSg9ua47HhdOlEW7kjC'),
+                        compositeImg: driveImg('1YnnLAD6f7czCi7LqFcn8ALVOS46YtWeG'),
+                        modelLookSvg: generateFullBodyModelSvg('THE RIDER CODE', 'STK-H004-MRN', '#5B1A24', '#FFFFFF', '#1E293B', '#FFFFFF', 'STK-H004'),
+                        fallback: fallbackHoodieCard('THE RIDER CODE', 'STK-H004-MRN', '#5B1A24', '#FFFFFF', 'STK-H004')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B002',
+                        sku: 'STK-B002-BLK',
+                        name: 'Utility Parachute Cargo Pants',
+                        category: 'Bottoms',
+                        priceBDT: 1550,
+                        color: 'Jet Black',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'PARACHUTE CARGO', 'JET BLACK', '#170000', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '48%' }
+                    },
+                    {
+                        id: 'STK-F003',
+                        sku: 'STK-F003-BLK',
+                        name: 'Urban Skate Suede Lows',
+                        category: 'Footwear',
+                        priceBDT: 2190,
+                        color: 'Black / Gum',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'SKATE SUEDE LOWS', 'BLACK / GUM', '#170000', '#FFFFFF'),
+                        hotspot: { top: '91%', left: '53%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H005',
+                name: 'MOONLIT HERO',
+                sourceDesign: 'One Punch Moon',
+                collection: 'Anime Archive',
+                editorial: 'NO LIMITS. NO NOISE.',
+                priceBDT: 1590,
+                copyEn: 'Monochrome atmosphere, cinematic moonlight and graphic storytelling.',
+                copyBn: 'ব্ল্যাক বেসে চাঁদের আবহ আর সিনেমাটিক গ্রাফিকের মিশেল।',
+                detailBadge: 'Cinematic Back Artwork',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1JN6xfn3hM3lRJ5uGjKL3naaFmctKWBr1?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H005-BLK',
+                        frontImg: driveImg('1E4vKZWFMxWtKXztIZw9SO1j8rb_jjxm5'),
+                        backImg: driveImg('1UsaOBj7Esk69yhcqfKxiOWpP-kNKnWDT'),
+                        compositeImg: driveImg('1xMl4q-HpYAPsWvv6vI0A1XW7MQnGmsgP'),
+                        modelLookSvg: generateFullBodyModelSvg('MOONLIT HERO', 'STK-H005-BLK', '#170000', '#FFFFFF', '#475569', '#FFFFFF', 'STK-H005'),
+                        fallback: fallbackHoodieCard('MOONLIT HERO', 'STK-H005-BLK', '#170000', '#FFFFFF', 'STK-H005')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B003',
+                        sku: 'STK-B003-WSH',
+                        name: 'Washed Charcoal Baggy Jeans',
+                        category: 'Bottoms',
+                        priceBDT: 1650,
+                        color: 'Charcoal',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'BAGGY JEANS', 'CHARCOAL', '#334155', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '50%' }
+                    },
+                    {
+                        id: 'STK-F001',
+                        sku: 'STK-F001-WHT',
+                        name: 'STΛRKIT Court Low Runners',
+                        category: 'Footwear',
+                        priceBDT: 2290,
+                        color: 'Monochrome',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'COURT RUNNERS', 'MONOCHROME', '#F8FAFC', '#170000'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H006',
+                name: 'CELLULOID NIGHTS',
+                sourceDesign: 'Bangla Cinema',
+                collection: 'Bangla Heritage',
+                editorial: 'STORIES WE WEAR',
+                priceBDT: 1490,
+                copyEn: 'A retro tribute to Bangla cinema and the visual language of classic posters.',
+                copyBn: 'বাংলা সিনেমার নস্টালজিয়া, ফিল্ম রিল ও রেট্রো পোস্টার-স্টাইল।',
+                detailBadge: 'Retro Back Graphic',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1QXfEwlocWgHXNCcUK-7zDrlYZEDhiU3U?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H006-BLK',
+                        frontImg: driveImg('18IPG2MEu0CaCCxv1ohUD-0sRf9BSdWxn'),
+                        backImg: driveImg('19Hh6RUcNRi85xi-9fqJkPxEPpLAF5LCy'),
+                        compositeImg: driveImg('1FNCXBUgewMOwL7WqFzLi38CVjdTMdBBC'),
+                        modelLookSvg: generateFullBodyModelSvg('CELLULOID NIGHTS', 'STK-H006-BLK', '#1E1B18', '#FFFFFF', '#334155', '#FFFFFF', 'STK-H006'),
+                        fallback: fallbackHoodieCard('CELLULOID NIGHTS', 'STK-H006-BLK', '#170000', '#FFFFFF', 'STK-H006')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B001',
+                        sku: 'STK-B001-IND',
+                        name: 'Dhaka Wide-Leg Raw Denim',
+                        category: 'Bottoms',
+                        priceBDT: 1690,
+                        color: 'Raw Indigo',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'WIDE-LEG DENIM', 'RAW INDIGO', '#1E293B', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '52%' }
+                    },
+                    {
+                        id: 'STK-F003',
+                        sku: 'STK-F003-BLK',
+                        name: 'Urban Skate Suede Lows',
+                        category: 'Footwear',
+                        priceBDT: 2190,
+                        color: 'Jet Black',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'SKATE SUEDE LOWS', 'JET BLACK', '#170000', '#FFFFFF'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H008',
+                name: 'COLLECTIVE VOICE',
+                sourceDesign: 'Student Movement Emblem',
+                collection: 'City Stories',
+                editorial: 'A SYMBOLIC STATEMENT',
+                priceBDT: 1390,
+                copyEn: 'A bold statement graphic shown across four signature StarkiT color directions.',
+                copyBn: 'চারটি কালারওয়েতে বাংলা টাইপোগ্রাফি ও সংগঠনের প্রতীকসংবলিত গ্রাফিক।',
+                detailBadge: 'Four Colorways',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H008-BLK',
+                        frontImg: driveImg('1jgpVbiBM8s33e5DcNGWJkKgRFG2G9YFG'),
+                        backImg: driveImg('1vk3hjfMnXVuzreB52fy87XQ-RpZILnVy'),
+                        compositeImg: driveImg('1TYs9_AqdTzrbx-LTqhu6m8MTp6N0luUD'),
+                        modelLookSvg: generateFullBodyModelSvg('COLLECTIVE VOICE', 'STK-H008-BLK', '#170000', '#FFFFFF', '#64748B', '#FFFFFF', 'STK-H008'),
+                        fallback: fallbackHoodieCard('COLLECTIVE VOICE', 'STK-H008-BLK', '#170000', '#FFFFFF', 'STK-H008')
+                    },
+                    {
+                        color: 'Maroon',
+                        hex: '#5B1A24',
+                        sku: 'STK-H008-MRN',
+                        frontImg: driveImg('1-EGia_vcqGTLWN0xOGrnjEpWsz-TXZms'),
+                        backImg: driveImg('15I3eqGPNahd0muPr2H9Y6tG5ZptUOhfh'),
+                        compositeImg: driveImg('1iTPgB5Dwy0SKPIUC6wnmWQcl0xvI2GW1'),
+                        modelLookSvg: generateFullBodyModelSvg('COLLECTIVE VOICE', 'STK-H008-MRN', '#5B1A24', '#FFFFFF', '#334155', '#FFFFFF', 'STK-H008'),
+                        fallback: fallbackHoodieCard('COLLECTIVE VOICE', 'STK-H008-MRN', '#5B1A24', '#FFFFFF', 'STK-H008')
+                    },
+                    {
+                        color: 'Chocolate Brown',
+                        hex: '#4B2E24',
+                        sku: 'STK-H008-BRN',
+                        frontImg: driveImg('1ed3V278Wb0gkGw3bFCziySSv72JaOUV0'),
+                        backImg: driveImg('1dd5amvFPuQ_O27FPi0cdbKpBpJ2nZlYR'),
+                        compositeImg: driveImg('1AcjUHMZTeyRQdQ_L-CIfYg5nhR5fa-zd'),
+                        modelLookSvg: generateFullBodyModelSvg('COLLECTIVE VOICE', 'STK-H008-BRN', '#4B2E24', '#FFFFFF', '#57534E', '#FFFFFF', 'STK-H008'),
+                        fallback: fallbackHoodieCard('COLLECTIVE VOICE', 'STK-H008-BRN', '#4B2E24', '#FFFFFF', 'STK-H008')
+                    },
+                    {
+                        color: 'Cream',
+                        hex: '#F3EFE6',
+                        sku: 'STK-H008-CRM',
+                        frontImg: driveImg('1mWi1zko8Z3XOLQslAQf_BPKmRozLgKp8'),
+                        backImg: driveImg('17LdOFSQOKCvlbhbsyBCsN3QjlIrepPP5'),
+                        compositeImg: driveImg('17vDAyrNGAiUYjDGdycn7Aus_sNV9YaA0'),
+                        modelLookSvg: generateFullBodyModelSvg('COLLECTIVE VOICE', 'STK-H008-CRM', '#F3EFE6', '#170000', '#475569', '#170000', 'STK-H008'),
+                        fallback: fallbackHoodieCard('COLLECTIVE VOICE', 'STK-H008-CRM', '#F3EFE6', '#170000', 'STK-H008')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B004',
+                        sku: 'STK-B004-CRM',
+                        name: 'Heavy Twill Relaxed Chinos',
+                        category: 'Bottoms',
+                        priceBDT: 1490,
+                        color: 'Sandstone',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'TWILL CHINOS', 'SANDSTONE', '#E7E5E4', '#170000'),
+                        hotspot: { top: '63%', left: '50%' }
+                    },
+                    {
+                        id: 'STK-F001',
+                        sku: 'STK-F001-WHT',
+                        name: 'STΛRKIT Court Low Runners',
+                        category: 'Footwear',
+                        priceBDT: 2290,
+                        color: 'Pure White',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'COURT RUNNERS', 'PURE WHITE', '#FFFFFF', '#170000'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H010',
+                name: 'CHEESE CHASE',
+                sourceDesign: 'Tom & Jerry Cheese Club',
+                collection: 'Playful Street',
+                editorial: 'FOREVER PLAYFUL',
+                priceBDT: 1390,
+                copyEn: 'Playful cartoon nostalgia with a bold back graphic.',
+                copyBn: 'কার্টুন-অনুপ্রাণিত নস্টালজিয়ায় মজার ফ্রন্ট ও ব্যাক ডিজাইন।',
+                detailBadge: 'Front + Back Cartoon Art',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1Uxl62Ty4IbJii1tcC-x7BQba-0oLxNYs?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H010-BLK',
+                        frontImg: driveImg('1ZPjZOwyf_Dv3pqeyx3YAKeORpLKNHUs0'),
+                        backImg: driveImg('1FmPD18E7USBKJs2B3C8aA8aCxSq1j-i7'),
+                        compositeImg: driveImg('1ePpIlvkmFsA82t37GHYS6gXi3_bM-n4v'),
+                        modelLookSvg: generateFullBodyModelSvg('CHEESE CHASE', 'STK-H010-BLK', '#170000', '#FFFFFF', '#3B82F6', '#FFFFFF', 'STK-H010'),
+                        fallback: fallbackHoodieCard('CHEESE CHASE', 'STK-H010-BLK', '#170000', '#FFFFFF', 'STK-H010')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B001',
+                        sku: 'STK-B001-IND',
+                        name: 'Dhaka Wide-Leg Raw Denim',
+                        category: 'Bottoms',
+                        priceBDT: 1690,
+                        color: 'Vintage Blue',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'WIDE-LEG DENIM', 'VINTAGE BLUE', '#1D4ED8', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '52%' }
+                    },
+                    {
+                        id: 'STK-F002',
+                        sku: 'STK-F002-CRM',
+                        name: 'Kinetic Chunky Street Trainers',
+                        category: 'Footwear',
+                        priceBDT: 2490,
+                        color: 'Cream / Gold',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'KINETIC TRAINERS', 'CREAM / GOLD', '#FEF3C7', '#170000'),
+                        hotspot: { top: '91%', left: '47%' }
+                    }
+                ]
+            },
+            {
+                id: 'STK-H011',
+                name: 'NIGHT CIRCUIT',
+                sourceDesign: 'Hot Wheels Night Circuit',
+                collection: 'Moto Culture',
+                editorial: 'BUILT FOR THE THRILL',
+                priceBDT: 1590,
+                copyEn: 'A high-energy racing graphic with checkerboard and flame details.',
+                copyBn: 'রেসিং কার, চেকারবোর্ড ও ফ্লেম-অনুপ্রাণিত স্ট্রিটওয়্যার ডিজাইন।',
+                detailBadge: 'Car Racing + Sleeve Graphics',
+                driveFolderUrl: 'https://drive.google.com/drive/folders/1HkP_v8kw6VggeZ-KTRX9MxGoirLlgavF?usp=drive_link',
+                featured: false,
+                variants: [
+                    {
+                        color: 'Black',
+                        hex: '#170000',
+                        sku: 'STK-H011-BLK',
+                        frontImg: driveImg('1YSJCA19QmktdDTVPXfqwAE1IgbdyHQeP'),
+                        backImg: driveImg('1BdW0yys2YfkiSbojjbPhOAkfwC3VPsX8'),
+                        compositeImg: driveImg('1xWw1BfuDBuw7Vc_TYAxBtMMh1c2Ip2oV'),
+                        modelLookSvg: generateFullBodyModelSvg('NIGHT CIRCUIT', 'STK-H011-BLK', '#170000', '#FFFFFF', '#334155', '#FFFFFF', 'STK-H011'),
+                        fallback: fallbackHoodieCard('NIGHT CIRCUIT', 'STK-H011-BLK', '#170000', '#FFFFFF', 'STK-H011')
+                    }
+                ],
+                pairing: [
+                    {
+                        id: 'STK-B002',
+                        sku: 'STK-B002-BLK',
+                        name: 'Utility Parachute Cargo Pants',
+                        category: 'Bottoms',
+                        priceBDT: 1550,
+                        color: 'Jet Black',
+                        sizes: ['30', '32', '34', '36'],
+                        selectedSize: '32',
+                        image: generateStudioSvg('bottoms', 'PARACHUTE CARGO', 'RACING BLACK', '#170000', '#FFFFFF'),
+                        hotspot: { top: '63%', left: '48%' }
+                    },
+                    {
+                        id: 'STK-F003',
+                        sku: 'STK-F003-BLK',
+                        name: 'Urban Skate Suede Lows',
+                        category: 'Footwear',
+                        priceBDT: 2190,
+                        color: 'Jet Black / Flame',
+                        sizes: ['40', '41', '42', '43'],
+                        selectedSize: '42',
+                        image: generateStudioSvg('footwear', 'SKATE SUEDE LOWS', 'FLAME EDITION', '#170000', '#FFFFFF'),
+                        hotspot: { top: '91%', left: '53%' }
+                    }
+                ]
+            }
+        ];
+
+        // Transform StarkiT catalog into Lookbook Experiences
+        function buildLookbookData() {
+            return STARKIT_CATALOG.map((prod) => {
+                const defaultVar = prod.variants[0];
+                return {
+                    id: prod.id,
+                    title: prod.name,
+                    subtitle: prod.editorial,
+                    season: prod.collection.toUpperCase(),
+                    collection: prod.collection,
+                    heroProduct: prod,
+                    activeVariant: defaultVar,
+                    selectedSize: 'L',
+                    sizes: ['S', 'M', 'L', 'XL'],
+                    pairingItems: prod.pairing.map(p => ({ ...p }))
+                };
+            });
+        }
+
+        /**
+         * ============================================================================
+         * 2. APPLICATION STATE & SPRING CAROUSEL PHYSICS ENGINE
+         * ============================================================================
+         */
+        const state = {
+            allLooks: buildLookbookData(),
+            filteredLooks: [],
+            activeFilter: 'All',
+            currency: 'BDT',
+            deliveryZone: 'dhaka',
+            mode: 'carousel', // 'carousel' | 'focus'
+            currentPos: 0,
+            targetPos: 0,
+            velocity: 0,
+            isDragging: false,
+            dragStartX: 0,
+            dragStartPos: 0,
+            dragDistance: 0,
+            removedItemIds: new Set(),
+            cart: [],
+            promoApplied: false,
+            modalItem: null,
+            modalActiveView: 'front',
+            stageViewMode: 'front', // 'front' | 'back' toggle on stage
+            pointerNormX: 0,
+            pointerNormY: 0,
+            cardTiltX: 0,
+            cardTiltY: 0
+        };
+
+        state.filteredLooks = [...state.allLooks];
+
+        // DOM References
+        const modelsContainer = document.getElementById('modelsContainer');
+        const carouselViewport = document.getElementById('carouselViewport');
+        const stageArea = document.getElementById('stageArea');
+        const hotspotOverlay = document.getElementById('hotspotOverlay');
+        const hotspotBounds = document.getElementById('hotspotBounds');
+
+        /**
+         * ============================================================================
+         * 2B. THREE.JS KINETIC STUDIO ENGINE (3D Spatial Rings, Particles & Camera)
+         * ============================================================================
+         */
+        let threeScene, threeCamera, threeRenderer, studioGroup, outerRing, innerIcosa, studioParticles;
+        let targetAccentHex = 0x170000;
+
+        function initThreeStudio() {
+            const canvas = document.getElementById('threeStudioCanvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+
+            threeScene = new THREE.Scene();
+
+            const width = stageArea.clientWidth || window.innerWidth;
+            const height = stageArea.clientHeight || window.innerHeight;
+
+            threeCamera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+            threeCamera.position.set(0, 0.4, 11);
+
+            threeRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            threeRenderer.setSize(width, height, false);
+
+            // Studio Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+            threeScene.add(ambientLight);
+
+            const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            keyLight.position.set(5, 8, 7);
+            threeScene.add(keyLight);
+
+            studioGroup = new THREE.Group();
+            threeScene.add(studioGroup);
+
+            // 1. Architectural Orbital Torus Ring (Reacts to Carousel Velocity)
+            const torusGeo = new THREE.TorusGeometry(4.2, 0.016, 16, 120);
+            const torusMat = new THREE.MeshBasicMaterial({
+                color: 0x170000,
+                transparent: true,
+                opacity: 0.14
+            });
+            outerRing = new THREE.Mesh(torusGeo, torusMat);
+            outerRing.rotation.x = Math.PI * 0.36;
+            outerRing.rotation.y = -Math.PI * 0.12;
+            studioGroup.add(outerRing);
+
+            // 2. Secondary Tilted Meridian Ring
+            const meridianGeo = new THREE.TorusGeometry(3.35, 0.01, 12, 96);
+            const meridianMat = new THREE.MeshBasicMaterial({
+                color: 0x170000,
+                transparent: true,
+                opacity: 0.09
+            });
+            const meridianRing = new THREE.Mesh(meridianGeo, meridianMat);
+            meridianRing.rotation.x = -Math.PI * 0.28;
+            meridianRing.rotation.z = Math.PI * 0.2;
+            outerRing.add(meridianRing);
+
+            // 3. Kinetic Wireframe Icosahedron Core
+            const icoGeo = new THREE.IcosahedronGeometry(2.5, 1);
+            const icoMat = new THREE.MeshBasicMaterial({
+                color: 0x170000,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.055
+            });
+            innerIcosa = new THREE.Mesh(icoGeo, icoMat);
+            studioGroup.add(innerIcosa);
+
+            // 4. Studio Floor Architectural Grid Circle
+            const gridHelper = new THREE.PolarGridHelper(5.5, 12, 5, 64, 0x170000, 0x170000);
+            gridHelper.position.y = -3.3;
+            gridHelper.material.transparent = true;
+            gridHelper.material.opacity = 0.07;
+            studioGroup.add(gridHelper);
+
+            // 5. Floating Spatial Dust Particles
+            const particleCount = 95;
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 18;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 11;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+            }
+            const particleGeo = new THREE.BufferGeometry();
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particleMat = new THREE.PointsMaterial({
+                color: 0x170000,
+                size: 0.055,
+                transparent: true,
+                opacity: 0.28
+            });
+            studioParticles = new THREE.Points(particleGeo, particleMat);
+            threeScene.add(studioParticles);
+
+            window.addEventListener('resize', onThreeResize);
+        }
+
+        function onThreeResize() {
+            if (!threeRenderer || !threeCamera) return;
+            const width = stageArea.clientWidth || window.innerWidth;
+            const height = stageArea.clientHeight || window.innerHeight;
+            threeCamera.aspect = width / height;
+            threeCamera.updateProjectionMatrix();
+            threeRenderer.setSize(width, height, false);
+        }
+
+        function updateThreeStudio(timeSec) {
+            if (!threeRenderer || !threeScene || !threeCamera) return;
+
+            // Smooth camera parallax responding to pointer & carousel scroll position
+            const targetCamX = state.pointerNormX * 0.9 + Math.sin(state.currentPos * 0.5) * 0.35;
+            const targetCamY = 0.35 - state.pointerNormY * 0.55;
+            const targetCamZ = state.mode === 'focus' ? 8.6 : 11.0;
+
+            threeCamera.position.x += (targetCamX - threeCamera.position.x) * 0.06;
+            threeCamera.position.y += (targetCamY - threeCamera.position.y) * 0.06;
+            threeCamera.position.z += (targetCamZ - threeCamera.position.z) * 0.07;
+            threeCamera.lookAt(0, -0.1, 0);
+
+            // Spin 3D rings proportionally to carousel physics velocity & position
+            if (outerRing && innerIcosa) {
+                outerRing.rotation.z = timeSec * 0.14 + state.currentPos * 0.45;
+                innerIcosa.rotation.y = timeSec * 0.18 - state.currentPos * 0.6;
+                innerIcosa.rotation.x = Math.sin(timeSec * 0.3) * 0.25;
+
+                // Subtle color shift matching active garment colorway
+                outerRing.material.color.lerp(new THREE.Color(targetAccentHex), 0.05);
+                innerIcosa.material.color.lerp(new THREE.Color(targetAccentHex), 0.05);
+            }
+
+            if (studioParticles) {
+                studioParticles.rotation.y = timeSec * 0.03 + state.currentPos * 0.08;
+                studioParticles.position.x = -state.pointerNormX * 0.4;
+            }
+
+            threeRenderer.render(threeScene, threeCamera);
+        }
+
+        /**
+         * ============================================================================
+         * 2C. ANIME.JS CHOREOGRAPHY HELPERS
+         * ============================================================================
+         */
+        function animateKineticHeadline(text) {
+            const headlineEl = document.getElementById('stageHeadline');
+            if (!headlineEl) return;
+
+            if (typeof anime === 'undefined') {
+                headlineEl.textContent = text;
+                return;
+            }
+
+            headlineEl.innerHTML = text.split('').map(ch =>
+                ch === ' ' ? '<span class="kinetic-char">&nbsp;</span>' : `<span class="kinetic-char">${ch}</span>`
+            ).join('');
+
+            anime({
+                targets: '#stageHeadline .kinetic-char',
+                translateY: [26, 0],
+                opacity: [0, 1],
+                rotateX: [-45, 0],
+                easing: 'easeOutExpo',
+                duration: 650,
+                delay: anime.stagger(22)
+            });
+        }
+
+        function runEntranceChoreography() {
+            if (typeof anime === 'undefined') return;
+            anime({
+                targets: 'header > div',
+                translateY: [-18, 0],
+                opacity: [0, 1],
+                easing: 'easeOutCubic',
+                duration: 700,
+                delay: anime.stagger(90)
+            });
+            animateKineticHeadline('Try the Look.');
+        }
+
+        /**
+         * ============================================================================
+         * 3. INITIALIZATION & CURRENCY HELPERS
+         * ============================================================================
+         */
+        window.addEventListener('DOMContentLoaded', () => {
+            refreshIcons();
+            initThreeStudio();
+            buildCarouselNodes();
+            renderPaginationDots();
+            renderArchiveGrid();
+            syncSidebarWithActiveLook();
+            setupInteractionListeners();
+            runEntranceChoreography();
+            requestAnimationFrame(physicsLoop);
+        });
+
+        function formatPrice(amountBDT) {
+            const cfg = CURRENCY_CONFIG[state.currency];
+            if (state.currency === 'BDT') {
+                return `৳${Math.round(amountBDT).toLocaleString('en-US')}`;
+            }
+            const converted = (amountBDT * cfg.rate).toFixed(2);
+            return `$${converted}`;
+        }
+
+        function toggleCurrency() {
+            state.currency = state.currency === 'BDT' ? 'USD' : 'BDT';
+            document.getElementById('currencyToggle').textContent = state.currency === 'BDT' ? 'BDT ৳' : 'USD $';
+            buildCarouselNodes();
+            syncSidebarWithActiveLook();
+            renderCart();
+            renderArchiveGrid();
+            if (state.mode === 'focus') renderHotspots();
+            showToast(`Currency switched to ${state.currency}`);
+        }
+
+        function getActiveLookIndex() {
+            const count = state.filteredLooks.length;
+            if (count === 0) return 0;
+            const raw = Math.round(state.currentPos);
+            return ((raw % count) + count) % count;
+        }
+
+        function getActiveLook() {
+            return state.filteredLooks[getActiveLookIndex()] || state.allLooks[0];
+        }
+
+        /**
+         * ============================================================================
+         * 4. 3D PERSPECTIVE CAROUSEL RENDERING & PHYSICS
+         * ============================================================================
+         */
+        function buildCarouselNodes() {
+            modelsContainer.innerHTML = '';
+            state.filteredLooks.forEach((look, idx) => {
+                const node = document.createElement('div');
+                node.className = 'model-node cursor-pointer flex items-center justify-center';
+                node.dataset.index = idx;
+                node.style.width = 'clamp(260px, 27vw, 370px)';
+                node.style.height = 'clamp(420px, 68vh, 620px)';
+
+                const activeVar = look.activeVariant;
+                const isBackView = state.stageViewMode === 'back';
+
+                node.innerHTML = `
+                    <div class="relative w-full h-full flex flex-col items-center justify-end pb-3">
+                        <!-- Cardless Full-Body Studio Model Silhouette (Exact Reference Video Style) -->
+                        <div class="look-card-surface relative w-full h-[94%] flex flex-col items-center justify-center">
+                            ${isBackView ? `
+                                <div class="relative w-[82%] h-[84%] rounded-3xl bg-white/95 shadow-[0_24px_60px_rgba(23,0,0,0.12)] border border-[#170000]/10 p-4 flex flex-col items-center justify-between">
+                                    <div class="w-full flex items-center justify-between">
+                                        <span class="px-2.5 py-0.5 rounded-full bg-[#170000] text-white text-[10px] font-bold">${activeVar.sku}</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#170000]/60">Back Artwork</span>
+                                    </div>
+                                    <img 
+                                        src="${activeVar.backImg}" 
+                                        onerror="this.onerror=null; this.src='${activeVar.fallback}';"
+                                        alt="${look.title} Back"
+                                        draggable="false"
+                                        class="max-h-[76%] max-w-full object-contain pointer-events-none select-none"
+                                    />
+                                    <div class="w-full text-center border-t border-[#170000]/8 pt-2">
+                                        <span class="text-xs font-extrabold text-[#170000]">${look.title} — ${formatPrice(look.heroProduct.priceBDT)}</span>
+                                    </div>
+                                </div>
+                            ` : `
+                                <img 
+                                    src="${activeVar.modelLookSvg}" 
+                                    alt="${look.title} Full Look"
+                                    draggable="false"
+                                    class="h-full w-auto max-w-full object-contain pointer-events-none select-none drop-shadow-[0_14px_24px_rgba(23,0,0,0.12)]"
+                                />
+                            `}
+                        </div>
+                        <div class="model-floor-shadow"></div>
+                    </div>
+                `;
+
+                node.addEventListener('click', (e) => {
+                    if (state.dragDistance > 8) return;
+                    e.stopPropagation();
+                    const activeIdx = getActiveLookIndex();
+                    if (state.mode === 'carousel') {
+                        if (idx === activeIdx) {
+                            enterFocusMode();
+                        } else {
+                            scrollToShortestIndex(idx);
+                        }
+                    }
+                });
+
+                modelsContainer.appendChild(node);
+            });
+        }
+
+        function scrollToShortestIndex(targetIdx) {
+            const count = state.filteredLooks.length;
+            const currentMod = ((Math.round(state.targetPos) % count) + count) % count;
+            let diff = targetIdx - currentMod;
+            if (diff > count / 2) diff -= count;
+            if (diff < -count / 2) diff += count;
+            state.targetPos = Math.round(state.targetPos) + diff;
+        }
+
+        function stepCarousel(delta) {
+            if (state.mode === 'focus') exitFocusMode();
+            state.targetPos += delta;
+        }
+
+        let lastActiveIndex = -1;
+
+        function physicsLoop(timestamp = 0) {
+            const timeSec = timestamp * 0.001;
+            updateThreeStudio(timeSec);
+
+            const count = state.filteredLooks.length;
+            if (count > 0) {
+                if (!state.isDragging) {
+                    const springForce = (state.targetPos - state.currentPos) * 0.13;
+                    state.velocity = (state.velocity + springForce) * 0.72;
+                    state.currentPos += state.velocity;
+
+                    if (Math.abs(state.targetPos - state.currentPos) < 0.001 && Math.abs(state.velocity) < 0.001) {
+                        state.currentPos = state.targetPos;
+                        state.velocity = 0;
+                    }
+                }
+
+                const activeIdx = getActiveLookIndex();
+                if (activeIdx !== lastActiveIndex) {
+                    lastActiveIndex = activeIdx;
+                    onActiveLookChanged(activeIdx);
+                }
+
+                const nodes = modelsContainer.children;
+                const stageWidth = carouselViewport.clientWidth || window.innerWidth;
+                const spacing = Math.min(265, Math.max(155, stageWidth * 0.25));
+                const nearestIndex = ((Math.round(state.currentPos) % count) + count) % count;
+
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    let offset = (i - state.currentPos) % count;
+                    if (offset > count / 2) offset -= count;
+                    if (offset < -count / 2) offset += count;
+
+                    const absOffset = Math.abs(offset);
+                    const cardSurface = node.querySelector('.look-card-surface');
+
+                    if (state.mode === 'focus') {
+                        if (i === nearestIndex) {
+                            node.style.opacity = '1';
+                            node.style.filter = 'blur(0px)';
+                            node.style.zIndex = '25';
+                            node.style.pointerEvents = 'auto';
+                            node.style.transform = `translate3d(-50%, -48%, 0) scale(1.03)`;
+                            if (cardSurface) {
+                                cardSurface.style.transform = `rotateX(${(state.cardTiltX * 0.6).toFixed(2)}deg) rotateY(${(state.cardTiltY * 0.6).toFixed(2)}deg)`;
+                            }
+                        } else {
+                            node.style.opacity = '0';
+                            node.style.filter = 'blur(12px)';
+                            node.style.zIndex = '1';
+                            node.style.pointerEvents = 'none';
+                            node.style.transform = `translate3d(calc(-50% + ${offset * spacing * 1.3}px), -48%, 0) scale(0.75)`;
+                        }
+                    } else {
+                        const translateX = offset * spacing;
+                        const scale = Math.max(0.68, 1 - absOffset * 0.14);
+                        const translateY = -48 + absOffset * 2.0;
+                        const blurPx = absOffset < 0.15 ? 0 : Math.min(6, absOffset * 2.5);
+                        const opacity = absOffset > 2.6 ? 0 : Math.max(0.32, 1 - absOffset * 0.25);
+                        const zIndex = Math.round(20 - absOffset * 5);
+
+                        node.style.opacity = opacity.toFixed(3);
+                        node.style.filter = `blur(${blurPx.toFixed(2)}px)`;
+                        node.style.zIndex = zIndex;
+                        node.style.pointerEvents = absOffset > 2.2 ? 'none' : 'auto';
+                        node.style.transform = `translate3d(calc(-50% + ${translateX.toFixed(1)}px), ${translateY.toFixed(1)}%, 0) scale(${scale.toFixed(3)})`;
+
+                        // Apply interactive 3D pointer tilt on the active centered look card
+                        if (cardSurface) {
+                            if (absOffset < 0.25) {
+                                cardSurface.style.transform = `rotateX(${state.cardTiltX.toFixed(2)}deg) rotateY(${state.cardTiltY.toFixed(2)}deg)`;
+                            } else {
+                                cardSurface.style.transform = `rotateY(${(-offset * 8).toFixed(1)}deg)`;
+                            }
+                        }
+                    }
+                }
+            }
+
+            requestAnimationFrame(physicsLoop);
+        }
+
+        function onActiveLookChanged(index) {
+            const look = state.filteredLooks[index];
+            if (!look) return;
+
+            // Update Three.js studio accent tint from active variant hex
+            if (look.activeVariant && look.activeVariant.hex) {
+                const parsedHex = parseInt(look.activeVariant.hex.replace('#', ''), 16);
+                targetAccentHex = parsedHex === 0xf3efe6 ? 0x8c7b65 : parsedHex;
+            }
+
+            const padIdx = String(index + 1).padStart(2, '0');
+            const padTotal = String(state.filteredLooks.length).padStart(2, '0');
+            document.getElementById('lookIndexTag').textContent = `LOOK ${padIdx} / ${padTotal}`;
+            document.getElementById('lookCategoryTag').textContent = look.season;
+
+            if (state.mode === 'focus') {
+                animateKineticHeadline(look.title);
+                document.getElementById('stageSubheadline').textContent = look.heroProduct.copyBn;
+            } else {
+                const headlineEl = document.getElementById('stageHeadline');
+                if (headlineEl.textContent.trim() !== 'Try the Look.') {
+                    animateKineticHeadline('Try the Look.');
+                }
+                document.getElementById('stageSubheadline').textContent = 'Drag or scroll horizontally across StarkiT Drop 01 hoodies & streetwear pairings. Click center card to inspect.';
+            }
+
+            updatePaginationDots(index);
+            syncSidebarWithActiveLook();
+        }
+
+        /**
+         * ============================================================================
+         * 5. FOCUS MODE & INTERACTIVE GARMENT HOTSPOTS
+         * ============================================================================
+         */
+        function enterFocusMode() {
+            if (state.mode === 'focus') return;
+            state.mode = 'focus';
+            state.targetPos = Math.round(state.currentPos);
+
+            const activeLook = getActiveLook();
+            animateKineticHeadline(activeLook.title);
+            document.getElementById('stageSubheadline').textContent = activeLook.heroProduct.copyBn;
+            
+            document.getElementById('backToLooksBtn').classList.remove('hidden');
+            document.getElementById('inspectLookBtn').classList.add('hidden');
+            document.getElementById('carouselControls').classList.add('opacity-40', 'pointer-events-none');
+            
+            hotspotOverlay.classList.remove('hidden');
+            renderHotspots();
+            refreshIcons();
+
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '#backToLooksBtn',
+                    translateX: [-14, 0],
+                    opacity: [0, 1],
+                    easing: 'easeOutExpo',
+                    duration: 450
+                });
+            }
+        }
+
+        function exitFocusMode() {
+            if (state.mode === 'carousel') return;
+            state.mode = 'carousel';
+
+            animateKineticHeadline('Try the Look.');
+            document.getElementById('stageSubheadline').textContent = 'Drag or scroll horizontally across StarkiT Drop 01 hoodies & streetwear pairings. Click center card to inspect.';
+
+            document.getElementById('backToLooksBtn').classList.add('hidden');
+            document.getElementById('inspectLookBtn').classList.remove('hidden');
+            document.getElementById('carouselControls').classList.remove('opacity-40', 'pointer-events-none');
+
+            hotspotOverlay.classList.add('hidden');
+            hotspotBounds.innerHTML = '';
+        }
+
+        function renderHotspots() {
+            const look = getActiveLook();
+            hotspotBounds.innerHTML = '';
+
+            // Build combined hotspot pins: Hero Hoodie + Styled Bottoms & Footwear
+            const pins = [
+                {
+                    label: `${look.title} (${look.activeVariant.color})`,
+                    priceBDT: look.heroProduct.priceBDT,
+                    top: '36%',
+                    left: '50%',
+                    isHero: true,
+                    itemRef: look.heroProduct
+                },
+                ...look.pairingItems.map(p => ({
+                    label: p.name,
+                    priceBDT: p.priceBDT,
+                    top: p.hotspot.top,
+                    left: p.hotspot.left,
+                    isHero: false,
+                    itemRef: p
+                }))
+            ];
+
+            pins.forEach((pinData) => {
+                const pin = document.createElement('div');
+                pin.style.top = pinData.top;
+                pin.style.left = pinData.left;
+                pin.className = 'hotspot-pin group absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer z-30';
+
+                pin.innerHTML = `
+                    <div class="relative flex items-center">
+                        <button class="hotspot-pulse relative w-7 h-7 rounded-full bg-white/95 border-2 border-[#170000] shadow-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
+                            <span class="w-2 h-2 rounded-full bg-[#170000]"></span>
+                        </button>
+                        <div class="ml-2.5 bg-white/95 backdrop-blur-md border border-[#170000]/15 px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-2 whitespace-nowrap transition-all duration-200 group-hover:bg-[#170000] group-hover:text-white">
+                            <span class="text-xs font-bold tracking-tight">${pinData.label}</span>
+                            <span class="text-[11px] font-extrabold opacity-80">${formatPrice(pinData.priceBDT)}</span>
+                        </div>
+                    </div>
+                `;
+
+                pin.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (pinData.isHero) {
+                        openHeroProductModal(look);
+                    } else {
+                        openPairingProductModal(pinData.itemRef);
+                    }
+                });
+
+                hotspotBounds.appendChild(pin);
+            });
+
+            // Staggered Anime.js elastic pop-in for garment hotspot pins
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '#hotspotBounds .hotspot-pin',
+                    scale: [0, 1],
+                    opacity: [0, 1],
+                    easing: 'easeOutElastic(1, .65)',
+                    duration: 750,
+                    delay: anime.stagger(110, { start: 120 })
+                });
+            }
+        }
+
+        function setStageView(view) {
+            state.stageViewMode = view;
+            const frontBtn = document.getElementById('viewFrontBtn');
+            const backBtn = document.getElementById('viewBackBtn');
+            if (view === 'front') {
+                frontBtn.className = 'px-3 py-1 rounded-full text-[11px] font-bold bg-[#170000] text-white transition-all';
+                backBtn.className = 'px-3 py-1 rounded-full text-[11px] font-bold text-[#170000]/65 hover:text-[#170000] transition-all';
+            } else {
+                backBtn.className = 'px-3 py-1 rounded-full text-[11px] font-bold bg-[#170000] text-white transition-all';
+                frontBtn.className = 'px-3 py-1 rounded-full text-[11px] font-bold text-[#170000]/65 hover:text-[#170000] transition-all';
+            }
+            buildCarouselNodes();
+        }
+
+        /**
+         * ============================================================================
+         * 6. "IN THIS LOOK" RIGHT SIDEBAR SYNC & COLORWAY SWITCHER
+         * ============================================================================
+         */
+        function getActiveLookLineItems(look) {
+            const heroLine = {
+                uid: `${look.id}-${look.activeVariant.sku}`,
+                sku: look.activeVariant.sku,
+                name: look.title,
+                category: `Heavyweight Hoodie • ${look.activeVariant.color}`,
+                priceBDT: look.heroProduct.priceBDT,
+                color: look.activeVariant.color,
+                sizes: look.sizes,
+                selectedSize: look.selectedSize,
+                image: look.activeVariant.frontImg,
+                fallback: look.activeVariant.fallback,
+                isHero: true
+            };
+
+            const pairingLines = look.pairingItems.map(p => ({
+                uid: `${look.id}-${p.id}`,
+                sku: p.sku,
+                name: p.name,
+                category: `${p.category} • ${p.color}`,
+                priceBDT: p.priceBDT,
+                color: p.color,
+                sizes: p.sizes,
+                selectedSize: p.selectedSize,
+                image: p.image,
+                fallback: p.image,
+                isHero: false,
+                rawPairing: p
+            }));
+
+            return [heroLine, ...pairingLines];
+        }
+
+        function syncSidebarWithActiveLook() {
+            const look = getActiveLook();
+            const listEl = document.getElementById('lookItemsList');
+            const allLineItems = getActiveLookLineItems(look);
+            const activeItems = allLineItems.filter(item => !state.removedItemIds.has(item.uid));
+
+            document.getElementById('sidebarLookSubtitle').textContent = `${look.title} — ${look.heroProduct.detailBadge}`;
+            document.getElementById('sidebarItemCount').textContent = `${activeItems.length} items`;
+            document.getElementById('mobileLookCount').textContent = activeItems.length;
+
+            // Colorway Swatches if product has multiple color variants (e.g. SHINOBI SUNSET or COLLECTIVE VOICE)
+            const variantRow = document.getElementById('variantSwitcherRow');
+            const swatchContainer = document.getElementById('variantSwatches');
+            if (look.heroProduct.variants.length > 1) {
+                variantRow.classList.remove('hidden');
+                variantRow.classList.add('flex');
+                swatchContainer.innerHTML = look.heroProduct.variants.map(v => {
+                    const isSelected = v.sku === look.activeVariant.sku;
+                    return `
+                        <button 
+                            onclick="switchLookVariant('${look.id}', '${v.color}')"
+                            title="${v.color}"
+                            class="w-6 h-6 rounded-full border-2 transition-transform ${isSelected ? 'border-[#170000] scale-110 ring-2 ring-[#170000]/20' : 'border-[#170000]/20 hover:scale-105'}"
+                            style="background-color: ${v.hex};"
+                        ></button>
+                    `;
+                }).join('');
+            } else {
+                variantRow.classList.add('hidden');
+                variantRow.classList.remove('flex');
+            }
+
+            // Show restore bar if any item in this look was removed
+            const hasRemoved = allLineItems.some(item => state.removedItemIds.has(item.uid));
+            const restoreBar = document.getElementById('restoreBar');
+            if (hasRemoved) {
+                restoreBar.classList.remove('hidden');
+                restoreBar.classList.add('flex');
+            } else {
+                restoreBar.classList.add('hidden');
+                restoreBar.classList.remove('flex');
+            }
+
+            listEl.innerHTML = '';
+            let totalBDT = 0;
+
+            activeItems.forEach((item) => {
+                totalBDT += item.priceBDT;
+
+                const card = document.createElement('div');
+                card.className = 'group relative bg-[#F6F5F3]/85 hover:bg-white border border-[#170000]/8 hover:border-[#170000]/20 rounded-2xl p-3 flex items-center gap-3.5 transition-all duration-200';
+
+                const sizeOptions = item.sizes.map(sz =>
+                    `<option value="${sz}" ${sz === item.selectedSize ? 'selected' : ''}>Size ${sz}</option>`
+                ).join('');
+
+                card.innerHTML = `
+                    <div class="w-16 h-20 rounded-xl bg-white border border-[#170000]/8 overflow-hidden shrink-0 flex items-center justify-center p-1 cursor-pointer">
+                        <img src="${item.image}" onerror="this.onerror=null; this.src='${item.fallback}';" alt="${item.name}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2">
+                            <h3 class="text-sm font-extrabold text-[#170000] truncate cursor-pointer hover:underline">${item.name}</h3>
+                            <button onclick="removeItemFromLook('${item.uid}')" title="Remove from look" class="text-[#170000]/35 hover:text-[#170000] p-1 rounded-lg hover:bg-[#170000]/5 transition-colors shrink-0">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] font-medium text-[#170000]/55 mt-0.5 truncate">${item.category}</p>
+                        
+                        <div class="mt-2 flex items-center justify-between gap-2">
+                            <span class="text-xs font-extrabold text-[#170000]">${formatPrice(item.priceBDT)}</span>
+                            <select onchange="updateItemSize('${item.uid}', this.value)" class="text-[11px] font-bold bg-white border border-[#170000]/15 rounded-lg px-2 py-1 text-[#170000] focus:outline-none cursor-pointer">
+                                ${sizeOptions}
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                const imgEl = card.querySelector('img');
+                const titleEl = card.querySelector('h3');
+                const openFn = () => item.isHero ? openHeroProductModal(look) : openPairingProductModal(item.rawPairing);
+                imgEl.addEventListener('click', openFn);
+                titleEl.addEventListener('click', openFn);
+
+                listEl.appendChild(card);
+            });
+
+            document.getElementById('lookTotalPrice').textContent = formatPrice(totalBDT);
+            const addBtn = document.getElementById('addFullLookBtn');
+            addBtn.disabled = activeItems.length === 0;
+            addBtn.classList.toggle('opacity-40', activeItems.length === 0);
+
+            refreshIcons();
+
+            // Staggered Anime.js entrance for "In this look" garment cards
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '#lookItemsList > div',
+                    translateY: [14, 0],
+                    opacity: [0, 1],
+                    easing: 'easeOutCubic',
+                    duration: 380,
+                    delay: anime.stagger(55)
+                });
+            }
+        }
+
+        function switchLookVariant(lookId, colorName) {
+            const look = state.filteredLooks.find(l => l.id === lookId);
+            if (!look) return;
+            const found = look.heroProduct.variants.find(v => v.color === colorName);
+            if (found) {
+                look.activeVariant = found;
+                if (found.hex) {
+                    const parsedHex = parseInt(found.hex.replace('#', ''), 16);
+                    targetAccentHex = parsedHex === 0xf3efe6 ? 0x8c7b65 : parsedHex;
+                }
+                buildCarouselNodes();
+                syncSidebarWithActiveLook();
+                if (state.mode === 'focus') renderHotspots();
+                showToast(`${look.title} switched to ${colorName}`);
+            }
+        }
+
+        function updateItemSize(uid, newSize) {
+            const look = getActiveLook();
+            if (uid === `${look.id}-${look.activeVariant.sku}`) {
+                look.selectedSize = newSize;
+            } else {
+                const pair = look.pairingItems.find(p => `${look.id}-${p.id}` === uid);
+                if (pair) pair.selectedSize = newSize;
+            }
+            showToast(`Updated size to ${newSize}`);
+        }
+
+        function removeItemFromLook(uid) {
+            state.removedItemIds.add(uid);
+            syncSidebarWithActiveLook();
+        }
+
+        function restoreRemovedPieces() {
+            const look = getActiveLook();
+            const allLineItems = getActiveLookLineItems(look);
+            allLineItems.forEach(item => state.removedItemIds.delete(item.uid));
+            syncSidebarWithActiveLook();
+            showToast('Restored all pieces in look');
+        }
+
+        function renderPaginationDots() {
+            const dotsContainer = document.getElementById('lookPaginationDots');
+            dotsContainer.innerHTML = '';
+            state.filteredLooks.forEach((_, idx) => {
+                const dot = document.createElement('button');
+                dot.ariaLabel = `Go to look ${idx + 1}`;
+                dot.className = 'h-1.5 rounded-full transition-all duration-300 bg-[#170000]/20 w-1.5';
+                dot.addEventListener('click', () => {
+                    if (state.mode === 'focus') exitFocusMode();
+                    scrollToShortestIndex(idx);
+                });
+                dotsContainer.appendChild(dot);
+            });
+            updatePaginationDots(getActiveLookIndex());
+        }
+
+        function updatePaginationDots(activeIndex) {
+            const dots = document.getElementById('lookPaginationDots').children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === activeIndex) {
+                    dots[i].className = 'h-1.5 rounded-full transition-all duration-300 bg-[#170000] w-4';
+                } else {
+                    dots[i].className = 'h-1.5 rounded-full transition-all duration-300 bg-[#170000]/20 w-1.5 hover:bg-[#170000]/45';
+                }
+            }
+        }
+
+        /**
+         * ============================================================================
+         * 7. PRODUCT QUICK-VIEW MODAL & 11-PRODUCT ARCHIVE GRID
+         * ============================================================================
+         */
+        function openHeroProductModal(look) {
+            const prod = look.heroProduct;
+            const variant = look.activeVariant;
+            state.modalItem = {
+                sku: variant.sku,
+                name: prod.name,
+                category: prod.collection,
+                priceBDT: prod.priceBDT,
+                color: variant.color,
+                copyEn: prod.copyEn,
+                copyBn: prod.copyBn,
+                driveFolderUrl: prod.driveFolderUrl || STARKIT_DRIVE_RESOURCES.brandAndCatalog,
+                sizes: look.sizes,
+                selectedSize: look.selectedSize,
+                views: [
+                    { key: 'front', label: 'Front View', url: variant.frontImg, fallback: variant.fallback },
+                    { key: 'back', label: 'Back Graphic', url: variant.backImg, fallback: variant.fallback },
+                    { key: 'composite', label: 'Full Sheet', url: variant.compositeImg, fallback: variant.fallback }
+                ]
+            };
+            renderModalContent();
+        }
+
+        function openPairingProductModal(pairItem) {
+            state.modalItem = {
+                sku: pairItem.sku,
+                name: pairItem.name,
+                category: pairItem.category,
+                priceBDT: pairItem.priceBDT,
+                color: pairItem.color,
+                copyEn: 'Engineered by StarkiT Dhaka to pair seamlessly with Drop 01 oversized fleece hoodies.',
+                copyBn: 'স্টারকিট ড্রপ ০১ হুডির সাথে পারফেক্ট স্ট্রিটওয়্যার পেয়ারিং।',
+                driveFolderUrl: STARKIT_DRIVE_RESOURCES.libraryIndex,
+                sizes: pairItem.sizes,
+                selectedSize: pairItem.selectedSize,
+                views: [
+                    { key: 'front', label: 'Studio View', url: pairItem.image, fallback: pairItem.image }
+                ]
+            };
+            renderModalContent();
+        }
+
+        function renderModalContent() {
+            const m = state.modalItem;
+            if (!m) return;
+
+            document.getElementById('modalSkuBadge').textContent = m.sku;
+            document.getElementById('modalCategory').textContent = m.category;
+            document.getElementById('modalTitle').textContent = `${m.name} (${m.color})`;
+            document.getElementById('modalPrice').textContent = formatPrice(m.priceBDT);
+            document.getElementById('modalDescEn').textContent = m.copyEn;
+            document.getElementById('modalDescBn').textContent = m.copyBn;
+
+            const driveLinkEl = document.getElementById('modalDriveFolderLink');
+            if (driveLinkEl) {
+                driveLinkEl.href = m.driveFolderUrl || STARKIT_DRIVE_RESOURCES.brandAndCatalog;
+            }
+
+            const activeView = m.views[0];
+            const imgEl = document.getElementById('modalProductImg');
+            imgEl.src = activeView.url;
+            imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = activeView.fallback; };
+
+            const viewPills = document.getElementById('modalViewPills');
+            viewPills.innerHTML = m.views.map((v, i) => `
+                <button onclick="switchModalGalleryView('${v.key}')" class="modal-view-btn px-3 py-1 rounded-full text-[11px] font-bold transition-all ${i === 0 ? 'bg-[#170000] text-white' : 'bg-white text-[#170000] border border-[#170000]/15'}">
+                    ${v.label}
+                </button>
+            `).join('');
+
+            const sizeContainer = document.getElementById('modalSizeButtons');
+            sizeContainer.innerHTML = m.sizes.map(sz => {
+                const isSel = sz === m.selectedSize;
+                return `
+                    <button onclick="selectModalSize('${sz}')" class="modal-size-btn py-2 rounded-xl text-xs font-bold border transition-all ${isSel ? 'bg-[#170000] text-white border-[#170000]' : 'bg-white text-[#170000] border-[#170000]/15 hover:border-[#170000]'}">
+                        ${sz}
+                    </button>
+                `;
+            }).join('');
+
+            const modal = document.getElementById('productModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '#productModal > div',
+                    scale: [0.92, 1],
+                    translateY: [18, 0],
+                    opacity: [0, 1],
+                    easing: 'easeOutExpo',
+                    duration: 420
+                });
+            }
+        }
+
+        function switchModalGalleryView(viewKey) {
+            if (!state.modalItem) return;
+            const found = state.modalItem.views.find(v => v.key === viewKey);
+            if (!found) return;
+            const imgEl = document.getElementById('modalProductImg');
+            imgEl.src = found.url;
+            imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = found.fallback; };
+
+            document.querySelectorAll('.modal-view-btn').forEach(btn => {
+                const active = btn.textContent.trim() === found.label;
+                btn.className = `modal-view-btn px-3 py-1 rounded-full text-[11px] font-bold transition-all ${active ? 'bg-[#170000] text-white' : 'bg-white text-[#170000] border border-[#170000]/15'}`;
+            });
+        }
+
+        function selectModalSize(size) {
+            if (!state.modalItem) return;
+            state.modalItem.selectedSize = size;
+            document.querySelectorAll('.modal-size-btn').forEach(btn => {
+                const isSel = btn.textContent.trim() === size;
+                btn.className = `modal-size-btn py-2 rounded-xl text-xs font-bold border transition-all ${isSel ? 'bg-[#170000] text-white border-[#170000]' : 'bg-white text-[#170000] border-[#170000]/15 hover:border-[#170000]'}`;
+            });
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('productModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function addSingleModalItemToBag() {
+            if (!state.modalItem) return;
+            const m = state.modalItem;
+            pushToCart({
+                sku: m.sku,
+                name: m.name,
+                color: m.color,
+                priceBDT: m.priceBDT,
+                image: m.views[0].url,
+                fallback: m.views[0].fallback,
+                size: m.selectedSize,
+                qty: 1
+            });
+            closeProductModal();
+            showToast(`Added ${m.name} (Size ${m.selectedSize}) to bag`);
+        }
+
+        // Render Complete 11-Product StarkiT Catalog Grid
+        function renderArchiveGrid() {
+            const grid = document.getElementById('archiveGridContainer');
+            if (!grid) return;
+            grid.innerHTML = STARKIT_CATALOG.map((prod, index) => {
+                const v = prod.variants[0];
+                return `
+                    <div class="bg-white rounded-2xl p-4 border border-[#170000]/10 flex flex-col justify-between hover:shadow-lg transition-all">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-extrabold tracking-widest uppercase px-2 py-0.5 rounded bg-[#170000] text-white">${prod.id}</span>
+                                <span class="text-[11px] font-bold text-[#170000]/55">${prod.collection}</span>
+                            </div>
+                            <div class="h-44 bg-[#F6F5F3] rounded-xl flex items-center justify-center p-3 overflow-hidden">
+                                <img src="${v.frontImg}" onerror="this.onerror=null; this.src='${v.fallback}';" alt="${prod.name}" class="max-h-full max-w-full object-contain">
+                            </div>
+                            <div class="mt-3 flex items-baseline justify-between">
+                                <h4 class="text-base font-extrabold text-[#170000]">${prod.name}</h4>
+                                <span class="text-sm font-extrabold text-[#170000]">${formatPrice(prod.priceBDT)}</span>
+                            </div>
+                            <p class="text-xs font-bangla text-[#170000]/65 mt-1 line-clamp-2">${prod.copyBn}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-[#170000]/8 flex items-center gap-2">
+                            <button onclick="jumpToCatalogLook('${prod.id}')" class="flex-1 py-2 rounded-xl bg-[#F6F5F3] hover:bg-[#170000] hover:text-white text-[#170000] text-xs font-bold transition-all">
+                                Try on Stage
+                            </button>
+                            <a href="${prod.driveFolderUrl}" target="_blank" rel="noopener" title="Open Google Drive Folder" class="px-3 py-2 rounded-xl bg-[#F6F5F3] hover:bg-[#170000] hover:text-white text-[#170000] text-xs font-bold transition-all">
+                                Drive ↗
+                            </a>
+                            <button onclick="quickAddCatalogProduct('${prod.id}')" class="px-3.5 py-2 rounded-xl bg-[#170000] text-white text-xs font-bold hover:bg-[#2c0303] transition-all">
+                                + Bag
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleArchiveModal(open) {
+            const modal = document.getElementById('archiveModal');
+            if (open) {
+                renderArchiveGrid();
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (typeof anime !== 'undefined') {
+                    anime({
+                        targets: '#archiveGridContainer > div',
+                        translateY: [20, 0],
+                        opacity: [0, 1],
+                        easing: 'easeOutCubic',
+                        duration: 420,
+                        delay: anime.stagger(35)
+                    });
+                }
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function jumpToCatalogLook(productId) {
+            toggleArchiveModal(false);
+            filterCollection('All');
+            const idx = state.filteredLooks.findIndex(l => l.id === productId);
+            if (idx >= 0) {
+                scrollToShortestIndex(idx);
+            }
+        }
+
+        function quickAddCatalogProduct(productId) {
+            const prod = STARKIT_CATALOG.find(p => p.id === productId);
+            if (!prod) return;
+            const v = prod.variants[0];
+            pushToCart({
+                sku: v.sku,
+                name: prod.name,
+                color: v.color,
+                priceBDT: prod.priceBDT,
+                image: v.frontImg,
+                fallback: v.fallback,
+                size: 'L',
+                qty: 1
+            });
+            showToast(`Added ${prod.name} (Size L) to bag`);
+        }
+
+        /**
+         * ============================================================================
+         * 8. SHOPPING BAG & BANGLADESH CASH-ON-DELIVERY (COD) CHECKOUT
+         * ============================================================================
+         */
+        function pushToCart(entry) {
+            const existing = state.cart.find(c => c.sku === entry.sku && c.size === entry.size);
+            if (existing) {
+                existing.qty += entry.qty;
+            } else {
+                state.cart.push({ ...entry });
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        function addFullLookToBag() {
+            const look = getActiveLook();
+            const allLineItems = getActiveLookLineItems(look);
+            const activeItems = allLineItems.filter(item => !state.removedItemIds.has(item.uid));
+            if (activeItems.length === 0) return;
+
+            activeItems.forEach(item => {
+                pushToCart({
+                    sku: item.sku,
+                    name: item.name,
+                    color: item.color,
+                    priceBDT: item.priceBDT,
+                    image: item.image,
+                    fallback: item.fallback,
+                    size: item.selectedSize,
+                    qty: 1
+                });
+            });
+
+            showToast(`Added ${activeItems.length} pieces from ${look.title} to bag`);
+            toggleMobileSidebar(false);
+            toggleCartDrawer(true);
+        }
+
+        function updateCartBadge() {
+            const totalQty = state.cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').textContent = totalQty;
+            document.getElementById('cartHeaderCount').textContent = `${totalQty} ${totalQty === 1 ? 'item' : 'items'} selected`;
+        }
+
+        function setDeliveryZone(zone) {
+            state.deliveryZone = zone;
+            const dhakaBtn = document.getElementById('zoneDhakaBtn');
+            const outBtn = document.getElementById('zoneOutsideBtn');
+            if (zone === 'dhaka') {
+                dhakaBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#170000] text-white';
+                outBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#F6F5F3] text-[#170000]';
+            } else {
+                outBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#170000] text-white';
+                dhakaBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#F6F5F3] text-[#170000]';
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            const footer = document.getElementById('cartFooter');
+
+            if (state.cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center py-12">
+                        <div class="w-14 h-14 rounded-full bg-[#F6F5F3] flex items-center justify-center mb-3 text-[#170000]/40">
+                            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-extrabold text-[#170000]">Your StarkiT bag is empty</p>
+                        <p class="text-xs text-[#170000]/55 mt-1 max-w-[230px]">Explore Drop 01 hoodies and click "Add full look to bag".</p>
+                    </div>
+                `;
+                footer.classList.add('hidden');
+                updateFreeShippingBar(0);
+                refreshIcons();
+                return;
+            }
+
+            footer.classList.remove('hidden');
+            container.innerHTML = '';
+            let subtotalBDT = 0;
+
+            state.cart.forEach((item, idx) => {
+                subtotalBDT += item.priceBDT * item.qty;
+
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-3.5 bg-[#F6F5F3]/80 p-3 rounded-2xl border border-[#170000]/8';
+                row.innerHTML = `
+                    <img src="${item.image}" onerror="this.onerror=null; this.src='${item.fallback}';" alt="${item.name}" class="w-16 h-20 rounded-xl object-contain bg-white p-1 border border-[#170000]/8 shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="text-xs font-extrabold text-[#170000] truncate">${item.name}</h4>
+                            <button onclick="removeCartItem(${idx})" class="text-[#170000]/35 hover:text-[#170000]">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-[#170000]/55 mt-0.5">${item.color} • Size ${item.size}</p>
+                        <div class="mt-2.5 flex items-center justify-between">
+                            <div class="flex items-center bg-white border border-[#170000]/15 rounded-lg">
+                                <button onclick="changeCartQty(${idx}, -1)" class="px-2 py-0.5 text-xs font-bold hover:bg-[#170000]/5">-</button>
+                                <span class="px-2 text-xs font-bold">${item.qty}</span>
+                                <button onclick="changeCartQty(${idx}, 1)" class="px-2 py-0.5 text-xs font-bold hover:bg-[#170000]/5">+</button>
+                            </div>
+                            <span class="text-xs font-extrabold text-[#170000]">${formatPrice(item.priceBDT * item.qty)}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            const discountBDT = state.promoApplied ? subtotalBDT * 0.10 : 0;
+            const freeThreshold = 3000;
+            const baseShipping = state.deliveryZone === 'dhaka' ? 70 : 130;
+            const shippingBDT = subtotalBDT >= freeThreshold ? 0 : baseShipping;
+            const totalBDT = subtotalBDT - discountBDT + shippingBDT;
+
+            document.getElementById('cartSubtotal').textContent = formatPrice(subtotalBDT);
+            const discRow = document.getElementById('discountRow');
+            if (state.promoApplied) {
+                discRow.classList.remove('hidden');
+                discRow.classList.add('flex');
+                document.getElementById('cartDiscount').textContent = `-${formatPrice(discountBDT)}`;
+            } else {
+                discRow.classList.add('hidden');
+                discRow.classList.remove('flex');
+            }
+
+            document.getElementById('cartShipping').textContent = shippingBDT === 0 ? 'FREE' : formatPrice(shippingBDT);
+            document.getElementById('cartTotal').textContent = formatPrice(totalBDT);
+
+            updateFreeShippingBar(subtotalBDT);
+            refreshIcons();
+        }
+
+        function updateFreeShippingBar(subtotalBDT) {
+            const threshold = 3000;
+            const pct = Math.min(100, Math.round((subtotalBDT / threshold) * 100));
+            document.getElementById('shippingBar').style.width = `${pct}%`;
+            document.getElementById('shippingPct').textContent = `${pct}%`;
+
+            if (subtotalBDT >= threshold) {
+                document.getElementById('shippingMsg').textContent = 'You unlocked FREE Nationwide Delivery!';
+            } else {
+                const rem = threshold - subtotalBDT;
+                document.getElementById('shippingMsg').textContent = `Add ${formatPrice(rem)} more for FREE Nationwide Delivery`;
+            }
+        }
+
+        function changeCartQty(idx, delta) {
+            state.cart[idx].qty += delta;
+            if (state.cart[idx].qty <= 0) {
+                state.cart.splice(idx, 1);
+            }
+            updateCartBadge();
+            renderCart();
+        }
+
+        function removeCartItem(idx) {
+            state.cart.splice(idx, 1);
+            updateCartBadge();
+            renderCart();
+        }
+
+        function applyPromoCode() {
+            const code = document.getElementById('promoInput').value.trim().toUpperCase();
+            if (code === 'STARKIT10' || code === 'WEAR10') {
+                state.promoApplied = true;
+                renderCart();
+                showToast('Promo STARKIT10 applied (10% OFF)');
+            } else {
+                showToast('Try promo code: STARKIT10');
+            }
+        }
+
+        function handleCheckout() {
+            state.cart = [];
+            state.promoApplied = false;
+            updateCartBadge();
+            renderCart();
+            toggleCartDrawer(false);
+            showToast('Order received! StarkiT Dhaka will confirm via 01778-307704.');
+        }
+
+        /**
+         * ============================================================================
+         * 9. NAVIGATION, FILTERING & GESTURE LISTENERS
+         * ============================================================================
+         */
+        function filterCollection(category) {
+            state.activeFilter = category;
+            if (state.mode === 'focus') exitFocusMode();
+
+            document.querySelectorAll('.filter-pill').forEach(btn => {
+                const isMatch = btn.dataset.filter === category;
+                if (isMatch) {
+                    btn.classList.add('bg-[#170000]', 'text-white');
+                    btn.classList.remove('text-[#170000]/70', 'bg-white/85');
+                } else {
+                    btn.classList.remove('bg-[#170000]', 'text-white');
+                    btn.classList.add('text-[#170000]/70');
+                }
+            });
+
+            state.filteredLooks = category === 'All'
+                ? [...state.allLooks]
+                : state.allLooks.filter(l => l.collection === category);
+
+            state.currentPos = 0;
+            state.targetPos = 0;
+            lastActiveIndex = -1;
+            buildCarouselNodes();
+            renderPaginationDots();
+            onActiveLookChanged(0);
+        }
+
+        function resetToHome() {
+            filterCollection('All');
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            if (open) {
+                renderCart();
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileSidebar(forceState) {
+            const sidebar = document.getElementById('lookSidebar');
+            const backdrop = document.getElementById('mobileSidebarBackdrop');
+            const isOpen = !sidebar.classList.contains('translate-x-full');
+            const nextState = typeof forceState === 'boolean' ? forceState : !isOpen;
+
+            if (nextState) {
+                sidebar.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        let toastTimer = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 2800);
+        }
+
+        function setupInteractionListeners() {
+            let wheelAccumulator = 0;
+            let wheelSnapTimeout = null;
+
+            stageArea.addEventListener('wheel', (e) => {
+                if (state.mode === 'focus') return;
+                e.preventDefault();
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                wheelAccumulator += delta * 0.0032;
+                state.targetPos += delta * 0.0032;
+
+                clearTimeout(wheelSnapTimeout);
+                wheelSnapTimeout = setTimeout(() => {
+                    state.targetPos = Math.round(state.targetPos);
+                    wheelAccumulator = 0;
+                }, 140);
+            }, { passive: false });
+
+            const onPointerDown = (clientX) => {
+                if (state.mode === 'focus') return;
+                state.isDragging = true;
+                state.dragStartX = clientX;
+                state.dragStartPos = state.currentPos;
+                state.dragDistance = 0;
+                state.velocity = 0;
+            };
+
+            const onPointerMove = (clientX) => {
+                if (!state.isDragging || state.mode === 'focus') return;
+                const dx = clientX - state.dragStartX;
+                state.dragDistance = Math.abs(dx);
+                const sensitivity = window.innerWidth < 640 ? 210 : 300;
+                state.currentPos = state.dragStartPos - (dx / sensitivity);
+                state.targetPos = state.currentPos;
+            };
+
+            const onPointerUp = () => {
+                if (!state.isDragging) return;
+                state.isDragging = false;
+                state.targetPos = Math.round(state.currentPos);
+            };
+
+            stageArea.addEventListener('mousedown', (e) => onPointerDown(e.clientX));
+            window.addEventListener('mousemove', (e) => {
+                // Track normalized pointer coordinates for Three.js camera & 3D card tilt
+                const rect = stageArea.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                    const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+                    state.pointerNormX = Math.max(-1, Math.min(1, nx));
+                    state.pointerNormY = Math.max(-1, Math.min(1, ny));
+                    state.cardTiltY = state.pointerNormX * 7.5;
+                    state.cardTiltX = -state.pointerNormY * 5.5;
+                }
+                onPointerMove(e.clientX);
+            });
+            window.addEventListener('mouseup', onPointerUp);
+
+            stageArea.addEventListener('mouseleave', () => {
+                state.pointerNormX = 0;
+                state.pointerNormY = 0;
+                state.cardTiltX = 0;
+                state.cardTiltY = 0;
+            });
+
+            stageArea.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) onPointerDown(e.touches[0].clientX);
+            }, { passive: true });
+
+            stageArea.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1) onPointerMove(e.touches[0].clientX);
+            }, { passive: true });
+
+            stageArea.addEventListener('touchend', onPointerUp);
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') stepCarousel(1);
+                if (e.key === 'ArrowLeft') stepCarousel(-1);
+                if (e.key === 'Escape') {
+                    closeProductModal();
+                    toggleArchiveModal(false);
+                    toggleCartDrawer(false);
+                    if (state.mode === 'focus') exitFocusMode();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
