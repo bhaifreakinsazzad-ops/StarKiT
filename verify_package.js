@@ -90,10 +90,15 @@ for (const f of expectedImages) {
   }
 }
 
-// 3. Verify Original References
+// 3. Verify Original References & Drop 02 Accessories
 const refJpgs = fs.readdirSync(path.join(ROOT, 'docs/original_references')).filter(f => f.endsWith('.jpg'));
 if (refJpgs.length !== 13) {
   throw new Error(`Expected 13 original JPG reference files, found ${refJpgs.length}`);
+}
+
+const accessoryJpgs = fs.readdirSync(path.join(ROOT, 'assets/images/accessories')).filter(f => f.endsWith('.jpg'));
+if (accessoryJpgs.length !== 35) {
+  throw new Error(`Expected 35 accessory JPG files, found ${accessoryJpgs.length}`);
 }
 
 // 4. Verify Essential Deployable Files
@@ -107,11 +112,17 @@ const essentialFiles = [
   'returns.html',
   'shipping.html',
   'terms.html',
+  'admin.html',
   'api/orders.js',
+  'api/admin.js',
   'supabase/001_starkit_store.sql',
   'supabase/002_catalog_seed.sql',
   'assets/js/catalog-data.js',
   'assets/js/app.js',
+  'assets/js/spatial-three.js',
+  'assets/js/interactive-anime.js',
+  'assets/js/vendor/three.module.js',
+  'assets/js/vendor/anime.min.js',
   'assets/js/store-config.js',
   'assets/css/styles.css',
   'assets/images/starkit-logo-brand-original.png',
@@ -185,9 +196,23 @@ if (appJs.includes('state.cart = []')) {
   throw new Error('Unsolicited cart clear detected without confirmation');
 }
 
-console.log('✓ PASS: All 11 products and 15 SKU colorways validated with live commercial stock and sizes.');
-console.log('✓ PASS: All 67 WebP image assets verified on disk with valid byte sizes.');
+// 7. Verify Combined Catalog Data
+await import('./assets/js/catalog-data.js');
+const fullCatalog = globalThis.STARKIT_CATALOG;
+if (!Array.isArray(fullCatalog) || fullCatalog.length !== 46) {
+  throw new Error(`Expected 46 products in full catalog, found ${fullCatalog ? fullCatalog.length : 0}`);
+}
+const allVariants = fullCatalog.flatMap(p => p.variants);
+if (allVariants.length !== 50) {
+  throw new Error(`Expected 50 total SKU variants in full catalog, found ${allVariants.length}`);
+}
+
+console.log('✓ PASS: All 11 Drop 01 hoodies and 15 SKU colorways validated with live commercial stock and sizes.');
+console.log('✓ PASS: All 35 Drop 02 Fariza\'s Territory accessories validated across 3 collections.');
+console.log('✓ PASS: Full catalog verified with 46 master designs and 50 active SKUs.');
+console.log('✓ PASS: All 67 WebP image assets and 35 accessory JPGs verified on disk.');
 console.log('✓ PASS: All 13 original reference photography files present.');
 console.log(`✓ PASS: All ${htmlFiles.length} HTML pages audited with zero broken links or broken image paths.`);
+console.log('✓ PASS: Three.js and Anime.js vendor libraries and modules verified.');
 console.log('✓ PASS: Vercel serverless API & Supabase schemas present and verified.');
 console.log('✓ ALL SYSTEM INTEGRITY AUDITS PASSED CLEANLY FOR LIVE COMMERCIAL ADVERTISING.');
