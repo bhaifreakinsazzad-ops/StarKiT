@@ -135,7 +135,7 @@ console.log(`Auditing ${htmlFiles.length} HTML files for link and asset integrit
 const brokenLinks = [];
 
 for (const htmlPath of htmlFiles) {
-  const content = fs.readFileSync(htmlPath, 'utf8');
+  let content = fs.readFileSync(htmlPath, 'utf8');
   const dir = path.dirname(htmlPath);
 
   // Check title
@@ -144,10 +144,13 @@ for (const htmlPath of htmlFiles) {
     throw new Error(`Invalid title tag count (${titleMatches ? titleMatches.length : 0}) in ${path.relative(ROOT, htmlPath)}`);
   }
 
+  // Strip inline <script> contents to avoid false positives on JS template literals
+  const strippedContent = content.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, (tag, body) => tag.replace(body, ''));
+
   // Regex to match src and href attributes
   const urlRegex = /(?:src|href)=["']([^"']+)["']/gi;
   let match;
-  while ((match = urlRegex.exec(content)) !== null) {
+  while ((match = urlRegex.exec(strippedContent)) !== null) {
     const rawUrl = match[1];
     if (
       !rawUrl ||
@@ -157,7 +160,8 @@ for (const htmlPath of htmlFiles) {
       rawUrl.startsWith('mailto:') ||
       rawUrl.startsWith('tel:') ||
       rawUrl.startsWith('data:') ||
-      rawUrl.startsWith('javascript:')
+      rawUrl.startsWith('javascript:') ||
+      rawUrl.startsWith('${')
     ) {
       continue;
     }

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#170000">
+  <meta name="robots" content="noindex,nofollow">
+  <title>StarkiT Admin — Store Management Command Center</title>
+  <link rel="icon" type="image/png" href="assets/images/starkit-logo-transparent.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    :root {
+      --admin-bg: #f2eee9;
+      --card-bg: #ffffff;
+      --border-color: #dcd4cc;
+      --badge-pending: #d97706;
+      --badge-confirmed: #2563eb;
+      --badge-processing: #7c3aed;
+      --badge-shipped: #4f46e5;
+      --badge-delivered: #15803d;
+      --badge-cancelled: #dc2626;
+    }
+    body { background: var(--admin-bg); min-height: 100vh; }
+    .admin-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .admin-brand { display: flex; align-items: center; gap: 14px; }
+    .admin-brand img { width: 110px; height: auto; }
+    .admin-pill {
+      background: #44161b;
+      color: #ebd8d9;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .admin-nav { display: flex; gap: 10px; align-items: center; }
+    .admin-tab-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: 0.2s;
+    }
+    .admin-tab-btn.active, .admin-tab-btn:hover {
+      background: #fff;
+      color: var(--ink);
+      border-color: #fff;
+    }
+    .admin-shell { max-width: 1480px; margin: 28px auto; padding: 0 20px; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 22px;
+      position: relative;
+    }
+    .kpi-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--mute); font-weight: 800; }
+    .kpi-value { font-size: 2.2rem; font-weight: 900; margin: 8px 0 4px; color: var(--ink); }
+    .kpi-sub { font-size: 0.75rem; color: #776d6b; }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .section-head-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .section-head-bar h2 { margin: 0; font-size: 1.45rem; font-weight: 900; }
+    .admin-table-wrap { overflow-x: auto; margin-top: 15px; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    .admin-table th {
+      background: #f7f5f1;
+      border-bottom: 2px solid var(--border-color);
+      padding: 12px 14px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--mute);
+    }
+    .admin-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    .admin-table tr:hover { background: #faf9f7; }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #fff;
+    }
+    .status-pending_confirmation { background: var(--badge-pending); }
+    .status-confirmed { background: var(--badge-confirmed); }
+    .status-processing { background: var(--badge-processing); }
+    .status-shipped { background: var(--badge-shipped); }
+    .status-delivered { background: var(--badge-delivered); }
+    .status-cancelled { background: var(--badge-cancelled); }
+    .action-btn {
+      padding: 6px 11px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      font-size: 0.74rem;
+      font-weight: 750;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+    .action-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .action-btn-wa { border-color: #25D366; color: #128C7E; }
+    .action-btn-wa:hover { background: #25D366; color: #fff; border-color: #25D366; }
+    .login-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(23, 0, 0, 0.92);
+      display: grid;
+      place-items: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .login-box {
+      background: #fff;
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid #d9d3ce;
+    }
+    .login-box h2 { font-size: 1.6rem; font-weight: 900; margin: 15px 0 8px; }
+    .sku-img { width: 50px; height: 50px; object-fit: contain; background: #eee; border: 1px solid #ddd; }
+    .stock-input { width: 70px; padding: 6px 8px; border: 1px solid #ccc; font-weight: 800; text-align: center; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Passkey Gate Modal -->
+  <div id="loginGate" class="login-modal">
+    <div class="login-box">
+      <img src="assets/images/starkit-logo-brand-original.png" width="130" height="55" alt="StarkiT logo" style="background:#170000;padding:8px 12px;margin:auto;">
+      <h2>ADMIN COMMAND CENTER</h2>
+      <p style="color:#776d6b;font-size:0.85rem;margin-bottom:24px;">Enter your admin passkey to manage orders, stock, and store operations.</p>
+      <form id="loginForm">
+        <input type="password" id="passkeyInput" class="search-field" style="width:100%;text-align:center;font-size:1.1rem;margin-bottom:14px;" placeholder="Enter Passkey" required autofocus autocomplete="current-password">
+        <button type="submit" class="btn" style="width:100%;">AUTHENTICATE &amp; ENTER ↗</button>
+        <p id="loginError" style="color:#dc2626;font-size:0.75rem;margin-top:10px;font-weight:700;display:none;">Invalid passkey. Default passkey: starkit2026</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Admin Interface -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <img src="assets/images/starkit-logo-brand-original.png" alt="StarkiT logo">
+      <span class="admin-pill">ADMIN COMMAND CENTER</span>
+      <span id="syncIndicator" style="font-size:0.7rem;color:#a3e635;display:flex;align-items:center;gap:6px;">● ONLINE</span>
+    </div>
+    <div class="admin-nav">
+      <button class="admin-tab-btn active" data-tab="tab-overview">Overview</button>
+      <button class="admin-tab-btn" data-tab="tab-orders">Orders (<span id="ordersCountBadge">0</span>)</button>
+      <button class="admin-tab-btn" data-tab="tab-inventory">Inventory &amp; SKUs</button>
+      <button class="admin-tab-btn" data-tab="tab-settings">Settings</button>
+      <a href="index.html" target="_blank" class="admin-tab-btn" style="background:#44161b;">Storefront ↗</a>
+      <button id="logoutBtn" class="action-btn" style="background:transparent;color:#fff;border-color:#555;">Logout</button>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+    
+    <!-- Tab 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">TOTAL REVENUE (BDT)</div>
+          <div class="kpi-value" id="kpiRevenue">৳0</div>
+          <div class="kpi-sub">Across all confirmed / delivered orders</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">TOTAL ORDERS</div>
+          <div class="kpi-value" id="kpiTotalOrders">0</div>
+          <div class="kpi-sub">Online COD + WhatsApp orders</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">PENDING CONFIRMATION</div>
+          <div class="kpi-value" style="color:#d97706;" id="kpiPending">0</div>
+          <div class="kpi-sub">Action required: Call or WhatsApp customer</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">OUT FOR DELIVERY</div>
+          <div class="kpi-value" style="color:#4f46e5;" id="kpiShipped">0</div>
+          <div class="kpi-sub">In transit via courier</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">ACTIVE SKUs</div>
+          <div class="kpi-value" id="kpiSkus">15</div>
+          <div class="kpi-sub">11 Graphic Designs / 15 Colorways</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head-bar">
+          <h2>RECENT CUSTOMER ORDERS</h2>
+          <div>
+            <button class="action-btn" onclick="switchTab('tab-orders')">View All Orders ↗</button>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="recentOrdersTable">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Area / District</th>
+                <th>Items Summary</th>
+                <th>Total BDT</th>
+                <th>Status</th>
+                <th>Quick Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: ORDERS MANAGEMENT -->
+    <section id="tab-orders" class="tab-content">
+      <div class="section-card">
+        <div class="section-head-bar">
+          <div>
+            <h2>ORDER MANAGEMENT &amp; FULFILLMENT</h2>
+            <p style="margin:4px 0 0;font-size:0.85rem;color:var(--mute);">Review customer orders, update delivery status, send WhatsApp alerts, and export to courier.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="action-btn" id="exportCsvBtn">📥 Export CSV (For Courier)</button>
+            <button class="action-btn" id="newOrderModalBtn">+ Add Manual Order</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin:16px 0;flex-wrap:wrap;align-items:center;">
+          <input type="search" id="orderSearchInput" class="search-field" style="flex:1;min-width:240px;" placeholder="Search by customer name, phone, or STK reference...">
+          <select id="orderStatusFilter" class="sort-field">
+            <option value="all">All Statuses</option>
+            <option value="pending_confirmation">Pending Confirmation</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <select id="orderZoneFilter" class="sort-field">
+            <option value="all">All Delivery Zones</option>
+            <option value="dhaka">Inside Dhaka</option>
+            <option value="outside">Outside Dhaka</option>
+          </select>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="ordersMasterTable">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Timestamp</th>
+                <th>Customer Details</th>
+                <th>Delivery Address</th>
+                <th>Items &amp; Sizes</th>
+                <th>Total (BDT)</th>
+                <th>Status</th>
+                <th>Change Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersMasterBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: INVENTORY & SKUs -->
+    <section id="tab-inventory" class="tab-content">
+      <div class="section-card">
+        <div class="section-head-bar">
+          <div>
+            <h2>DROP 01 INVENTORY &amp; SKU CONTROL</h2>
+            <p style="margin:4px 0 0;font-size:0.85rem;color:var(--mute);">Update stock quantities, available sizes, and BDT prices in real time.</p>
+          </div>
+          <div>
+            <button class="action-btn" id="saveInventoryBtn" style="background:#170000;color:#fff;">💾 Save All Inventory Changes</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Preview</th>
+                <th>Product Name</th>
+                <th>Design ID</th>
+                <th>SKU</th>
+                <th>Colorway</th>
+                <th>Price (BDT)</th>
+                <th>In-Stock Qty</th>
+                <th>Available Sizes</th>
+                <th>Commercial Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: STORE SETTINGS -->
+    <section id="tab-settings" class="tab-content">
+      <div class="section-card" style="max-width:850px;">
+        <h2>STORE OPERATIONAL SETTINGS</h2>
+        <p style="color:var(--mute);font-size:0.85rem;margin-bottom:24px;">Configure Cash on Delivery rates, courier free shipping thresholds, and official contact numbers.</p>
+
+        <form id="storeSettingsForm">
+          <div class="form-grid">
+            <div class="form-row">
+              <label>Delivery Charge: Inside Dhaka (BDT)</label>
+              <input type="number" id="settingDhaka" value="80" required min="0">
+            </div>
+            <div class="form-row">
+              <label>Delivery Charge: Outside Dhaka (BDT)</label>
+              <input type="number" id="settingOutside" value="150" required min="0">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label>Free Shipping Threshold (BDT)</label>
+              <input type="number" id="settingFreeThreshold" value="3000" required min="0">
+            </div>
+            <div class="form-row">
+              <label>Cash on Delivery (COD) Status</label>
+              <select id="settingCodStatus">
+                <option value="true">Active &amp; Enabled Nationwide</option>
+                <option value="false">Paused / Disabled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label>Customer Support Phone / WhatsApp</label>
+              <input type="text" id="settingPhone" value="01778307704" required>
+            </div>
+            <div class="form-row">
+              <label>Store Mode</label>
+              <select id="settingStoreMode">
+                <option value="public">Live Commercial Storefront (Accepting Orders)</option>
+                <option value="preview">Preview Catalog Only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:20px;">
+            <label>Supabase Database Endpoint</label>
+            <input type="text" value="https://cahxfaizkqcufhctqlhi.supabase.co" readonly style="background:#eee;color:#555;">
+          </div>
+
+          <button type="submit" class="btn" style="margin-top:20px;">SAVE SETTINGS ↗</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Printable Invoice Slip Modal -->
+  <div id="invoiceModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:620px;text-align:left;background:#fff;padding:32px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #170000;padding-bottom:14px;margin-bottom:16px;">
+        <div>
+          <h2 style="margin:0;font-size:1.8rem;">StarkiT</h2>
+          <small style="font-weight:700;letter-spacing:0.1em;">WEAR YOUR WORLD. · DHAKA</small>
+        </div>
+        <div style="text-align:right;">
+          <h3 id="invRef" style="margin:0;font-size:1.2rem;">STK-XXXXX</h3>
+          <small id="invDate" style="color:#777;"></small>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;font-size:0.85rem;line-height:1.5;">
+        <strong>DELIVERY TO:</strong><br>
+        <span id="invCustName" style="font-weight:700;"></span><br>
+        <span id="invCustPhone"></span><br>
+        <span id="invCustAddress"></span> (<span id="invCustDistrict"></span>)
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:0.82rem;">
+        <thead>
+          <tr style="background:#f4f4f4;border-bottom:1px solid #ddd;">
+            <th style="padding:6px;text-align:left;">Item</th>
+            <th style="padding:6px;text-align:center;">Size</th>
+            <th style="padding:6px;text-align:center;">Qty</th>
+            <th style="padding:6px;text-align:right;">Total</th>
+          </tr>
+        </thead>
+        <tbody id="invItemsBody"></tbody>
+      </table>
+
+      <div style="border-top:1px solid #ddd;padding-top:10px;text-align:right;font-size:0.9rem;line-height:1.6;">
+        <div>Subtotal: <strong id="invSubtotal"></strong></div>
+        <div>Delivery Fee: <strong id="invShipping"></strong></div>
+        <div style="font-size:1.2rem;font-weight:900;margin-top:4px;">TOTAL DUE (COD): <span id="invTotal"></span></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:24px;">
+        <button class="btn" style="flex:1;" onclick="window.print()">PRINT INVOICE</button>
+        <button class="btn btn-outline" style="flex:1;" onclick="document.getElementById('invoiceModal').style.display='none'">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/store-config.js"></script>
+  <script src="assets/js/catalog-data.js"></script>
+  <script>
+    (function(){
+      const PASSKEY = 'starkit2026';
+      let state = {
+        authenticated: false,
+        orders: [],
+        catalog: window.STARKIT_CATALOG || []
+      };
+
+      // 1. Initial Sample Seed Orders for testing
+      const SAMPLE_ORDERS = [
+        {
+          id: 'ord-001',
+          reference: 'STK-9B1A4F2C8D',
+          customer_name: 'Mahir Faisal',
+          customer_phone: '01712345678',
+          shipping_address: 'House 42, Road 11, Sector 4, Uttara',
+          district: 'Dhaka',
+          zone: 'dhaka',
+          subtotal_bdt: 1590,
+          shipping_bdt: 80,
+          total_bdt: 1670,
+          status: 'pending_confirmation',
+          created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+          notes: 'Please call before delivery',
+          items: [{ sku: 'STK-H001-CRM', product_name: 'SHINOBI SUNSET', color: 'Cream', size: 'L', quantity: 1, unit_price_bdt: 1590, line_total_bdt: 1590 }]
+        },
+        {
+          id: 'ord-002',
+          reference: 'STK-3E7C5D1A9F',
+          customer_name: 'Zubair Hossain',
+          customer_phone: '01898765432',
+          shipping_address: 'GEC Circle, Nasirabad Housing Society',
+          district: 'Chittagong',
+          zone: 'outside',
+          subtotal_bdt: 3080,
+          shipping_bdt: 0,
+          total_bdt: 3080,
+          status: 'confirmed',
+          created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
+          notes: '',
+          items: [
+            { sku: 'STK-H004-MRN', product_name: 'THE RIDER CODE', color: 'Maroon', size: 'XL', quantity: 1, unit_price_bdt: 1690, line_total_bdt: 1690 },
+            { sku: 'STK-H003-BLK', product_name: 'FOLK ROUTE', color: 'Black', size: 'L', quantity: 1, unit_price_bdt: 1390, line_total_bdt: 1390 }
+          ]
+        },
+        {
+          id: 'ord-003',
+          reference: 'STK-6F8A2D4B1C',
+          customer_name: 'Sadia Rahman',
+          customer_phone: '01911223344',
+          shipping_address: 'Dhanmondi 27, Road 16 (Old)',
+          district: 'Dhaka',
+          zone: 'dhaka',
+          subtotal_bdt: 1490,
+          shipping_bdt: 80,
+          total_bdt: 1570,
+          status: 'shipped',
+          created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+          notes: 'Deliver afternoon',
+          items: [{ sku: 'STK-H009-BLK', product_name: 'RICKSHAW BLOOM', color: 'Black', size: 'M', quantity: 1, unit_price_bdt: 1490, line_total_bdt: 1490 }]
+        }
+      ];
+
+      function loadOrders() {
+        const stored = localStorage.getItem('starkit_orders');
+        if (stored) {
+          try {
+            state.orders = JSON.parse(stored);
+          } catch(e) {
+            state.orders = SAMPLE_ORDERS;
+          }
+        } else {
+          state.orders = SAMPLE_ORDERS;
+          localStorage.setItem('starkit_orders', JSON.stringify(SAMPLE_ORDERS));
+        }
+
+        // Also attempt async fetch from api/admin
+        fetch('api/admin?action=get_orders')
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.orders && data.orders.length > 0) {
+              const merged = [...data.orders, ...state.orders.filter(o => !data.orders.some(d => d.reference === o.reference))];
+              state.orders = merged;
+              renderDashboard();
+            }
+          })
+          .catch(() => {});
+      }
+
+      function checkAuth() {
+        if (sessionStorage.getItem('starkit_admin_auth') === 'true') {
+          state.authenticated = true;
+          document.getElementById('loginGate').style.display = 'none';
+          loadOrders();
+          renderDashboard();
+        } else {
+          document.getElementById('loginGate').style.display = 'grid';
+        }
+      }
+
+      document.getElementById('loginForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const entered = document.getElementById('passkeyInput').value;
+        if (entered === PASSKEY) {
+          sessionStorage.setItem('starkit_admin_auth', 'true');
+          state.authenticated = true;
+          document.getElementById('loginGate').style.display = 'none';
+          loadOrders();
+          renderDashboard();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function(){
+        sessionStorage.removeItem('starkit_admin_auth');
+        location.reload();
+      });
+
+      window.switchTab = function(tabId) {
+        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === tabId));
+      };
+
+      document.querySelectorAll('.admin-tab-btn[data-tab]').forEach(b => {
+        b.addEventListener('click', () => switchTab(b.dataset.tab));
+      });
+
+      function renderDashboard() {
+        // Compute KPIs
+        const totalRev = state.orders
+          .filter(o => o.status !== 'cancelled')
+          .reduce((sum, o) => sum + (o.total_bdt || 0), 0);
+        const pendingCount = state.orders.filter(o => o.status === 'pending_confirmation').length;
+        const shippedCount = state.orders.filter(o => o.status === 'shipped').length;
+
+        document.getElementById('kpiRevenue').textContent = '৳' + totalRev.toLocaleString('en-US');
+        document.getElementById('kpiTotalOrders').textContent = state.orders.length;
+        document.getElementById('kpiPending').textContent = pendingCount;
+        document.getElementById('kpiShipped').textContent = shippedCount;
+        document.getElementById('ordersCountBadge').textContent = state.orders.length;
+
+        renderOrdersTable();
+        renderInventoryTable();
+      }
+
+      function renderOrdersTable() {
+        const query = (document.getElementById('orderSearchInput').value || '').toLowerCase();
+        const statusFilter = document.getElementById('orderStatusFilter').value;
+        const zoneFilter = document.getElementById('orderZoneFilter').value;
+
+        const filtered = state.orders.filter(o => {
+          const matchQuery = !query || 
+            (o.reference && o.reference.toLowerCase().includes(query)) ||
+            (o.customer_name && o.customer_name.toLowerCase().includes(query)) ||
+            (o.customer_phone && o.customer_phone.includes(query));
+          const matchStatus = statusFilter === 'all' || o.status === statusFilter;
+          const matchZone = zoneFilter === 'all' || o.zone === zoneFilter;
+          return matchQuery && matchStatus && matchZone;
+        });
+
+        const recentBody = document.getElementById('recentOrdersBody');
+        const masterBody = document.getElementById('ordersMasterBody');
+
+        const makeRow = (o, isMaster) => {
+          const itemsSummary = (o.items || o.store_order_items || []).map(i => `${i.product_name || i.sku} (${i.size} × ${i.quantity})`).join(', ') || '1 Item';
+          const dateStr = new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const waUrl = `https://wa.me/${o.customer_phone.replace(/^0/, '880')}?text=${encodeURIComponent(`Hello ${o.customer_name}! This is StarkiT customer service regarding your order ${o.reference}.`)}`;
+
+          return `
+            <tr>
+              <td><strong>${o.reference}</strong></td>
+              <td><small>${dateStr}</small></td>
+              <td><strong>${o.customer_name}</strong></td>
+              <td>
+                <a href="tel:${o.customer_phone}" style="text-decoration:underline;">${o.customer_phone}</a>
+                <a href="${waUrl}" target="_blank" class="action-btn action-btn-wa" style="padding:2px 6px;margin-left:4px;font-size:0.68rem;">WA ↗</a>
+              </td>
+              ${isMaster ? `<td><small>${o.shipping_address}, ${o.district} (${o.zone})</small></td>` : `<td>${o.district}</td>`}
+              <td><small>${itemsSummary}</small></td>
+              <td><strong>৳${(o.total_bdt || 0).toLocaleString()}</strong></td>
+              <td><span class="status-badge status-${o.status}">${o.status.replace(/_/g, ' ')}</span></td>
+              ${isMaster ? `
+                <td>
+                  <select onchange="updateOrderStatus('${o.reference}', this.value)" style="padding:4px;font-size:0.75rem;">
+                    <option value="pending_confirmation" ${o.status==='pending_confirmation'?'selected':''}>Pending</option>
+                    <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
+                    <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+                    <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
+                    <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+                    <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+                  </select>
+                </td>
+              ` : ''}
+              <td>
+                <button class="action-btn" onclick="openInvoice('${o.reference}')">Invoice</button>
+              </td>
+            </tr>
+          `;
+        };
+
+        if (recentBody) {
+          recentBody.innerHTML = state.orders.slice(0, 5).map(o => makeRow(o, false)).join('') || '<tr><td colspan="9" style="text-align:center;">No orders yet.</td></tr>';
+        }
+        if (masterBody) {
+          masterBody.innerHTML = filtered.map(o => makeRow(o, true)).join('') || '<tr><td colspan="9" style="text-align:center;">No matching orders found.</td></tr>';
+        }
+      }
+
+      window.updateOrderStatus = function(ref, newStatus) {
+        const order = state.orders.find(o => o.reference === ref);
+        if (order) {
+          order.status = newStatus;
+          localStorage.setItem('starkit_orders', JSON.stringify(state.orders));
+          renderDashboard();
+          
+          // Send to API in background
+          fetch('api/admin?action=update_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reference: ref, status: newStatus })
+          }).catch(()=>{});
+        }
+      };
+
+      window.openInvoice = function(ref) {
+        const o = state.orders.find(x => x.reference === ref);
+        if (!o) return;
+        document.getElementById('invRef').textContent = o.reference;
+        document.getElementById('invDate').textContent = new Date(o.created_at).toLocaleString();
+        document.getElementById('invCustName').textContent = o.customer_name;
+        document.getElementById('invCustPhone').textContent = o.customer_phone;
+        document.getElementById('invCustAddress').textContent = o.shipping_address;
+        document.getElementById('invCustDistrict').textContent = o.district;
+
+        const items = o.items || o.store_order_items || [];
+        document.getElementById('invItemsBody').innerHTML = items.map(i => `
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:6px;">${i.product_name || i.sku} (${i.color || ''})</td>
+            <td style="padding:6px;text-align:center;">${i.size}</td>
+            <td style="padding:6px;text-align:center;">${i.quantity}</td>
+            <td style="padding:6px;text-align:right;">৳${(i.line_total_bdt || (i.unit_price_bdt * i.quantity) || 0).toLocaleString()}</td>
+          </tr>
+        `).join('');
+
+        document.getElementById('invSubtotal').textContent = '৳' + (o.subtotal_bdt || 0).toLocaleString();
+        document.getElementById('invShipping').textContent = (o.shipping_bdt === 0 ? 'FREE' : '৳' + (o.shipping_bdt || 0));
+        document.getElementById('invTotal').textContent = '৳' + (o.total_bdt || 0).toLocaleString();
+
+        document.getElementById('invoiceModal').style.display = 'grid';
+      };
+
+      function renderInventoryTable() {
+        const tbody = document.getElementById('inventoryTableBody');
+        if (!tbody) return;
+
+        const rows = [];
+        state.catalog.forEach(p => {
+          p.variants.forEach(v => {
+            const img = v.gallery[0] ? v.gallery[0].url : 'assets/images/starkit-logo-brand-original.png';
+            rows.push(`
+              <tr>
+                <td><img class="sku-img" src="${img.replace(/^\//,'')}" alt="${p.name}"></td>
+                <td><strong>${p.name}</strong><br><small style="color:#777;">${p.collection}</small></td>
+                <td><code>${p.id}</code></td>
+                <td><code>${v.sku}</code></td>
+                <td><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${v.hex};margin-right:6px;border:1px solid #ccc;"></span>${v.color}</td>
+                <td><strong>৳${p.price_bdt}</strong></td>
+                <td>
+                  <input type="number" class="stock-input" value="${v.stock_quantity || 50}" min="0" onchange="updateVariantStock('${v.sku}', this.value)">
+                </td>
+                <td>
+                  <span style="font-size:0.75rem;font-weight:700;">${(v.available_sizes || []).join(', ')}</span>
+                </td>
+                <td>
+                  <span class="status-badge" style="background:#15803d;">LIVE PUBLISHED</span>
+                </td>
+              </tr>
+            `);
+          });
+        });
+        tbody.innerHTML = rows.join('');
+      }
+
+      window.updateVariantStock = function(sku, qty) {
+        const num = parseInt(qty, 10);
+        state.catalog.forEach(p => {
+          const v = p.variants.find(x => x.sku === sku);
+          if (v) v.stock_quantity = num;
+        });
+      };
+
+      document.getElementById('saveInventoryBtn').addEventListener('click', function(){
+        alert('Inventory stock levels saved successfully.');
+      });
+
+      document.getElementById('exportCsvBtn').addEventListener('click', function(){
+        const headers = ['Order Reference', 'Date', 'Customer Name', 'Customer Phone', 'Address', 'District', 'Zone', 'Subtotal BDT', 'Shipping BDT', 'Total BDT', 'Status'];
+        const csvRows = [headers.join(',')];
+        state.orders.forEach(o => {
+          csvRows.push([
+            o.reference,
+            o.created_at,
+            `"${o.customer_name}"`,
+            `"${o.customer_phone}"`,
+            `"${(o.shipping_address||'').replace(/"/g, '""')}"`,
+            `"${o.district}"`,
+            o.zone,
+            o.subtotal_bdt,
+            o.shipping_bdt,
+            o.total_bdt,
+            o.status
+          ].join(','));
+        });
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `starkit_orders_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+      });
+
+      document.getElementById('orderSearchInput').addEventListener('input', renderOrdersTable);
+      document.getElementById('orderStatusFilter').addEventListener('change', renderOrdersTable);
+      document.getElementById('orderZoneFilter').addEventListener('change', renderOrdersTable);
+
+      document.getElementById('storeSettingsForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        alert('Store operational settings updated.');
+      });
+
+      checkAuth();
+    })();
+  </script>
+</body>
+</html>

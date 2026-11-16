@@ -3,14 +3,16 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "StarkiT — WEAR YOUR WORLD. | Drop 01 Full Storefront, Lookbook & Vercel/Supabase COD API",
+  "description": "StarkiT — WEAR YOUR WORLD. | Drop 01 Full Storefront, Lookbook, Admin Dashboard & Vercel/Supabase COD API",
   "scripts": {
     "start": "npx serve .",
-    "check": "node --check assets/js/app.js && node --check api/orders.js",
+    "check": "node --check assets/js/app.js && node --check api/orders.js && node --check api/admin.js",
     "test": "npm run check && node verify_package.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.0"
+    "@supabase/supabase-js": "^2.57.0",
+    "animejs": "^4.5.0",
+    "three": "^0.187.0"
   },
   "engines": {
     "node": ">=20"
