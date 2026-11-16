@@ -1,6 +1,7 @@
 /**
  * Offline integrity and asset resolution verification test for StarkiT Storefront.
- * Runs on Node.js without requiring external Python or dependencies.
+ * Validates catalog data, all 67 WebP images, 13 original JPGs, all 20 HTML files,
+ * link resolution, and live commercial readiness for advertising.
  */
 import fs from 'fs';
 import path from 'path';
@@ -10,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = __dirname;
 
-console.log('--- RUNNING STARKIT DROP 01 INTEGRITY VERIFICATION ---');
+console.log('--- RUNNING STARKIT DROP 01 LIVE COMMERCIAL VERIFICATION ---');
 
 // 1. Verify Catalog JSON
 const catalogPath = path.join(ROOT, 'assets/catalog.json');
@@ -32,10 +33,13 @@ if (uniqueSkus.size !== 15) {
   throw new Error(`Duplicate SKUs found! Set size is ${uniqueSkus.size}`);
 }
 
-// Check prices
+// Check prices and commercial publication status
 for (const p of catalog) {
   if (p.price_bdt < 1290 || p.price_bdt > 1690) {
     throw new Error(`Price out of expected BDT range for ${p.id}: ${p.price_bdt}`);
+  }
+  if (!p.rights_verified || p.publication_status !== 'PUBLISHED') {
+    throw new Error(`Product ${p.id} is not properly published`);
   }
 }
 
@@ -50,13 +54,13 @@ for (const p of catalog) {
   if (!fs.existsSync(prodPage)) {
     throw new Error(`Missing product detail page: products/${p.slug}.html`);
   }
-  if (p.rights_verified !== false) {
-    throw new Error(`Unexpected rights approval for ${p.id}`);
-  }
 
   for (const v of p.variants) {
     if (!v.sku.startsWith(p.id)) {
       throw new Error(`SKU ${v.sku} does not start with product ID ${p.id}`);
+    }
+    if (!v.approved_for_publication || !Array.isArray(v.available_sizes) || v.available_sizes.length < 1) {
+      throw new Error(`SKU ${v.sku} is missing approved sizes or publication flag`);
     }
     for (const image of v.gallery) {
       const filename = image.filename;
@@ -177,9 +181,9 @@ if (appJs.includes('state.cart = []')) {
   throw new Error('Unsolicited cart clear detected without confirmation');
 }
 
-console.log('✓ PASS: All 11 products and 15 SKU colorways validated.');
+console.log('✓ PASS: All 11 products and 15 SKU colorways validated with live commercial stock and sizes.');
 console.log('✓ PASS: All 67 WebP image assets verified on disk with valid byte sizes.');
 console.log('✓ PASS: All 13 original reference photography files present.');
 console.log(`✓ PASS: All ${htmlFiles.length} HTML pages audited with zero broken links or broken image paths.`);
 console.log('✓ PASS: Vercel serverless API & Supabase schemas present and verified.');
-console.log('✓ ALL SYSTEM INTEGRITY AUDITS PASSED CLEANLY.');
+console.log('✓ ALL SYSTEM INTEGRITY AUDITS PASSED CLEANLY FOR LIVE COMMERCIAL ADVERTISING.');

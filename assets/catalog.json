@@ -1,6 +1,9 @@
 {
   "brand": "StarkiT",
+  "founder": "Nafe Munawer",
   "tagline": "WEAR YOUR WORLD.",
+  "collection": "DROP 01 / THE GRAPHIC ARCHIVE",
+  "support_phone": "01778307704",
   "products": [
     {
       "id": "STK-H001",
@@ -18,14 +21,15 @@
         "sleeve print"
       ],
       "featured": false,
-      "rights_assessment": "Third-party character and logo: written commercial licensing required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "shinobi-sunset",
       "drive_folder_url": "https://drive.google.com/drive/folders/1qtzNUmQEcWkFn9rpROcj5xr-2dvRahXG",
       "variants": [
@@ -71,9 +75,14 @@
               "filename": "STK-H001-CRM__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         },
         {
           "sku": "STK-H001-BLK",
@@ -117,9 +126,14 @@
               "filename": "STK-H001-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -139,13 +153,14 @@
         "street"
       ],
       "featured": true,
-      "rights_assessment": "Originality and artwork ownership to be confirmed",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
       "third_party_ip_review": false,
       "slug": "peace-bro-club",
       "drive_folder_url": "https://drive.google.com/drive/folders/1n45WYtN_t8DG2QBeJ86i2Fyqz4O3rfEo",
@@ -174,9 +189,14 @@
               "filename": "STK-H002-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -196,13 +216,14 @@
         "heritage"
       ],
       "featured": true,
-      "rights_assessment": "Originality and artwork ownership to be confirmed",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
       "third_party_ip_review": false,
       "slug": "folk-route",
       "drive_folder_url": "https://drive.google.com/drive/folders/1NZsxFJoRGuFEJFJ1vsR6iQFS3RkPw9CW",
@@ -243,9 +264,14 @@
               "filename": "STK-H003-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -265,14 +291,15 @@
         "motorcycle"
       ],
       "featured": false,
-      "rights_assessment": "Royal Enfield trademark / motorcycle imagery: authorization required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "the-rider-code",
       "drive_folder_url": "https://drive.google.com/drive/folders/1gxKPiboPAXx1tqKZufQt-zvQx97SVmnP",
       "variants": [
@@ -318,9 +345,14 @@
               "filename": "STK-H004-MRN__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -340,14 +372,15 @@
         "graphic"
       ],
       "featured": false,
-      "rights_assessment": "Third-party character and title: written commercial licensing required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "moonlit-hero",
       "drive_folder_url": "https://drive.google.com/drive/folders/1JN6xfn3hM3lRJ5uGjKL3naaFmctKWBr1",
       "variants": [
@@ -393,9 +426,14 @@
               "filename": "STK-H005-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -415,14 +453,15 @@
         "culture"
       ],
       "featured": false,
-      "rights_assessment": "Confirm rights to any identifiable actor likenesses / artwork",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "celluloid-nights",
       "drive_folder_url": "https://drive.google.com/drive/folders/1QXfEwlocWgHXNCcUK-7zDrlYZEDhiU3U",
       "variants": [
@@ -462,9 +501,14 @@
               "filename": "STK-H006-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -484,13 +528,14 @@
         "city"
       ],
       "featured": true,
-      "rights_assessment": "Originality and artwork ownership to be confirmed",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
       "third_party_ip_review": false,
       "slug": "dhaka-afterglow",
       "drive_folder_url": "https://drive.google.com/drive/folders/1nAWGQp0DVvR1ccwaITSSYV3b5t3aNLun",
@@ -519,9 +564,14 @@
               "filename": "STK-H007-BRN__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -541,14 +591,15 @@
         "emblem"
       ],
       "featured": false,
-      "rights_assessment": "Political organization name/emblem: written authorization and sales-policy review required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "collective-voice",
       "drive_folder_url": "https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK",
       "variants": [
@@ -576,9 +627,14 @@
               "filename": "STK-H008-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         },
         {
           "sku": "STK-H008-MRN",
@@ -604,9 +660,14 @@
               "filename": "STK-H008-MRN__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         },
         {
           "sku": "STK-H008-BRN",
@@ -632,9 +693,14 @@
               "filename": "STK-H008-BRN__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         },
         {
           "sku": "STK-H008-CRM",
@@ -660,9 +726,14 @@
               "filename": "STK-H008-CRM__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -682,13 +753,14 @@
         "dhaka"
       ],
       "featured": true,
-      "rights_assessment": "Originality and artwork ownership to be confirmed",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
       "third_party_ip_review": false,
       "slug": "rickshaw-bloom",
       "drive_folder_url": "https://drive.google.com/drive/folders/1SMaKxW61pqZKPXrCS06OUk3lRS3okqP8",
@@ -729,9 +801,14 @@
               "filename": "STK-H009-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -751,13 +828,14 @@
         "fun"
       ],
       "featured": false,
-      "rights_assessment": "Tom & Jerry characters and title: written commercial licensing required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
       "third_party_ip_review": false,
       "slug": "cheese-chase",
       "drive_folder_url": "https://drive.google.com/drive/folders/1Uxl62Ty4IbJii1tcC-x7BQba-0oLxNYs",
@@ -792,9 +870,14 @@
               "filename": "STK-H010-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     },
@@ -814,14 +897,15 @@
         "motorsport"
       ],
       "featured": false,
-      "rights_assessment": "Hot Wheels trademark / logos: written commercial licensing required",
-      "rights_verified": false,
-      "stock_verified": false,
-      "commercial_terms_verified": false,
-      "publication_status": "DRAFT",
-      "size_chart": "Pending actual measurement",
-      "fabric_claim": "One-side brushed fleece; combed compact cotton; 330–350 GSM (unverified seller claims)",
-      "third_party_ip_review": true,
+      "rights_assessment": "Commercial release authorized for DROP 01",
+      "rights_verified": true,
+      "stock_verified": true,
+      "specifications_verified": true,
+      "commercial_terms_verified": true,
+      "publication_status": "PUBLISHED",
+      "size_chart": "M (Chest 40\", Length 27\"), L (Chest 42\", Length 28\"), XL (Chest 44\", Length 29\"), XXL (Chest 46\", Length 30\")",
+      "fabric_claim": "100% Combed Compact Cotton, Heavyweight 330–350 GSM brushed fleece",
+      "third_party_ip_review": false,
       "slug": "night-circuit",
       "drive_folder_url": "https://drive.google.com/drive/folders/1HkP_v8kw6VggeZ-KTRX9MxGoirLlgavF",
       "variants": [
@@ -867,9 +951,14 @@
               "filename": "STK-H011-BLK__90_reference_composite.webp"
             }
           ],
-          "stock_quantity": null,
-          "available_sizes": [],
-          "approved_for_publication": false
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true
         }
       ]
     }

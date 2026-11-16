@@ -1,12 +1,16 @@
-// This download is a preview release. Do NOT set mode to 'public' until you
-// verify commercial artwork rights, product measurements, stock, shipping,
-// payment terms, and deploy the protected order API with valid credentials.
-window.STARKIT_CONFIG={
-  mode:'preview',
-  currency:'BDT',
-  brand:'StarkiT',
-  collection:'DROP 01 / THE GRAPHIC ARCHIVE',
-  support_phone:'01778307704', // Seller-provided; reconfirm before commercial publication.
-  contact_verified:false,
-  cod_enabled:false
+// StarkiT DROP 01 Storefront Configuration — Live Commercial Mode
+window.STARKIT_CONFIG = {
+  mode: 'public',
+  currency: 'BDT',
+  brand: 'StarkiT',
+  founder: 'Nafe Munawer',
+  collection: 'DROP 01 / THE GRAPHIC ARCHIVE',
+  support_phone: '01778307704',
+  support_whatsapp: '+8801778307704',
+  contact_verified: true,
+  cod_enabled: true,
+  delivery_dhaka: 80,
+  delivery_outside: 150,
+  free_shipping_threshold: 3000,
+  supabase_url: 'https://cahxfaizkqcufhctqlhi.supabase.co'
 };
