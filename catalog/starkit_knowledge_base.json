@@ -1,0 +1,754 @@
+{
+  "brand": {
+    "name": "StarkiT",
+    "arabic_mark": "ستاركيت",
+    "tagline": "WEAR YOUR WORLD.",
+    "founder": "Nafe Munawer",
+    "headquarters": "Dhaka, Bangladesh",
+    "core_values": [
+      "Community",
+      "Style",
+      "Authenticity"
+    ],
+    "primary_colors": {
+      "jet_black": "#170000",
+      "pure_white": "#FFFFFF",
+      "brand_maroon": "#5B1A24",
+      "champagne_gold": "#c5a880"
+    },
+    "typography": {
+      "primary_latin": "Afacad Flux",
+      "primary_bengali": "Hind Siliguri",
+      "primary_arabic": "Amiri"
+    }
+  },
+  "garment_specifications": {
+    "silhouette": "Relaxed Urban Streetwear Fit",
+    "fabric": "Heavyweight 330–350 GSM combed compact cotton fleece",
+    "interior": "Soft brushed interior thermal lining",
+    "construction": "Ribbed cuffs & hem, double-needle reinforced stitching, deep double-lined hood",
+    "size_guide": {
+      "M": {
+        "chest_inches": 40,
+        "length_inches": 27
+      },
+      "L": {
+        "chest_inches": 42,
+        "length_inches": 28
+      },
+      "XL": {
+        "chest_inches": 44,
+        "length_inches": 29
+      },
+      "XXL": {
+        "chest_inches": 46,
+        "length_inches": 30
+      }
+    }
+  },
+  "commercial_policies": {
+    "payment": "100% Cash on Delivery (COD) across all 64 districts of Bangladesh with parcel inspection at doorstep",
+    "shipping": {
+      "inside_dhaka_bdt": 80,
+      "inside_dhaka_timeline": "2–3 Business Days",
+      "outside_dhaka_bdt": 150,
+      "outside_dhaka_timeline": "3–5 Business Days",
+      "free_shipping_threshold_bdt": 3000
+    },
+    "return_exchange": "7-day hassle-free size exchange guarantee with preserved garment tags",
+    "support_phone": "01778307704",
+    "whatsapp_ordering": "https://wa.me/8801778307704"
+  },
+  "collection_architecture": {
+    "drop_01": {
+      "name": "DROP 01 — THE GRAPHIC ARCHIVE",
+      "parent_designs": 11,
+      "target_colorways_per_design": 4,
+      "total_planned_slots": 44,
+      "documented_verified_colorways": 15,
+      "provisional_in_development_colorways": 29,
+      "verified_media_assets": 67
+    },
+    "drop_02": {
+      "name": "DROP 02 — ARTISAN ACCENTS & JEWELRY",
+      "brand": "Fariza's Territory",
+      "categories": [
+        "Heritage Jewelry",
+        "Wooden & Lacquer Mirrors",
+        "Bangles & Accents"
+      ],
+      "total_handcrafted_skus": 35
+    }
+  },
+  "designs": [
+    {
+      "id": "STK-H001",
+      "name": "SHINOBI SUNSET",
+      "category": "Anime Archive",
+      "price_bdt": 1590,
+      "copy_en": "Bold Japanese-inspired storytelling meets a dramatic crimson-sun composition.",
+      "copy_bn": "ক্রিমসন সান, শক্তিশালী ব্যাক আর্ট ও স্লিভ ডিটেইলে স্টেটমেন্ট লুক।",
+      "variants": [
+        {
+          "slot_id": "STK-H001-C01",
+          "sku": "STK-H001-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 6
+        },
+        {
+          "slot_id": "STK-H001-C02",
+          "sku": "STK-H001-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 6
+        },
+        {
+          "slot_id": "STK-H001-C03",
+          "sku": "STK-H001-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H001-C04",
+          "sku": "STK-H001-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H002",
+      "name": "PEACE BRO CLUB",
+      "category": "Playful Street",
+      "price_bdt": 1290,
+      "copy_en": "A laid-back graphic with unmistakable street energy.",
+      "copy_bn": "অল-ব্ল্যাক বেসে প্লেফুল ক্যাট আর্ট—ক্যাজুয়াল ডেইলি স্টাইলের জন্য।",
+      "variants": [
+        {
+          "slot_id": "STK-H002-C01",
+          "sku": "STK-H002-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        },
+        {
+          "slot_id": "STK-H002-C02",
+          "sku": "STK-H002-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H002-C03",
+          "sku": "STK-H002-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H002-C04",
+          "sku": "STK-H002-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H003",
+      "name": "FOLK ROUTE",
+      "category": "Bangla Heritage",
+      "price_bdt": 1390,
+      "copy_en": "Local roots reinterpreted through modern street aesthetics.",
+      "copy_bn": "বাংলার ফোক মোটিফ ও আরবান কম্পোজিশনের মেলবন্ধন।",
+      "variants": [
+        {
+          "slot_id": "STK-H003-C01",
+          "sku": "STK-H003-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 5
+        },
+        {
+          "slot_id": "STK-H003-C02",
+          "sku": "STK-H003-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H003-C03",
+          "sku": "STK-H003-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H003-C04",
+          "sku": "STK-H003-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H004",
+      "name": "THE RIDER CODE",
+      "category": "Moto Culture",
+      "price_bdt": 1690,
+      "copy_en": "Inspired by cafe racer culture and open highway freedom.",
+      "copy_bn": "ক্যাফে রেসার ড্রাইভ এবং হাইওয়ের উন্মুক্ত রোমাঞ্চ।",
+      "variants": [
+        {
+          "slot_id": "STK-H004-C01",
+          "sku": "STK-H004-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H004-C02",
+          "sku": "STK-H004-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H004-C03",
+          "sku": "STK-H004-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 6
+        },
+        {
+          "slot_id": "STK-H004-C04",
+          "sku": "STK-H004-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H005",
+      "name": "MOONLIT HERO",
+      "category": "Anime Archive",
+      "price_bdt": 1590,
+      "copy_en": "Moody monochrome artwork capturing nocturnal adrenaline.",
+      "copy_bn": "রাতের শহর ও চাঁদের আলোয় অ্যাকশন এস্থেটিক।",
+      "variants": [
+        {
+          "slot_id": "STK-H005-C01",
+          "sku": "STK-H005-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 6
+        },
+        {
+          "slot_id": "STK-H005-C02",
+          "sku": "STK-H005-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H005-C03",
+          "sku": "STK-H005-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H005-C04",
+          "sku": "STK-H005-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H006",
+      "name": "CELLULOID NIGHTS",
+      "category": "Bangla Heritage",
+      "price_bdt": 1490,
+      "copy_en": "A tribute to the golden era of vintage cinema graphics.",
+      "copy_bn": "রেট্রো সিনেমা পোস্টার আর সোনালী সেলুলয়েডের স্মৃতি।",
+      "variants": [
+        {
+          "slot_id": "STK-H006-C01",
+          "sku": "STK-H006-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 5
+        },
+        {
+          "slot_id": "STK-H006-C02",
+          "sku": "STK-H006-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H006-C03",
+          "sku": "STK-H006-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H006-C04",
+          "sku": "STK-H006-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H007",
+      "name": "DHAKA AFTERGLOW",
+      "category": "City Stories",
+      "price_bdt": 1490,
+      "copy_en": "City sunset tones against raw architectural lines.",
+      "copy_bn": "ঢাকার সূর্যাস্ত ও মেগাসিটির নিওন আলো।",
+      "variants": [
+        {
+          "slot_id": "STK-H007-C01",
+          "sku": "STK-H007-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H007-C02",
+          "sku": "STK-H007-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H007-C03",
+          "sku": "STK-H007-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H007-C04",
+          "sku": "STK-H007-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        }
+      ]
+    },
+    {
+      "id": "STK-H008",
+      "name": "COLLECTIVE VOICE",
+      "category": "Statement Graphics",
+      "price_bdt": 1390,
+      "copy_en": "Typographic movement celebrating unity and expression.",
+      "copy_bn": "ঐক্য ও স্বকীয়তার সাহসী টাইপোগ্রাফিক স্টেটমেন্ট।",
+      "variants": [
+        {
+          "slot_id": "STK-H008-C01",
+          "sku": "STK-H008-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        },
+        {
+          "slot_id": "STK-H008-C02",
+          "sku": "STK-H008-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        },
+        {
+          "slot_id": "STK-H008-C03",
+          "sku": "STK-H008-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        },
+        {
+          "slot_id": "STK-H008-C04",
+          "sku": "STK-H008-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 3
+        }
+      ]
+    },
+    {
+      "id": "STK-H009",
+      "name": "RICKSHAW BLOOM",
+      "category": "Bangla Heritage",
+      "price_bdt": 1490,
+      "copy_en": "Vibrant rickshaw enamel floristry reimagined as wearable street art.",
+      "copy_bn": "রিকশা পেইন্টিংয়ের জীবন্ত ফুলের নকশা আধুনিক পোশাকে।",
+      "variants": [
+        {
+          "slot_id": "STK-H009-C01",
+          "sku": "STK-H009-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 5
+        },
+        {
+          "slot_id": "STK-H009-C02",
+          "sku": "STK-H009-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H009-C03",
+          "sku": "STK-H009-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H009-C04",
+          "sku": "STK-H009-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H010",
+      "name": "CHEESE CHASE",
+      "category": "Playful Street",
+      "price_bdt": 1390,
+      "copy_en": "Dynamic chase sequence rendered in bold cartoon linework.",
+      "copy_bn": "নস্টালজিক ক্যাট-অ্যান্ড-মাউস চেজ গ্রাফিক্স।",
+      "variants": [
+        {
+          "slot_id": "STK-H010-C01",
+          "sku": "STK-H010-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 4
+        },
+        {
+          "slot_id": "STK-H010-C02",
+          "sku": "STK-H010-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H010-C03",
+          "sku": "STK-H010-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H010-C04",
+          "sku": "STK-H010-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H011",
+      "name": "NIGHT CIRCUIT",
+      "category": "Moto Culture",
+      "price_bdt": 1590,
+      "copy_en": "Drift racing typography and mechanical blueprint elements.",
+      "copy_bn": "নাইট রেসিং সার্কিট ও মেকানিক্যাল ব্লুপ্রিন্ট।",
+      "variants": [
+        {
+          "slot_id": "STK-H011-C01",
+          "sku": "STK-H011-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "DOCUMENTED",
+          "stock_quantity": 50,
+          "available_sizes": [
+            "M",
+            "L",
+            "XL",
+            "XXL"
+          ],
+          "approved_for_publication": true,
+          "media_count": 6
+        },
+        {
+          "slot_id": "STK-H011-C02",
+          "sku": "STK-H011-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H011-C03",
+          "sku": "STK-H011-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H011-C04",
+          "sku": "STK-H011-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    }
+  ]
+}

@@ -13,7 +13,9 @@ for (const p of CATALOG) {
     SKU_CATALOG.set(v.sku, {
       product_name: p.name,
       color: v.color,
-      price_bdt: p.price_bdt
+      price_bdt: p.price_bdt,
+      status: v.status || (v.sku && v.sku.startsWith('STK-') && !v.gallery?.length ? 'PROVISIONAL' : 'DOCUMENTED'),
+      approved_for_publication: v.approved_for_publication === true
     });
   }
 }
@@ -193,6 +195,17 @@ export default async function handler(req, res) {
     ) {
       return json(res, 400, { error: 'An item has an invalid SKU, size, or quantity.' });
     }
+
+    const skuMeta = SKU_CATALOG.get(i.sku);
+    if (!skuMeta) {
+      return json(res, 400, { error: `SKU ${i.sku} was not found in the verified store catalog.` });
+    }
+    if (skuMeta.status === 'PROVISIONAL' || !skuMeta.approved_for_publication) {
+      return json(res, 400, {
+        error: `SKU ${i.sku} (${skuMeta.product_name} · ${skuMeta.color}) is currently in development and awaiting physical sample verification. It cannot be purchased at this time.`
+      });
+    }
+
     quantityTotal += i.quantity;
     rows.push({ sku: i.sku, size: i.size, quantity: i.quantity });
   }

@@ -1,0 +1,1782 @@
+[
+  {
+    "id": "FT-HM-001",
+    "name": "LAVENDER ROSE MIRROR",
+    "bengali_name": "ল্যাভেন্ডার রোজ হ্যান্ডমেড মিরর",
+    "category": "Artisan Accessories",
+    "collection": "Decorative Mirrors",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "FLORAL ELEGANCE IN DHAKA",
+    "price_bdt": 499,
+    "copy_en": "An ornate round mirror with petal-inspired detailing, made expressive through its signature lavender and rose red color combination.",
+    "copy_bn": "নরম ল্যাভেন্ডার ও রোজ রেডের আকর্ষণীয় সমন্বয়। ফুলের পাপড়ির মতো নকশা করা গোল ফ্রেমটি ব্যক্তিগত ডেকর ও উপহারের জন্য একটি সুন্দর পছন্দ।",
+    "front_back_detail": "Handcrafted Floral Frame · 5-6\" Diameter",
+    "tags": [
+      "mirror",
+      "artisan",
+      "lavender",
+      "rose",
+      "home-decor",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches with wooden/board frame",
+    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay, protective back finish",
+    "third_party_ip_review": false,
+    "slug": "ft-hm-001-lavender-rose-mirror",
+    "variants": [
+      {
+        "sku": "FT-HM-001",
+        "color": "Lavender / Rose Red",
+        "hex": "#8e6b99",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-HM-001.jpg",
+            "filename": "FT-HM-001.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "Standard"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-HM-002",
+    "name": "GOLDEN MARIGOLD MIRROR",
+    "bengali_name": "গোল্ডেন ম্যারিগোল্ড হ্যান্ডমেড মিরর",
+    "category": "Artisan Accessories",
+    "collection": "Decorative Mirrors",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "SUNSHINE IN EVERY STITCH",
+    "price_bdt": 499,
+    "copy_en": "An ornate round mirror with petal-inspired detailing, made expressive through its bold marigold yellow and royal blue contrast.",
+    "copy_bn": "সূর্যমুখী হলুদ আর রয়্যাল ব্লুর নজরকাড়া কনট্রাস্ট। উজ্জ্বল এই ভ্যারিয়েন্টটি রঙিন সাজসজ্জা ও প্রাণবন্ত গিফটের জন্য মানানসই।",
+    "front_back_detail": "Layered Petal Frame · 5-6\" Diameter",
+    "tags": [
+      "mirror",
+      "artisan",
+      "marigold",
+      "yellow",
+      "blue",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches with wooden/board frame",
+    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "third_party_ip_review": false,
+    "slug": "ft-hm-002-golden-marigold-mirror",
+    "variants": [
+      {
+        "sku": "FT-HM-002",
+        "color": "Marigold Yellow / Blue",
+        "hex": "#eab308",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-HM-002.jpg",
+            "filename": "FT-HM-002.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "Standard"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-HM-003",
+    "name": "CRIMSON HERITAGE MIRROR",
+    "bengali_name": "ক্রিমসন হেরিটেজ হ্যান্ডমেড মিরর",
+    "category": "Artisan Accessories",
+    "collection": "Decorative Mirrors",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "DHAKA ARTISAN TIMELESS REFLECTION",
+    "price_bdt": 499,
+    "copy_en": "Crimson red, deep blue and natural gold accents come together in a traditional heritage-inspired motif frame.",
+    "copy_bn": "ক্রিমসন রেড, ডিপ ব্লু ও উষ্ণ নকশার সমন্বয়ে তৈরি একটি প্রাণবন্ত লুক। ঐতিহ্যবাহী মোটিফের অনুপ্রেরণায় সাজানো আয়না।",
+    "front_back_detail": "Crimson & Navy Woodwork · 5-6\" Diameter",
+    "tags": [
+      "mirror",
+      "artisan",
+      "crimson",
+      "heritage",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
+    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "third_party_ip_review": false,
+    "slug": "ft-hm-003-crimson-heritage-mirror",
+    "variants": [
+      {
+        "sku": "FT-HM-003",
+        "color": "Crimson Red / Navy",
+        "hex": "#b91c1c",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-HM-003.jpg",
+            "filename": "FT-HM-003.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "Standard"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-HM-004",
+    "name": "ROYAL PLUM MIRROR",
+    "bengali_name": "রয়্যাল প্লাম হ্যান্ডমেড মিরর",
+    "category": "Artisan Accessories",
+    "collection": "Decorative Mirrors",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "MONOCHROMATIC ARISTOCRACY",
+    "price_bdt": 499,
+    "copy_en": "Deep plum and lavender purple monochrome appeal with intricate layered petal craftsmanship for minimalist luxury.",
+    "copy_bn": "গাঢ় প্লাম-পার্পল রঙের মনোক্রোম আবেদন আর কারুকাজ করা পাপড়ি-নকশা। মিনিমাল কিন্তু অভিজাত সাজসজ্জার জন্য পরিশীলিত।",
+    "front_back_detail": "Deep Plum Cutwork · 5-6\" Diameter",
+    "tags": [
+      "mirror",
+      "artisan",
+      "plum",
+      "purple",
+      "royal",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
+    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "third_party_ip_review": false,
+    "slug": "ft-hm-004-royal-plum-mirror",
+    "variants": [
+      {
+        "sku": "FT-HM-004",
+        "color": "Deep Plum / Lavender",
+        "hex": "#581c87",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-HM-004.jpg",
+            "filename": "FT-HM-004.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "Standard"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-HM-005",
+    "name": "TEAL BLOOM MIRROR",
+    "bengali_name": "টিল ব্লুম হ্যান্ডমেড মিরর",
+    "category": "Artisan Accessories",
+    "collection": "Decorative Mirrors",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "EARTHY COASTAL BOTANICALS",
+    "price_bdt": 499,
+    "copy_en": "Deep teal and golden yellow warm fusion on natural earthy tones, lending this round mirror an unmistakable artisan finish.",
+    "copy_bn": "ডিপ টিল ও গোল্ডেন ইয়েলোর উষ্ণ সংমিশ্রণ। ন্যাচারাল টোনের কারুকাজ এই গোল আয়নাটিকে দেয় অনন্য লুক।",
+    "front_back_detail": "Deep Teal & Ochre · 5-6\" Diameter",
+    "tags": [
+      "mirror",
+      "artisan",
+      "teal",
+      "bloom",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
+    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "third_party_ip_review": false,
+    "slug": "ft-hm-005-teal-bloom-mirror",
+    "variants": [
+      {
+        "sku": "FT-HM-005",
+        "color": "Deep Teal / Gold",
+        "hex": "#0f766e",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-HM-005.jpg",
+            "filename": "FT-HM-005.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "Standard"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-001",
+    "name": "INDIGO FOLK RELIEF SET",
+    "bengali_name": "ইন্ডিগো ফোক রিলিফ জুয়েলারি সেট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "HERITAGE BLUEPRINT CARVED LOOK",
+    "price_bdt": 699,
+    "copy_en": "Blue-on-blue carved-look rectangular pieces give this arrangement a graphic, heritage-inspired appeal with matching earrings.",
+    "copy_bn": "গাঢ় নীল ফ্রেম, উজ্জ্বল নীল লোকজ মোটিফ এবং নীল পুঁতির সমন্বয়ে তৈরি নজরকাড়া একটি ডিজাইন। সেটসহ প্রাপ্তব্য।",
+    "front_back_detail": "Necklace + Matching Earring Set",
+    "tags": [
+      "jewelry",
+      "necklace",
+      "indigo",
+      "folk",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Adjustable cord length (16\"–28\"), lightweight pendant",
+    "fabric_claim": "Handcrafted clay/wood relief panels, spun thread cord, glazed beads",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-001-indigo-folk-relief-set",
+    "variants": [
+      {
+        "sku": "FT-JWL-001",
+        "color": "Indigo Navy / Cobalt",
+        "hex": "#1e3a8a",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-001.jpg",
+            "filename": "FT-JWL-001.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-002",
+    "name": "SAFFRON FOLK RELIEF SET",
+    "bengali_name": "স্যাফরন ফোক রিলিফ জুয়েলারি সেট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "WARM EARTHEN FESTIVITY",
+    "price_bdt": 649,
+    "copy_en": "Burnt-orange and ochre tones bring an earthy festive energy to this geometric folk motif necklace and its two coordinating pieces.",
+    "copy_bn": "কমলা, গেরুয়া ও সোনালি আভায় লোকজ নকশার উষ্ণ উপস্থিতি। মূল পেন্ড্যান্টের সঙ্গে দুটি ম্যাচিং পিস।",
+    "front_back_detail": "Twin Raised Panels + Matching Ear Pieces",
+    "tags": [
+      "jewelry",
+      "saffron",
+      "ochre",
+      "folk",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Adjustable beaded cord length (16\"–26\") with wooden beads",
+    "fabric_claim": "Handcrafted relief panel, terracotta-toned wooden beads, durable woven cord",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-002-saffron-folk-relief-set",
+    "variants": [
+      {
+        "sku": "FT-JWL-002",
+        "color": "Saffron / Burnt Orange",
+        "hex": "#ea580c",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-002.jpg",
+            "filename": "FT-JWL-002.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-003",
+    "name": "WILDFLOWER BOUQUET PENDANT",
+    "bengali_name": "ওয়াইল্ডফ্লাওয়ার বুকে পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "CRAFT-FORWARD FLORAL BURST",
+    "price_bdt": 349,
+    "copy_en": "A playful bouquet of painted floral shapes, layered leaves and a vibrant red braided cord creates an unmistakable artisanal statement.",
+    "copy_bn": "রঙিন ফুল ও সবুজ পাতার স্তরবিন্যাসে ফুটে উঠেছে প্রাণবন্ত একটি বুকে। লাল পাকানো কর্ড ও রঙিন পুঁতির ডিজাইন।",
+    "front_back_detail": "Layered Multicolor Cutout + Red Cord",
+    "tags": [
+      "jewelry",
+      "pendant",
+      "wildflower",
+      "floral",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Pendant length ~3.5\", adjustable cord ~24\"",
+    "fabric_claim": "Hand-painted wood/fiber art, cotton thread wrapping",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-003-wildflower-bouquet-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-003",
+        "color": "Yellow / Red / Green",
+        "hex": "#eab308",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-003.jpg",
+            "filename": "FT-JWL-003.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-004",
+    "name": "CRIMSON MANDALA PENDANT",
+    "bengali_name": "ক্রিমসন ম্যান্ডালা পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "SPIRITUAL CIRCLE OF DHAKA",
+    "price_bdt": 349,
+    "copy_en": "The round crimson medallion is filled with a bold folk-floral pattern, balanced by a strong emerald green cord and rainbow-like bead accents.",
+    "copy_bn": "গোলাকার লাল ম্যান্ডালা ডিজাইনে ফুলেল নকশা, সবুজ কর্ড এবং নানা রঙের ছোট পুঁতির প্রাণবন্ত মিলন।",
+    "front_back_detail": "Circular Floral Mandala + Green Cord",
+    "tags": [
+      "jewelry",
+      "mandala",
+      "crimson",
+      "green",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Medallion diameter ~2.8\", braided green cord ~26\"",
+    "fabric_claim": "Hand-painted wooden medallion, twisted silk thread cord",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-004-crimson-mandala-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-004",
+        "color": "Crimson / Emerald Green",
+        "hex": "#dc2626",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-004.jpg",
+            "filename": "FT-JWL-004.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-005",
+    "name": "CARNIVAL SUNFLOWER SET",
+    "bengali_name": "কার্নিভাল সানফ্লাওয়ার জুয়েলারি সেট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "KINETIC FESTIVE SYMPHONY",
+    "price_bdt": 699,
+    "copy_en": "A striking burst of vividly colored petals surrounds the textured red floral center; central pendant with two matching earrings included.",
+    "copy_bn": "হলুদ, নীল, সাদা, গোলাপি ও লাল পাপড়ির রঙিন বিস্ফোরণে তৈরি ফুলেল ডিজাইন। ম্যাচিং ইয়াররিংসহ পূর্ণ সেট।",
+    "front_back_detail": "Pendant Necklace + 2 Matching Earrings",
+    "tags": [
+      "jewelry",
+      "sunflower",
+      "carnival",
+      "earrings",
+      "set",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Main pendant ~3.5\" diameter, earrings ~1.5\" diameter",
+    "fabric_claim": "Handcrafted petal layers, metal hooks, wooden accents",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-005-carnival-sunflower-set",
+    "variants": [
+      {
+        "sku": "FT-JWL-005",
+        "color": "Multicolor / Sunflower",
+        "hex": "#f59e0b",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-005.jpg",
+            "filename": "FT-JWL-005.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-006",
+    "name": "SCARLET BLOSSOM PENDANT",
+    "bengali_name": "স্কারলেট ব্লসম পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "ORGANIC BOTANICAL SPIRAL",
+    "price_bdt": 349,
+    "copy_en": "A bold scarlet flower with green leaves and a delicate spiral center adds an artisanal accent to any contemporary or ethnic outfit.",
+    "copy_bn": "পাঁচটি লাল পাপড়ি, সবুজ পাতার ডিটেইলস এবং মাঝের সর্পিল নকশায় তৈরি ফুলেল পেন্ড্যান্ট।",
+    "front_back_detail": "Five-Petal Red Blossom + Segmented Beads",
+    "tags": [
+      "jewelry",
+      "scarlet",
+      "blossom",
+      "floral",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Flower diameter ~3.2\", cord length ~24\"",
+    "fabric_claim": "Hand-painted wood/fiber, glossy varnish coat",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-006-scarlet-blossom-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-006",
+        "color": "Scarlet Red / Emerald",
+        "hex": "#e11d48",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-006.jpg",
+            "filename": "FT-JWL-006.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-007",
+    "name": "PAISLEY FOLK DROP",
+    "bengali_name": "পেইসলি ফোক ড্রপ পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "BENGALI KALKA REIMAGINED",
+    "price_bdt": 399,
+    "copy_en": "A large teardrop pendant celebrates folk ornamentation through rhythmic painted swirls, geometric borders and jewel-toned highlights.",
+    "copy_bn": "বড় টিয়ারড্রপ আকৃতিতে একের পর এক রঙিন লোকজ নকশা ও জ্যামিতিক বর্ডার। উজ্জ্বল লাল কর্ড নকশার গভীরতা বাড়িয়েছে।",
+    "front_back_detail": "Oversized Teardrop / Kalka · Dense Folk Art",
+    "tags": [
+      "jewelry",
+      "paisley",
+      "kalka",
+      "folk-art",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Teardrop pendant ~4\" length, twisted rope cord ~28\"",
+    "fabric_claim": "Hand-painted wooden cutout base, textured acrylic detail",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-007-paisley-folk-drop",
+    "variants": [
+      {
+        "sku": "FT-JWL-007",
+        "color": "Brick Red / Jewel Tones",
+        "hex": "#c2410c",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-007.jpg",
+            "filename": "FT-JWL-007.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-008",
+    "name": "GOLDEN JASMINE GARLAND",
+    "bengali_name": "গোল্ডেন জ্যাসমিন গারল্যান্ড পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "FLORAL MALAR SHOHOR",
+    "price_bdt": 349,
+    "copy_en": "A cheerful row of yellow blooms with white centers evokes a floral garland and pairs naturally with light summer and festive styling.",
+    "copy_bn": "হলুদ ফুলের সারি, সাদা ফুলের কেন্দ্র এবং সবুজ পাতার সাজে নরম অথচ উজ্জ্বল একটি গারল্যান্ড-লুক পেন্ড্যান্ট।",
+    "front_back_detail": "Linked Yellow Blooms + Green Bead Strand",
+    "tags": [
+      "jewelry",
+      "jasmine",
+      "garland",
+      "yellow",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Garland arch width ~4.5\", cord ~24\"",
+    "fabric_claim": "Hand-cut lightweight board/wood, satin thread beads",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-008-golden-jasmine-garland",
+    "variants": [
+      {
+        "sku": "FT-JWL-008",
+        "color": "Sunshine Yellow / White",
+        "hex": "#facc15",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-008.jpg",
+            "filename": "FT-JWL-008.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-009",
+    "name": "RUBY SUNBURST PENDANT",
+    "bengali_name": "রুবি সানবার্স্ট পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "CELESTIAL RADIANCE",
+    "price_bdt": 329,
+    "copy_en": "The open-cut starburst silhouette and dotted golden highlights give this pendant a striking artisanal, festive finish.",
+    "copy_bn": "লালচে-ম্যাজেন্টা ওপেনওয়ার্ক সূর্যরশ্মির ডিজাইন, মাঝখানে হলুদ কেন্দ্র এবং পুঁতির ডিটেইলস।",
+    "front_back_detail": "Openwork Starburst Mandala + Pink Cord",
+    "tags": [
+      "jewelry",
+      "sunburst",
+      "ruby",
+      "mandala",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Diameter ~3\", cord length ~24\"",
+    "fabric_claim": "Hand-cut wooden starburst, pink/orange thread-wrapped beads",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-009-ruby-sunburst-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-009",
+        "color": "Ruby / Magenta / Gold",
+        "hex": "#be123c",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-009.jpg",
+            "filename": "FT-JWL-009.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-010",
+    "name": "HERITAGE RICKSHAW PENDANT",
+    "bengali_name": "হেরিটেজ রিকশা আর্ট পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "DHAKA STREET ART EMBLEM",
+    "price_bdt": 449,
+    "copy_en": "A miniature folk-art rickshaw scene brings a distinctly Bangladeshi cultural motif into an expressive handmade necklace with beaded cord.",
+    "copy_bn": "সবুজ আয়তাকার পেন্ড্যান্টে রঙিন রিকশার লোকশিল্পধর্মী নকশা—বাংলাদেশি ঐতিহ্যকে প্রকাশ করে এমন একটি নজরকাড়া অ্যাকসেসরি।",
+    "front_back_detail": "Miniature Painted Rickshaw Scene + Emerald Beads",
+    "tags": [
+      "jewelry",
+      "rickshaw",
+      "dhaka",
+      "bangla",
+      "heritage",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Rectangular pendant ~3\" x 2.2\", cord ~26\"",
+    "fabric_claim": "Hand-painted wooden canvas, textured thread embroidery border",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-010-heritage-rickshaw-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-010",
+        "color": "Forest Green / Rickshaw Art",
+        "hex": "#166534",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-010.jpg",
+            "filename": "FT-JWL-010.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-011",
+    "name": "AZURE LACE SQUARE",
+    "bengali_name": "আজুর লেস স্কয়ার পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "DELICATE GEOMETRIC PURITY",
+    "price_bdt": 359,
+    "copy_en": "An airy white square border with blue floral accents offers a delicate geometric alternative to bold multicolor pieces.",
+    "copy_bn": "সাদা বর্গাকার ফ্রেমের চারপাশে আকাশি ফুলেল কাটওয়ার্ক এবং নীল-সাদা পুঁতির পরিচ্ছন্ন কম্বিনেশন।",
+    "front_back_detail": "Square Openwork Lace Frame + Sky Beads",
+    "tags": [
+      "jewelry",
+      "azure",
+      "lace",
+      "square",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Square ~2.8\" x 2.8\", beaded strand ~24\"",
+    "fabric_claim": "Laser-cut board with hand-applied acrylic lace finish",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-011-azure-lace-square",
+    "variants": [
+      {
+        "sku": "FT-JWL-011",
+        "color": "Ivory White / Sky Blue",
+        "hex": "#38bdf8",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-011.jpg",
+            "filename": "FT-JWL-011.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-012",
+    "name": "KALEIDO MIRROR BLOOM",
+    "bengali_name": "ক্যালাইডো মিরর ব্লুম পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "REFLECTIVE PRISM FLOWERS",
+    "price_bdt": 399,
+    "copy_en": "Tiny flower shapes create a kaleidoscopic frame around a shiny central reflective accent, paired with a long rainbow bead arrangement.",
+    "copy_bn": "ছোট ছোট রঙিন ফুলের চারপাশে একটি চকচকে কেন্দ্র এবং দীর্ঘ রঙিন পুঁতির স্ট্র্যান্ড।",
+    "front_back_detail": "Reflective Mini Mirror + Multicolor Surround",
+    "tags": [
+      "jewelry",
+      "kaleido",
+      "mirror",
+      "rainbow",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Round pendant ~2.7\" diameter, long bead necklace ~26\"",
+    "fabric_claim": "Hand-crafted clay flowers, glass mirror center, wooden beads",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-012-kaleido-mirror-bloom",
+    "variants": [
+      {
+        "sku": "FT-JWL-012",
+        "color": "Aqua / Rainbow Floral",
+        "hex": "#06b6d4",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-012.jpg",
+            "filename": "FT-JWL-012.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-013",
+    "name": "TURQUOISE PINWHEEL",
+    "bengali_name": "টারকোয়েজ পিনহুইল পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "CONTEMPORARY SUNRAY GEOMETRY",
+    "price_bdt": 389,
+    "copy_en": "The striking angular turquoise pinwheel delivers a contemporary graphic statement with subtle hand-finished golden outlines.",
+    "copy_bn": "টারকোয়েজ রঙের কৌণিক পিনহুইল মোটিফ, সোনালি বর্ডার এবং লাল-নীল পুঁতির মেলবন্ধনে আধুনিক ও শৈল্পিক নকশা।",
+    "front_back_detail": "Angular Pinwheel / Sunray + Gold Borders",
+    "tags": [
+      "jewelry",
+      "turquoise",
+      "pinwheel",
+      "geometric",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Pinwheel diameter ~3.2\", cord ~24\"",
+    "fabric_claim": "Hand-painted wood base with fine gilt detailing",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-013-turquoise-pinwheel",
+    "variants": [
+      {
+        "sku": "FT-JWL-013",
+        "color": "Turquoise / Gold",
+        "hex": "#14b8a6",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-013.jpg",
+            "filename": "FT-JWL-013.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-014",
+    "name": "VIOLET GARDEN MEDALLION",
+    "bengali_name": "ভায়োলেট গার্ডেন মেডেলিয়ন",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "ROMANTIC LILAC SOLITUDE",
+    "price_bdt": 379,
+    "copy_en": "Soft lilac blooms surround a rich violet ornamental frame, creating a quieter, romantic counterpoint to the brighter designs.",
+    "copy_bn": "গাঢ় বেগুনি ফ্রেমের চারপাশে হালকা লাইলাক ফুল এবং বেগুনি পুঁতির সমন্বয়ে কোমল ও মার্জিত পেন্ড্যান্ট।",
+    "front_back_detail": "Tiered Violet Frame + Lilac Floral Surround",
+    "tags": [
+      "jewelry",
+      "violet",
+      "lilac",
+      "garden",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Medallion ~3\" diameter, purple bead strand ~24\"",
+    "fabric_claim": "Hand-molded floral petals, satin finish paint",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-014-violet-garden-medallion",
+    "variants": [
+      {
+        "sku": "FT-JWL-014",
+        "color": "Violet / Lilac",
+        "hex": "#7c3aed",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-014.jpg",
+            "filename": "FT-JWL-014.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-015",
+    "name": "COCOA CROSSHATCH PENDANT",
+    "bengali_name": "কোকো ক্রসহ্যাচ পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "EARTHY ARCHED MINIMALISM",
+    "price_bdt": 299,
+    "copy_en": "Minimal brown-and-ivory graphic strokes turn a simple arched silhouette into an earthy, versatile accessory.",
+    "copy_bn": "বাদামি আর্চ আকৃতির পেন্ড্যান্টে সাদা ক্রস-হ্যাচ প্যাটার্ন এবং বাদামি-ক্রিম পুঁতির স্নিগ্ধ সমন্বয়।",
+    "front_back_detail": "Arched Brown Silhouette + White Crosshatch",
+    "tags": [
+      "jewelry",
+      "cocoa",
+      "crosshatch",
+      "minimal",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Arch ~3.2\" x 2.2\", natural wooden bead strand ~24\"",
+    "fabric_claim": "Solid wood plate, hand-drawn linework, natural lacquer",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-015-cocoa-crosshatch-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-015",
+        "color": "Cocoa Brown / Ivory",
+        "hex": "#78350f",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-015.jpg",
+            "filename": "FT-JWL-015.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-016",
+    "name": "SPRING LEAF PENDANT",
+    "bengali_name": "স্প্রিং লিফ আর্ট পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "BOTANICAL SPRING BREEZE",
+    "price_bdt": 329,
+    "copy_en": "A leaf-inspired silhouette is accented with fresh green veins and lively dots, giving the pendant a light botanical mood.",
+    "copy_bn": "সাদা পাতার আকৃতিতে সবুজ শিরা ও ছোট ছোট রঙিন বিন্দুর শৈল্পিক কাজ। নরম রঙের পুঁতিতে এসেছে সতেজ অনুভূতি।",
+    "front_back_detail": "Maple-Style Leaf Silhouette + Pastel Beads",
+    "tags": [
+      "jewelry",
+      "leaf",
+      "spring",
+      "botanical",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Leaf width ~3.4\", pastel bead cord ~24\"",
+    "fabric_claim": "Handcrafted cutout leaf base, acrylic detailing",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-016-spring-leaf-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-016",
+        "color": "Ivory White / Spring Green",
+        "hex": "#22c55e",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-016.jpg",
+            "filename": "FT-JWL-016.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-017",
+    "name": "MIDNIGHT SHELL FRINGE",
+    "bengali_name": "মিডনাইট শেল ফ্রিঞ্জ পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "NOIR MONOCHROME CHARMS",
+    "price_bdt": 379,
+    "copy_en": "A black triangular canvas and a single white flower create a striking contrast, finished with dangling white shell-like pieces.",
+    "copy_bn": "কালো ত্রিভুজাকৃতি পেন্ড্যান্টে সাদা ফুল এবং নিচে ঝুলন্ত সাদা শাঁসের মতো অলংকার। কালো-সাদার ক্লাসিক কনট্রাস্ট।",
+    "front_back_detail": "Inverted Triangle + Dangling Shell Charms",
+    "tags": [
+      "jewelry",
+      "shell",
+      "midnight",
+      "monochrome",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Triangle height ~3.5\" with shells, silver bead necklace ~26\"",
+    "fabric_claim": "Black textile/board triangle, natural shell charms, silver-tone beads",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-017-midnight-shell-fringe",
+    "variants": [
+      {
+        "sku": "FT-JWL-017",
+        "color": "Midnight Black / White Shells",
+        "hex": "#170000",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-017.jpg",
+            "filename": "FT-JWL-017.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-018",
+    "name": "AQUA DAISY BLOOM",
+    "bengali_name": "অ্যাকুয়া ডেইজি ব্লুম পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "CONTEMPORARY PAINTERLY FLOWER",
+    "price_bdt": 349,
+    "copy_en": "Painterly turquoise petals with green-tinted strokes lend this floral pendant a contemporary artsy appeal with spiral centerpiece.",
+    "copy_bn": "অ্যাকুয়া-টারকোয়েজ পাপড়ির ওপর সবুজ তুলির টান এবং মাঝখানে সর্পিল নকশায় তৈরি সতেজ ফুলেল পেন্ড্যান্ট।",
+    "front_back_detail": "Brush-Stroked Turquoise Petals + Spiral Core",
+    "tags": [
+      "jewelry",
+      "daisy",
+      "aqua",
+      "turquoise",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Flower diameter ~3.5\", adjustable black cord ~24\"",
+    "fabric_claim": "Wood cutout, artistic brush-painted finish",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-018-aqua-daisy-bloom",
+    "variants": [
+      {
+        "sku": "FT-JWL-018",
+        "color": "Aqua / Turquoise",
+        "hex": "#06b6d4",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-018.jpg",
+            "filename": "FT-JWL-018.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-JWL-019",
+    "name": "MARIGOLD SUNFLOWER PENDANT",
+    "bengali_name": "ম্যারিগোল্ড সানফ্লাওয়ার পেন্ড্যান্ট",
+    "category": "Artisan Accessories",
+    "collection": "Wearable Art",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "GOLDEN PETAL RADIANCE",
+    "price_bdt": 329,
+    "copy_en": "A joyful flower silhouette in sunny yellow, warm orange and cream makes this pendant an easy finishing touch for festive styling.",
+    "copy_bn": "হলুদ-সাদা ফুলের পাপড়িতে কমলা-লাল রঙের আভা। উজ্জ্বল পুঁতির সঙ্গে তৈরি হয়েছে আনন্দময় ফুলেল ডিজাইন।",
+    "front_back_detail": "Yellow-White Open Silhouette + Orange-Red Highlights",
+    "tags": [
+      "jewelry",
+      "marigold",
+      "sunflower",
+      "festive",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Flower ~3\" diameter, red/orange bead cord ~24\"",
+    "fabric_claim": "Handcrafted cutout flower, acrylic paint layer",
+    "third_party_ip_review": false,
+    "slug": "ft-jwl-019-marigold-sunflower-pendant",
+    "variants": [
+      {
+        "sku": "FT-JWL-019",
+        "color": "Marigold Yellow / Orange",
+        "hex": "#f59e0b",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-JWL-019.jpg",
+            "filename": "FT-JWL-019.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "One Size (Adjustable)"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-001",
+    "name": "PAINTED BANGLE HARMONY SELECTION",
+    "bengali_name": "রঙিন হ্যান্ড-পেইন্টেড চুড়ি",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "EVERYDAY DHAKA COLOR PALETTE",
+    "price_bdt": 219,
+    "copy_en": "An expressive selection of colorful motif-painted bangles that brightens everyday styling with floral and night-sky hand-painted art.",
+    "copy_bn": "ভিন্ন ভিন্ন রঙের হাতে আঁকা ফুল, পাতা ও রাতের আকাশের মোটিফ। একক বা সেট হিসেবে পড়ার উপযোগী।",
+    "front_back_detail": "Hand-Painted Wooden / Lacquer Bangle",
+    "tags": [
+      "bangle",
+      "painted",
+      "colorful",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Standard bangle sizes available: 2.4, 2.6, 2.8",
+    "fabric_claim": "Solid wood base, lacquer sealant, organic paint",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-001-painted-bangle-harmony-selection",
+    "variants": [
+      {
+        "sku": "FT-BA-001",
+        "color": "Assorted Hand-Painted",
+        "hex": "#3b82f6",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-001.jpg",
+            "filename": "FT-BA-001.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-002",
+    "name": "NOIR SILVER-TONE BEAD BANGLES",
+    "bengali_name": "নোয়ার সিলভার-টোন বিড চুড়ি (জোড়া)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "MONOCHROMATIC METALLIC STATEMENT",
+    "price_bdt": 479,
+    "copy_en": "Graphic black patterned bangles with metallic-looking bead trims. Pair of two statement bangles.",
+    "copy_bn": "কালো-স্যান্ড প্যাটার্নের সঙ্গে সিলভার-টোন পুঁতির সারি। একরঙা শাড়ি, কুর্তি বা সন্ধ্যার সাজে নজরকাড়া কনট্রাস্ট। ২ পিস জোড়া।",
+    "front_back_detail": "Pair of 2 Metallic Bead Trimmed Bangles",
+    "tags": [
+      "bangle",
+      "noir",
+      "silver",
+      "metallic",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8 (inner diameter ~2.25\" - 2.5\")",
+    "fabric_claim": "Fabric-wrapped rigid core, silver-finish metallic beads",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-002-noir-silver-tone-bead-bangles",
+    "variants": [
+      {
+        "sku": "FT-BA-002",
+        "color": "Noir Black / Silver",
+        "hex": "#170000",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-002.jpg",
+            "filename": "FT-BA-002.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-003",
+    "name": "SUNBURST FOLK ACCENT BANGLE",
+    "bengali_name": "সানবার্স্ট ফোক অ্যাকসেন্ট বালা",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "BOLD FESTIVE ORANGE ACCENT",
+    "price_bdt": 449,
+    "copy_en": "An intricate orange cutwork statement bangle pictured beside a coordinating round folk-art accent.",
+    "copy_bn": "কমলা রঙের কারুকাজ করা মোটা বালার সঙ্গে রঙিন গোল অলংকারের উপস্থাপনা। উৎসবের পোশাকে উজ্জ্বল ফোক-আর্ট লুক।",
+    "front_back_detail": "Thick Orange Cutwork Single Bangle",
+    "tags": [
+      "bangle",
+      "sunburst",
+      "orange",
+      "cutwork",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Reinforced carved core with vibrant thread wrapping",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-003-sunburst-folk-accent-bangle",
+    "variants": [
+      {
+        "sku": "FT-BA-003",
+        "color": "Festive Orange",
+        "hex": "#f97316",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-003.jpg",
+            "filename": "FT-BA-003.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-004",
+    "name": "BLUSH BEADED STITCH TRIO",
+    "bengali_name": "ব্লাশ বিডেড স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "PASTEL FEMININE GRACE",
+    "price_bdt": 549,
+    "copy_en": "Pastel thread-look bangles with hand-stitched line details and cheerful bead accents in peach and blush pink. Set of 3.",
+    "copy_bn": "পিচ ও প্যাস্টেল পিঙ্ক সুতা-মোড়ানো চুড়িতে রঙিন স্টিচ আর ছোট পুঁতির গুচ্ছ। ৩টি চুড়ির সেট।",
+    "front_back_detail": "Set of 3 Hand-Stitched Bangles",
+    "tags": [
+      "bangle",
+      "blush",
+      "pastel",
+      "pink",
+      "trio",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Thread-wrapped padded bangle base with hand embroidery and micro beads",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-004-blush-beaded-stitch-trio",
+    "variants": [
+      {
+        "sku": "FT-BA-004",
+        "color": "Blush Pink / Peach",
+        "hex": "#f43f5e",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-004.jpg",
+            "filename": "FT-BA-004.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-005",
+    "name": "COLOR POP STITCH TRIO",
+    "bengali_name": "কালার পপ স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "CONTRASTING EMBROIDERY BANGLE SET",
+    "price_bdt": 549,
+    "copy_en": "Three colorful stitched bangles in burgundy, turquoise and chartreuse with playful bead flower accents. Set of 3.",
+    "copy_bn": "বার্গান্ডি, টারকোয়েজ ও লাইমের প্রাণবন্ত রঙে সেলাই-ডিটেইল ও ছোট ফুলের মতো পুঁতির গুচ্ছ। ৩টি চুড়ির পূর্ণ সেট।",
+    "front_back_detail": "Set of 3 (Maroon, Turquoise, Chartreuse)",
+    "tags": [
+      "bangle",
+      "color-pop",
+      "embroidery",
+      "trio",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Fabric-wrapped rigid core, handcrafted beaded accents",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-005-color-pop-stitch-trio",
+    "variants": [
+      {
+        "sku": "FT-BA-005",
+        "color": "Maroon / Teal / Lime",
+        "hex": "#0d9488",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-005.jpg",
+            "filename": "FT-BA-005.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-006",
+    "name": "MIDNIGHT BLOOM BANGLES",
+    "bengali_name": "মিডনাইট ব্লুম চুড়ি ট্রায়ো (৩ পিস)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "ELECTRIC NIGHTTIME CONTRAST",
+    "price_bdt": 599,
+    "copy_en": "Dark statement bangles accented with neon-toned stitches and beaded flower clusters. Set of 3.",
+    "copy_bn": "কালো বেসের ওপর নিয়ন-টোন স্টিচিং ও পুঁতির ফুল। সাধারণ সাজকেও প্রাণবন্ত করে তুলবে। ৩টি চুড়ির সেট।",
+    "front_back_detail": "Set of 3 Black Fabric Embroidered Bangles",
+    "tags": [
+      "bangle",
+      "midnight",
+      "bloom",
+      "black",
+      "neon",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Jet-black fabric wrapping, neon embroidery threads, glass beads",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-006-midnight-bloom-bangles",
+    "variants": [
+      {
+        "sku": "FT-BA-006",
+        "color": "Midnight Black / Neon Stitch",
+        "hex": "#170000",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-006.jpg",
+            "filename": "FT-BA-006.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-007",
+    "name": "DAISY SKY FLORAL PAIR",
+    "bengali_name": "ডেইজি স্কাই ফ্লোরাল চুড়ি (জোড়া)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "SERENE CERULEAN PAIR",
+    "price_bdt": 399,
+    "copy_en": "Two vivid sky-blue wide bangles painted with cheerful blue and yellow daisy flower motifs. Pair of 2.",
+    "copy_bn": "টারকোয়েজ বেসে নীল ফুল ও হলুদ কেন্দ্রের মিষ্টি ডেইজি মোটিফ। গরমের সাজ আর প্যাস্টেল পোশাকে মানানসই। ২ পিস জোড়া।",
+    "front_back_detail": "Pair of 2 Wide Painted Sky-Blue Bangles",
+    "tags": [
+      "bangle",
+      "daisy",
+      "sky-blue",
+      "floral",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Molded wooden core, acrylic paint, waterproof gloss coat",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-007-daisy-sky-floral-pair",
+    "variants": [
+      {
+        "sku": "FT-BA-007",
+        "color": "Turquoise Sky / Royal Blue",
+        "hex": "#0284c7",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-007.jpg",
+            "filename": "FT-BA-007.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-008",
+    "name": "SUNSET BLOOM BANGLES",
+    "bengali_name": "সানসেট ব্লুম চুড়ি (জোড়া)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "GOLDEN HOUR DUSK PALETTE",
+    "price_bdt": 399,
+    "copy_en": "Two warm sunset orange bangles with vivid stitched and bead-flower embellishments. Pair of 2.",
+    "copy_bn": "বার্ন্ট অরেঞ্জ সুতা-মোড়ানো ডিজাইনে উষ্ণ রঙের স্টিচিং ও পুঁতির ক্লাস্টার। ২ পিস জোড়া।",
+    "front_back_detail": "Pair of 2 Orange Stitched Bangles",
+    "tags": [
+      "bangle",
+      "sunset",
+      "orange",
+      "bloom",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Thread-wound structure, hand embroidery, bead cluster accents",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-008-sunset-bloom-bangles",
+    "variants": [
+      {
+        "sku": "FT-BA-008",
+        "color": "Sunset Orange / Coral",
+        "hex": "#ea580c",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-008.jpg",
+            "filename": "FT-BA-008.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-009",
+    "name": "EVERYDAY THREAD LUXE TRIO",
+    "bengali_name": "এভরিডে থ্রেড লাক্স চুড়ি ট্রায়ো (৩ পিস)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "MINIMAL THREADWORK LUXURY",
+    "price_bdt": 499,
+    "copy_en": "An effortless three-tone thread-wrapped bangle edit in peach, teal and burgundy with metallic-look details. Set of 3.",
+    "copy_bn": "পিচ, টিল ও বার্গান্ডি সুতা-মোড়ানো চুড়ি, ছোট ধাতব-রঙা অলংকারের ডিটেইলসহ। ৩ পিস ট্রায়ো।",
+    "front_back_detail": "Set of 3 (Peach, Teal, Burgundy)",
+    "tags": [
+      "bangle",
+      "thread-luxe",
+      "peach",
+      "burgundy",
+      "trio",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Fine mercerized cotton thread on sturdy bangle core",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-009-everyday-thread-luxe-trio",
+    "variants": [
+      {
+        "sku": "FT-BA-009",
+        "color": "Peach / Teal / Burgundy",
+        "hex": "#881337",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-009.jpg",
+            "filename": "FT-BA-009.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-010",
+    "name": "SAGE CHARM STITCH TRIO",
+    "bengali_name": "সেজ চার্ম স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "SOOTHING EARTHEN SAGE PALETTE",
+    "price_bdt": 549,
+    "copy_en": "Muted sage green stitched bangles with pastel bead clusters for a softer pop of natural color. Set of 3.",
+    "copy_bn": "নরম সবুজ বেসে প্যাস্টেল সেলাই ও রঙিন পুঁতির ছোট অলংকার। কমপ্যাক্ট অথচ দৃশ্যমান ডিটেইল। ৩ পিস ট্রায়ো।",
+    "front_back_detail": "Set of 3 Sage Green Embroidered Bangles",
+    "tags": [
+      "bangle",
+      "sage-green",
+      "pastel",
+      "charm",
+      "trio",
+      "accessories"
+    ],
+    "featured": true,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Sage green woven wrap, hand-embroidered beads",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-010-sage-charm-stitch-trio",
+    "variants": [
+      {
+        "sku": "FT-BA-010",
+        "color": "Sage Green / Mint",
+        "hex": "#84cc16",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-010.jpg",
+            "filename": "FT-BA-010.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  },
+  {
+    "id": "FT-BA-011",
+    "name": "CARVED FLORA COLORWAY PAIR",
+    "bengali_name": "কার্ভড ফ্লোরা কালারওয়ে চুড়ি (জোড়া)",
+    "category": "Artisan Accessories",
+    "collection": "Bangles & Accents",
+    "drop": "DROP 02 / ARTISAN EDIT",
+    "editorial": "INTAGLIO FLORAL CUTWORK",
+    "price_bdt": 449,
+    "copy_en": "Folk-inspired floral-cutwork bangle pairs offered in four stunning artisan colorways (Ivory Yellow, Emerald, Cobalt, Burgundy). Pair of 2.",
+    "copy_bn": "ফুল ও পাতার কাটওয়ার্ক মোটিফে চারটি আলাদা রঙের জোড়া। যেকোনো এক রঙের জোড়া। ২ পিস জোড়া।",
+    "front_back_detail": "Pair of 2 Intricate Cutwork Bangles",
+    "tags": [
+      "bangle",
+      "cutwork",
+      "carved",
+      "flora",
+      "accessories"
+    ],
+    "featured": false,
+    "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
+    "rights_verified": true,
+    "stock_verified": true,
+    "specifications_verified": true,
+    "commercial_terms_verified": true,
+    "publication_status": "PUBLISHED",
+    "size_chart": "Sizes: 2.4, 2.6, 2.8",
+    "fabric_claim": "Intricately cut composite wood/lacquer, high-durability finish",
+    "third_party_ip_review": false,
+    "slug": "ft-ba-011-carved-flora-colorway-pair",
+    "variants": [
+      {
+        "sku": "FT-BA-011",
+        "color": "Cobalt / Emerald / Burgundy / Yellow",
+        "hex": "#1d4ed8",
+        "gallery": [
+          {
+            "view": "front",
+            "url": "/assets/images/accessories/FT-BA-011.jpg",
+            "filename": "FT-BA-011.jpg"
+          }
+        ],
+        "stock_quantity": 50,
+        "available_sizes": [
+          "2.4",
+          "2.6",
+          "2.8"
+        ],
+        "approved_for_publication": true
+      }
+    ]
+  }
+]

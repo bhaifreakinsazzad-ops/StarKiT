@@ -211,7 +211,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
   }
 
   function productCard(p) {
-    const v = p.variants[0];
+    const v = p.variants.find((x) => x.status === 'DOCUMENTED') || p.variants[0];
     const f = first(p, v);
     const b = back(p, v);
     const isHoodie = p.id.startsWith('STK-');
@@ -222,7 +222,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
 
     const swatchesHtml = isHoodie
-      ? `<div class="swatches">${p.variants.map((vr) => `<span class="swatch" title="${safe(vr.color)}" style="background:${vr.hex}"></span>`).join('')}</div>`
+      ? `<div class="swatches">${p.variants.map((vr) => `<span class="swatch" title="${safe(vr.color)}${vr.status === 'PROVISIONAL' ? ' (In Development)' : ''}" style="background:${vr.hex}"></span>`).join('')}</div>`
       : `<div class="swatches"><span class="badge-tag">HANDCRAFTED · DHAKA</span></div>`;
 
     return `<article class="card reveal" data-product="${p.id}" data-tilt><div class="card-media">${mediaHtml}<span class="toplabel">${badgeLabel}</span><button type="button" class="fav ${favs.includes(p.id) ? 'active' : ''}" data-fav="${p.id}" aria-label="Save ${safe(p.name)} to favorites" aria-pressed="${String(favs.includes(p.id))}">${favs.includes(p.id) ? '♥' : '♡'}</button><div class="card-overlay"><a href="${ROOT}products/${p.slug}.html">${isHoodie ? 'EXPLORE DESIGN ↗' : 'VIEW ARTISAN PIECE ↗'}</a></div></div><div class="card-meta"><div><a href="${ROOT}products/${p.slug}.html">${safe(p.name)}</a>${p.bengali_name ? `<span class="card-bn" style="display:block;font-size:0.8rem;color:#8f7f7d;font-family:'Hind Siliguri',sans-serif;">${safe(p.bengali_name)}</span>` : ''}<span class="card-collection">${safe(p.collection)}</span></div><div class="price">${price(p.price_bdt)}</div></div>${swatchesHtml}<a class="card-cta-mobile" href="${ROOT}products/${p.slug}.html">VIEW PRODUCT ↗</a></article>`;
@@ -424,7 +424,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     const p = getP(container.dataset.detailProduct);
     if (!p) return;
 
-    let v = p.variants[0];
+    let v = p.variants.find((x) => x.status === 'DOCUMENTED') || p.variants[0];
     trackMeta('ViewContent', {
       content_name: p.name,
       content_category: p.collection,
@@ -443,8 +443,32 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     const sizeWrapper = $('#detailSize');
     const status = $('#purchaseStatus');
     const purchase = $('#purchaseBtn');
+    const whatsappBtn = $('#whatsappBtn');
 
     function setGallery(view) {
+      if (!v.gallery || v.gallery.length === 0) {
+        curr = null;
+        gallery.innerHTML = `
+          <div class="dev-concept-stage" style="aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#170000' : '#FFFFFF'};border-radius:6px;padding:36px;text-align:center;box-shadow:inset 0 0 100px rgba(0,0,0,0.5);position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 35%, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.45) 100%);pointer-events:none;"></div>
+            <span class="view-tag" style="position:absolute;top:16px;left:16px;background:rgba(23,0,0,0.85);color:#c5a880;border:1px solid rgba(197,168,128,0.35);padding:6px 12px;font-size:0.7rem;letter-spacing:0.14em;border-radius:3px;">PROVISIONAL COLORWAY</span>
+            <div style="font-family:'Afacad Flux',sans-serif;font-weight:900;letter-spacing:0.18em;font-size:1.6rem;text-transform:uppercase;margin-bottom:6px;position:relative;z-index:2;">${safe(p.name)}</div>
+            <div style="font-size:0.85rem;letter-spacing:0.14em;opacity:0.9;margin-bottom:28px;position:relative;z-index:2;">WORKING PALETTE · ${safe(v.color.toUpperCase())} (${v.hex})</div>
+            <div style="border:1px dashed ${v.hex === '#F3EFE6' ? 'rgba(23,0,0,0.4)' : 'rgba(255,255,255,0.4)'};padding:18px 24px;border-radius:6px;max-width:340px;background:rgba(0,0,0,0.35);backdrop-filter:blur(12px);position:relative;z-index:2;">
+              <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.14em;color:#e9b9b6;margin-bottom:6px;text-transform:uppercase;">Colorway In Development</div>
+              <div style="font-size:0.75rem;line-height:1.6;color:#ded3cc;">Physical production sample verification, artwork contrast checks, and sizing specs are in progress. Pre-orders open upon final approval.</div>
+            </div>
+            <div style="position:absolute;bottom:16px;font-size:0.65rem;letter-spacing:0.18em;opacity:0.7;position:relative;z-index:2;margin-top:28px;">STARKIT ARCHIVE · DROP 01</div>
+          </div>`;
+        if (thumbs) {
+          thumbs.innerHTML = `
+            <button class="thumb active" type="button" aria-label="Development swatch ${safe(v.color)}" style="display:flex;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#170000' : '#FFFFFF'};border:2px solid #c5a880;width:56px;height:70px;border-radius:4px;">
+              <span style="font-size:0.6rem;font-weight:800;letter-spacing:0.1em;text-align:center;">SWATCH<br>${safe(v.sku.slice(-3))}</span>
+            </button>`;
+        }
+        return;
+      }
+
       curr = v.gallery.find((g) => g.view === view) || v.gallery[0];
       if (!curr) return;
       gallery.innerHTML = `<img src="${asset(curr.url)}" alt="${safe(p.name)} ${safe(curr.view.replace(/_/g, ' '))}"><span class="view-tag">${p.id.startsWith('STK-') ? safe(curr.view.replace(/_/g, ' ')) : 'HANDCRAFTED IN DHAKA'}</span>`;
@@ -468,7 +492,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         colors.innerHTML = p.variants
           .map(
             (x) =>
-              `<button class="color-chip ${x.sku === sku ? 'selected' : ''}" type="button" data-variant="${x.sku}" aria-pressed="${x.sku === sku}"><span class="color-dot" style="background:${x.hex}"></span>${safe(x.color)}</button>`
+              `<button class="color-chip ${x.sku === sku ? 'selected' : ''}" type="button" data-variant="${x.sku}" aria-pressed="${x.sku === sku}"><span class="color-dot" style="background:${x.hex}"></span>${safe(x.color)}${x.status === 'PROVISIONAL' ? ' <span style="font-size:0.68rem;opacity:0.75;font-style:italic;">(Dev)</span>' : ''}</button>`
           )
           .join('');
       }
@@ -477,7 +501,15 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       if (skuEl) skuEl.textContent = v.sku;
 
       if (sizeWrapper) {
-        if (v.available_sizes.length) {
+        if (v.status === 'PROVISIONAL') {
+          sizeWrapper.innerHTML = `
+            <div class="notice" style="border-left:3px solid #be555c;background:rgba(68,22,27,0.3);padding:14px;border-radius:4px;">
+              <strong style="color:#e9b9b6;letter-spacing:0.08em;font-size:0.8rem;text-transform:uppercase;">Colorway In Development / Awaiting Approval</strong>
+              <p style="margin:6px 0 0;font-size:0.78rem;line-height:1.5;color:#ded3cc;">
+                This planned colorway slot (${safe(v.color)}) has not yet completed physical garment sample production. Measurement size charts and inventory remain paused until seller authorization.
+              </p>
+            </div>`;
+        } else if (v.available_sizes.length) {
           const isSingle = v.available_sizes.length === 1;
           if (isSingle) selectedSize = v.available_sizes[0];
           sizeWrapper.innerHTML = `<p class="smallcaps">${isSingle ? 'SIZE / SPECIFICATION' : 'AVAILABLE SIZES'}</p><div class="variant-buttons">${v.available_sizes.map((s) => `<button type="button" data-size="${safe(s)}" class="color-chip ${isSingle ? 'selected' : ''}">${safe(s)}</button>`).join('')}</div>`;
@@ -490,18 +522,44 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         purchase.disabled = true;
         purchase.textContent = 'PREVIEW — ORDERING NOT YET OPEN';
         status.textContent = 'The product and artwork are shown for internal review.';
-      } else if (!editable(p, v)) {
+      } else if (v.status === 'PROVISIONAL' || !editable(p, v)) {
         purchase.disabled = true;
-        purchase.textContent = 'NOT AVAILABLE';
-        status.textContent = 'This variant is not approved or has no verified stock.';
+        purchase.textContent = v.status === 'PROVISIONAL' ? 'COLORWAY IN DEVELOPMENT · NOT FOR SALE' : 'NOT AVAILABLE';
+        purchase.style.opacity = '0.6';
+        purchase.style.cursor = 'not-allowed';
+        status.textContent = v.status === 'PROVISIONAL'
+          ? 'Purchasing is paused until production sample verification.'
+          : 'This variant is not approved or has no verified stock.';
       } else if (v.available_sizes.length === 1) {
         purchase.disabled = false;
+        purchase.style.opacity = '1';
+        purchase.style.cursor = 'pointer';
         purchase.textContent = `ADD TO BAG · ${price(p.price_bdt)}`;
         status.textContent = '100% Cash on Delivery nationwide · Parcel inspection at delivery.';
       } else {
         purchase.disabled = false;
+        purchase.style.opacity = '1';
+        purchase.style.cursor = 'pointer';
         purchase.textContent = 'SELECT SIZE TO ADD TO BAG';
         status.textContent = 'Select an available size to continue.';
+      }
+
+      if (whatsappBtn) {
+        if (v.status === 'PROVISIONAL') {
+          whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
+            `Hello StarkiT! I am interested in the upcoming "${p.name}" in ${v.color} (${v.sku}). Please notify me when pre-orders open!`
+          )}`;
+          whatsappBtn.textContent = `💬 INQUIRE ABOUT ${v.color.toUpperCase()} PRE-RELEASE`;
+          whatsappBtn.style.borderColor = '#c5a880';
+          whatsappBtn.style.color = '#c5a880';
+        } else {
+          whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
+            `Hello StarkiT! I would like to order "${p.name}" in ${v.color} (SKU: ${v.sku}, Price: ৳${p.price_bdt}) via Cash on Delivery.`
+          )}`;
+          whatsappBtn.textContent = '💬 ORDER VIA WHATSAPP (01778307704)';
+          whatsappBtn.style.borderColor = '#25D366';
+          whatsappBtn.style.color = '#128C7E';
+        }
       }
 
       setGallery(v.gallery[0]?.view || 'front');

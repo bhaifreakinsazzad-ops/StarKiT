@@ -250,9 +250,9 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           <div class="kpi-sub">In transit via courier</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-label">ACTIVE SKUs</div>
-          <div class="kpi-value" id="kpiSkus">15</div>
-          <div class="kpi-sub">11 Graphic Designs / 15 Colorways</div>
+          <div class="kpi-label">CATALOG ARCHITECTURE</div>
+          <div class="kpi-value" id="kpiSkus">44</div>
+          <div class="kpi-sub">11 Designs · 15 Documented / 29 In-Dev</div>
         </div>
       </div>
 
@@ -736,25 +736,31 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
 
         const rows = [];
         state.catalog.forEach(p => {
-          p.variants.forEach(v => {
-            const img = v.gallery[0] ? v.gallery[0].url : 'assets/images/starkit-logo-brand-original.png';
+          (p.variants || []).forEach(v => {
+            const isProv = v.status === 'PROVISIONAL' || (!v.gallery || v.gallery.length === 0);
+            const imgHtml = (!isProv && v.gallery && v.gallery[0])
+              ? `<img class="sku-img" src="${v.gallery[0].url.replace(/^\//,'')}" alt="${p.name}">`
+              : `<div class="sku-img" style="display:flex;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#000' : '#fff'};font-size:0.6rem;font-weight:800;border:1px solid #c5a880;">DEV</div>`;
+            const badgeHtml = isProv
+              ? `<span class="status-badge" style="background:#be555c;">PROVISIONAL · IN DEV</span>`
+              : `<span class="status-badge" style="background:#15803d;">LIVE DOCUMENTED</span>`;
+            const sizesHtml = isProv
+              ? `<span style="font-size:0.75rem;color:#be555c;font-style:italic;">Pending specs</span>`
+              : `<span style="font-size:0.75rem;font-weight:700;">${(v.available_sizes || []).join(', ')}</span>`;
+
             rows.push(`
               <tr>
-                <td><img class="sku-img" src="${img.replace(/^\//,'')}" alt="${p.name}"></td>
+                <td>${imgHtml}</td>
                 <td><strong>${p.name}</strong><br><small style="color:#777;">${p.collection}</small></td>
                 <td><code>${p.id}</code></td>
                 <td><code>${v.sku}</code></td>
                 <td><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${v.hex};margin-right:6px;border:1px solid #ccc;"></span>${v.color}</td>
                 <td><strong>৳${p.price_bdt}</strong></td>
                 <td>
-                  <input type="number" class="stock-input" value="${v.stock_quantity || 50}" min="0" onchange="updateVariantStock('${v.sku}', this.value)">
+                  <input type="number" class="stock-input" value="${v.stock_quantity || (isProv ? 0 : 50)}" min="0" onchange="updateVariantStock('${v.sku}', this.value)">
                 </td>
-                <td>
-                  <span style="font-size:0.75rem;font-weight:700;">${(v.available_sizes || []).join(', ')}</span>
-                </td>
-                <td>
-                  <span class="status-badge" style="background:#15803d;">LIVE PUBLISHED</span>
-                </td>
+                <td>${sizesHtml}</td>
+                <td>${badgeHtml}</td>
               </tr>
             `);
           });

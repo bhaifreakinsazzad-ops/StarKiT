@@ -31,3 +31,6 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Distribution Build Folder
+StarkiT_DROP01_44_Variant_Complete_Store/
