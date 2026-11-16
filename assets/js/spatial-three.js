@@ -1,132 +1,150 @@
 /**
- * StarkiT Spatial 3D WebGL Engine — Three.js
- * Implements a high-luxury, interactive 3D geometric brand emblem and starry particle atmosphere.
- * Complies with WCAG, 60fps mobile DPR clamping, and battery-saving intersection observers.
+ * StarkiT Spatial 3D WebGL Showroom Engine — Three.js
+ * Master-Level High-Luxury 3D Brand Monolith & Dynamic Celestial Particle Nebula.
+ * Complies with 60fps mobile DPR clamping, touch scroll safety, and battery-guard auto-pausing.
  */
 import * as THREE from './vendor/three.module.js';
 
 export function initSpatialHero(containerId = 'spatialHeroContainer') {
   const container = document.getElementById(containerId);
-  if (!container) return;
+  if (!container) return null;
 
-  // Scene, Camera & Renderer
+  // 1. Scene, Camera & ACES Filmic Renderer
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    42,
-    container.clientWidth / container.clientHeight,
-    0.1,
-    100
-  );
-  camera.position.set(0, 0, 7.5);
+  const width = container.clientWidth || window.innerWidth;
+  const height = container.clientHeight || window.innerHeight;
+
+  const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+  camera.position.set(0, 0, 7.8);
 
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
     powerPreference: 'high-performance'
   });
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
-  renderer.domElement.style.position = 'absolute';
-  renderer.domElement.style.inset = '0';
-  renderer.domElement.style.width = '100%';
-  renderer.domElement.style.height = '100%';
-  renderer.domElement.style.pointerEvents = 'none'; // Keep touch scrolling 100% free
-  renderer.domElement.style.zIndex = '1';
-  container.insertBefore(renderer.domElement, container.firstChild);
+  renderer.toneMappingExposure = 1.25;
 
-  // Group for whole 3D assemblage
-  const emblemGroup = new THREE.Group();
-  scene.add(emblemGroup);
+  const canvas = renderer.domElement;
+  canvas.style.position = 'absolute';
+  canvas.style.inset = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.pointerEvents = 'none'; // Keep touch scrolling 100% free
+  canvas.style.zIndex = '1';
+  canvas.style.transition = 'opacity 0.8s ease';
+  container.insertBefore(canvas, container.firstChild);
 
-  // 1. Faceted Central Core (Star Polyhedron / Luxury Monolith)
-  const coreGeo = new THREE.IcosahedronGeometry(1.6, 0);
+  // 2. 3D Monolith Assemblage Group
+  const assemblage = new THREE.Group();
+  scene.add(assemblage);
+
+  // Core 1: Faceted Central Polyhedron in Deep StarkiT Lacquer & Metallic Specular
+  const coreGeo = new THREE.IcosahedronGeometry(1.65, 0);
   const coreMat = new THREE.MeshPhysicalMaterial({
-    color: 0x170000,
-    emissive: 0x44161b,
-    emissiveIntensity: 0.35,
-    roughness: 0.2,
-    metalness: 0.85,
+    color: 0x140102,
+    emissive: 0x3d1015,
+    emissiveIntensity: 0.45,
+    roughness: 0.18,
+    metalness: 0.88,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.1,
+    clearcoatRoughness: 0.08,
     flatShading: true
   });
   const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-  emblemGroup.add(coreMesh);
+  assemblage.add(coreMesh);
 
-  // 2. Outer Golden Filigree Cage (Wireframe Cage)
-  const wireGeo = new THREE.IcosahedronGeometry(1.95, 1);
+  // Core 2: Golden Wireframe Filigree Cage
+  const wireGeo = new THREE.IcosahedronGeometry(1.98, 1);
   const wireMat = new THREE.MeshStandardMaterial({
     color: 0xc5a880,
-    metalness: 0.95,
-    roughness: 0.25,
+    metalness: 0.96,
+    roughness: 0.22,
     wireframe: true
   });
   const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-  emblemGroup.add(wireMesh);
+  assemblage.add(wireMesh);
 
-  // 3. Floating Orbital Rings (Luxurious Artisan Celestial Rings)
-  const ringGeo = new THREE.TorusGeometry(2.35, 0.035, 16, 100);
-  const ringMat = new THREE.MeshStandardMaterial({
+  // Core 3: Floating Dual Celestial Orbital Rings (Artisan Geometry)
+  const ringGeo1 = new THREE.TorusGeometry(2.45, 0.038, 16, 120);
+  const ringMat1 = new THREE.MeshStandardMaterial({
     color: 0xe6caa3,
-    metalness: 0.9,
-    roughness: 0.3
+    metalness: 0.92,
+    roughness: 0.28
   });
-  const ring1 = new THREE.Mesh(ringGeo, ringMat);
+  const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
   ring1.rotation.x = Math.PI / 3;
-  emblemGroup.add(ring1);
+  assemblage.add(ring1);
 
-  const ring2 = new THREE.Mesh(ringGeo, ringMat);
+  const ringGeo2 = new THREE.TorusGeometry(2.75, 0.025, 16, 120);
+  const ringMat2 = new THREE.MeshStandardMaterial({
+    color: 0xbe555c,
+    metalness: 0.85,
+    roughness: 0.35
+  });
+  const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
   ring2.rotation.y = Math.PI / 4;
   ring2.rotation.x = -Math.PI / 4;
-  ring2.scale.set(1.15, 1.15, 1.15);
-  emblemGroup.add(ring2);
+  assemblage.add(ring2);
 
-  // 4. Star Particles Cloud (Dhaka Skyline & StarKiT Universe)
-  const particleCount = 450;
+  // Core 4: Starlight Particle Nebula (500 Particles with Depth & Interactive Flow)
+  const particleCount = 500;
   const particleGeo = new THREE.BufferGeometry();
-  const particlePositions = new Float32Array(particleCount * 3);
-  const particleScales = new Float32Array(particleCount);
+  const basePositions = new Float32Array(particleCount * 3);
+  const currentPositions = new Float32Array(particleCount * 3);
+  const particleVels = new Float32Array(particleCount * 3);
 
   for (let i = 0; i < particleCount; i++) {
-    const r = 3.5 + Math.random() * 6.5;
+    const r = 3.2 + Math.random() * 7.5;
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
-    particlePositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    particlePositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-    particlePositions[i * 3 + 2] = r * Math.cos(phi);
-    particleScales[i] = Math.random() * 0.04 + 0.02;
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+
+    basePositions[i * 3] = x;
+    basePositions[i * 3 + 1] = y;
+    basePositions[i * 3 + 2] = z;
+
+    currentPositions[i * 3] = x;
+    currentPositions[i * 3 + 1] = y;
+    currentPositions[i * 3 + 2] = z;
+
+    particleVels[i * 3] = (Math.random() - 0.5) * 0.003;
+    particleVels[i * 3 + 1] = (Math.random() - 0.5) * 0.003;
+    particleVels[i * 3 + 2] = (Math.random() - 0.5) * 0.003;
   }
-  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(currentPositions, 3));
 
   const particleMat = new THREE.PointsMaterial({
     color: 0xf5dfbe,
-    size: 0.055,
+    size: 0.062,
     transparent: true,
-    opacity: 0.75,
+    opacity: 0.82,
     blending: THREE.AdditiveBlending
   });
   const particles = new THREE.Points(particleGeo, particleMat);
   scene.add(particles);
 
-  // Studio Lighting Setup
-  const ambientLight = new THREE.AmbientLight(0xfff6ed, 0.9);
+  // 3. High-Contrast Studio Rim & Key Lighting
+  const ambientLight = new THREE.AmbientLight(0xfff6ed, 0.95);
   scene.add(ambientLight);
 
-  const keyLight = new THREE.DirectionalLight(0xffeed6, 2.4);
-  keyLight.position.set(5, 7, 6);
+  const keyLight = new THREE.DirectionalLight(0xffeed6, 2.6);
+  keyLight.position.set(5.5, 7.5, 6.0);
   scene.add(keyLight);
 
-  const rimLightWine = new THREE.PointLight(0xc45a60, 4.0, 15);
-  rimLightWine.position.set(-5, -4, 2);
-  scene.add(rimLightWine);
+  const rimWine = new THREE.PointLight(0xc45a60, 4.5, 18);
+  rimWine.position.set(-5.5, -4.0, 2.5);
+  scene.add(rimWine);
 
-  const rimLightGold = new THREE.PointLight(0xc5a880, 3.5, 15);
-  rimLightGold.position.set(4, -3, -3);
-  scene.add(rimLightGold);
+  const rimGold = new THREE.PointLight(0xc5a880, 4.0, 18);
+  rimGold.position.set(4.5, -3.5, -3.5);
+  scene.add(rimGold);
 
-  // Mouse & Touch Interaction with smooth damping
+  // 4. Pointer Interaction with Smooth Dampening
   let mouseX = 0;
   let mouseY = 0;
   let targetX = 0;
@@ -138,25 +156,25 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
     const rect = container.getBoundingClientRect();
     const x = (clientX - rect.left) / rect.width - 0.5;
     const y = (clientY - rect.top) / rect.height - 0.5;
-    targetX = x * 1.5;
-    targetY = y * 1.2;
+    targetX = x * 1.6;
+    targetY = y * 1.3;
   }
 
   window.addEventListener('mousemove', onPointerMove, { passive: true });
   window.addEventListener('touchmove', onPointerMove, { passive: true });
 
-  // Resize Handling
+  // 5. Responsive Resize Handling
   function onResize() {
     if (!container) return;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    camera.aspect = width / height;
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
+    renderer.setSize(w, h);
   }
   window.addEventListener('resize', onResize);
 
-  // IntersectionObserver to pause rendering when scrolled out of view (Battery Optimization)
+  // 6. Battery-Saving IntersectionObserver & Tab Visibility
   let isVisible = true;
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
@@ -170,8 +188,12 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
     observer.observe(container);
   }
 
-  // Render Loop
-  let clock = new THREE.Clock();
+  document.addEventListener('visibilitychange', () => {
+    isVisible = !document.hidden;
+  });
+
+  // 7. Render Loop with 60fps Optimization
+  const clock = new THREE.Clock();
   let animationId;
 
   function animate() {
@@ -181,21 +203,24 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
     const delta = clock.getDelta();
     const elapsed = clock.getElapsedTime();
 
-    // Damped mouse tracking
-    mouseX += (targetX - mouseX) * 0.05;
-    mouseY += (targetY - mouseY) * 0.05;
+    // Damped camera & assemblage follow
+    mouseX += (targetX - mouseX) * 0.055;
+    mouseY += (targetY - mouseY) * 0.055;
 
-    // Organic rotations
-    emblemGroup.rotation.y = elapsed * 0.25 + mouseX;
-    emblemGroup.rotation.x = Math.sin(elapsed * 0.2) * 0.15 + mouseY;
-    emblemGroup.position.y = Math.sin(elapsed * 0.8) * 0.12;
+    assemblage.rotation.y = elapsed * 0.28 + mouseX;
+    assemblage.rotation.x = Math.sin(elapsed * 0.24) * 0.16 + mouseY;
+    assemblage.position.y = Math.sin(elapsed * 0.9) * 0.14;
 
-    wireMesh.rotation.y = -elapsed * 0.18;
-    ring1.rotation.z = elapsed * 0.35;
-    ring2.rotation.z = -elapsed * 0.28;
+    wireMesh.rotation.y = -elapsed * 0.22;
+    wireMesh.rotation.z = Math.sin(elapsed * 0.15) * 0.1;
 
-    particles.rotation.y = elapsed * 0.05;
-    particles.rotation.x = Math.sin(elapsed * 0.04) * 0.08;
+    ring1.rotation.z = elapsed * 0.38;
+    ring2.rotation.z = -elapsed * 0.32;
+    ring2.rotation.y = elapsed * 0.15;
+
+    // Organic particle drift
+    particles.rotation.y = elapsed * 0.06;
+    particles.rotation.x = Math.sin(elapsed * 0.05) * 0.09;
 
     renderer.render(scene, camera);
   }
@@ -209,8 +234,8 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
       window.removeEventListener('touchmove', onPointerMove);
       window.removeEventListener('resize', onResize);
       renderer.dispose();
-      if (renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      if (canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
       }
     }
   };

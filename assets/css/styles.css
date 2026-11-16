@@ -203,3 +203,207 @@
     gap: 24px;
   }
 }
+
+
+/* ==============================================================================
+   BHAI DESIGNING UI/UX — MASTER LUXURY INTERACTIVE MOTION & GRAPHICAL STYLING
+   Triple-Layer Glassmorphism, Specular Radial Glow, Dynamic 3D Card Depth & Spring Ergonomics
+   ============================================================================== */
+
+/* 1. Fluid Scroll Progress Bar */
+#scrollProgressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  z-index: 9999;
+  background: linear-gradient(90deg, #be555c 0%, #c5a880 50%, #ebd8d9 100%);
+  transform-origin: 0% 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.6);
+}
+
+/* 2. Ambient Cursor Glow Aura */
+#cursorGlow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.08) 0%, rgba(190, 85, 92, 0.04) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease;
+  mix-blend-mode: screen;
+}
+
+/* 3. 3D Perspective Card Tilt & Specular Cursor Radial Glow */
+.card, .look-tile {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.card::before, .look-tile::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    480px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    rgba(197, 168, 128, 0.38),
+    rgba(190, 85, 92, 0.16) 35%,
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 3;
+}
+
+.card:hover::before, .look-tile:hover::before {
+  opacity: 1;
+}
+
+/* 4. Triple-Layer Luxury Glass Surfaces */
+.glass-surface, .drawer, .summary-panel, .notice {
+  background: rgba(23, 0, 0, 0.88) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1px solid rgba(197, 168, 128, 0.22) !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+/* 5. Animated Metallic Shimmer for Badges */
+@keyframes luxuryShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.toplabel, .badge-tag, .admin-pill {
+  background: linear-gradient(90deg, #170000 0%, #44161b 35%, #c5a880 50%, #44161b 65%, #170000 100%) !important;
+  background-size: 250% auto !important;
+  animation: luxuryShimmer 7s linear infinite !important;
+  border: 1px solid rgba(197, 168, 128, 0.3) !important;
+  color: #fff !important;
+  letter-spacing: 0.14em !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
+}
+
+/* 6. Magnetic Buttons with Physical Spring Feedback */
+.btn, .btn-light, .icon-btn, .filter-btn, .fav {
+  position: relative;
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+  touch-action: manipulation;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:active, .btn-light:active, .icon-btn:active, .filter-btn:active {
+  transform: scale(0.96) !important;
+}
+
+/* 7. Enhanced Product Hover Dual-Angle Transitions */
+.card-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.card-media img.front {
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+}
+
+.card-media img.back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+}
+
+.card:hover .card-media img.front {
+  opacity: 0;
+  transform: scale(1.04);
+}
+
+.card:hover .card-media img.back {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* For Single View Accessories */
+.card-media img.single-view {
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover .card-media img.single-view {
+  transform: scale(1.06);
+}
+
+/* 8. Filter Button Spring Hover & Active Glides */
+.category-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0 18px;
+  scrollbar-width: none;
+}
+
+.category-row::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ded3cc;
+  padding: 12px 22px;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  background: rgba(197, 168, 128, 0.15);
+  border-color: #c5a880;
+  color: #fff;
+}
+
+.filter-btn.active {
+  background: #c5a880;
+  border-color: #c5a880;
+  color: #170000;
+  box-shadow: 0 4px 18px rgba(197, 168, 128, 0.4);
+}
+
+/* 9. High-Precision Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0203;
+}
+::-webkit-scrollbar-thumb {
+  background: #381216;
+  border-radius: 4px;
+  border: 2px solid #0d0203;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a880;
+}
