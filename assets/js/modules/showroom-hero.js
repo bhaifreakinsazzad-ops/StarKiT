@@ -455,4 +455,10 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
   });
 
   render(0);
+
+  return {
+    refresh() {
+      render(0);
+    }
+  };
 }

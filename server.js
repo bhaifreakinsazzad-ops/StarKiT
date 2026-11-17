@@ -1,4 +1,5 @@
 // server.js – Express server for StarkiT storefront
+import fs from 'fs';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -7,6 +8,26 @@ import adminHandler from './api/admin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+function loadLocalEnvFile(envPath) {
+  if (!fs.existsSync(envPath)) return;
+  const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/);
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const eqIdx = line.indexOf('=');
+    if (eqIdx <= 0) continue;
+    const key = line.slice(0, eqIdx).trim();
+    if (!key || process.env[key] !== undefined) continue;
+    let val = line.slice(eqIdx + 1).trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    process.env[key] = val;
+  }
+}
+
+loadLocalEnvFile(path.join(__dirname, '.env'));
 
 const app = express();
 const PORT = 3000;
@@ -73,10 +94,10 @@ app.use((req, res, next) => {
 
 // Serve vendored Firebase ESM bundles safely without exposing node_modules
 app.get('/vendor/firebase/firebase-app.js', (req, res) => {
-  res.type('application/javascript').sendFile(path.join(__dirname, 'node_modules/firebase/firebase-app.js'));
+  res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-app.js'));
 });
 app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
-  res.type('application/javascript').sendFile(path.join(__dirname, 'node_modules/firebase/firebase-auth.js'));
+  res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-auth.js'));
 });
 
 // Serve static files (HTML, CSS, JS, assets)
@@ -107,6 +128,9 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
   <meta name="theme-color" content="#170000">
   <title>404 — Page Not Found | StarkiT</title>
   <link rel="icon" type="image/png" href="/assets/images/starkit-favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 <body style="background:#f6f4f0;color:#170000;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;">

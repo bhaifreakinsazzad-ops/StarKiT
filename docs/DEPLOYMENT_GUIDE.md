@@ -3,18 +3,19 @@
 
 ### 1. Architecture Overview
 * **Hosting Platform**: Vercel (Edge Network + Serverless Functions)
-* **Database Engine**: Supabase (PostgreSQL 15+ with Row Level Security and JSONB support)
-* **Frontend Runtime**: Zero-build vanilla web architecture (Static HTML5, CSS3, ES Modules, Three.js WebGL, Anime.js, Motion.dev)
+* **Database Engine**: Supabase (PostgreSQL 15+ with Row Level Security, Atomic RPC, and Storage)
+* **Frontend Runtime**: Zero-build vanilla web architecture (61 Static HTML5 pages, CSS3, ES Modules, Three.js r187, Anime.js v4.5.0, Motion.dev, and self-hosted Firebase Auth SDK in `assets/js/vendor/`)
 * **Commerce APIs**:
-  - `POST /api/orders`: Serverless order submission with idempotency, inventory locking, and Meta Conversions API (CAPI) dispatch.
-  - `GET /api/admin`: Authenticated administrative reporting and order status management.
-* **Telemetry & Tracking**: Meta Pixel (`1390081606323661`) client-side + serverless CAPI with SHA-256 customer identifier hashing and deduplication.
+  - `POST /api/orders`: Fail-closed Cash-on-Delivery order intake with origin validation, rate limiting, idempotency, server-side promo/shipping calculation, atomic stock deduction (`submit_starkit_order`), and Meta Conversions API (CAPI) dispatch.
+  - `GET /api/admin?action=public_storefront_state`: Non-PII public hydration of store settings, approved promotions, and variant availability/gallery overlays.
+  - `GET / POST /api/admin`: Timing-safe `X-Admin-Key` or Supabase JWT RBAC console for orders, 7-gate approvals, tier pricing, promotions, media uploads, and audit logs.
+* **Telemetry & Tracking**: Meta Pixel (`1390081606323661`) client-side (`PageView`, `ViewContent`, `AddToCart`, `InitiateCheckout`, `Purchase`) + serverless CAPI deduplication (`event_id = reference`).
 
 ---
 
 ### 2. Environment Variables Configuration
 
-Create `.env` (or set in Vercel Project Settings > Environment Variables):
+Copy `.env.example` to `.env` locally or configure in Vercel Project Settings > Environment Variables:
 
 ```bash
 # ==============================================================================
@@ -26,18 +27,21 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=<set-in-vercel-env>
 SUPABASE_SERVICE_ROLE_KEY=<set-in-vercel-env-server-only>
 
-# Meta Pixel & Conversions API (CAPI)
+# Admin Portal Access (minimum 32 random characters)
+STARKIT_ADMIN_API_KEY=<generate-32plus-char-cryptographic-secret>
+STARKIT_MEDIA_BUCKET=starkit-media
+
+# Store Commercial Operation Controls
+STARKIT_STORE_MODE=public              # 'preview' or 'public'
+STARKIT_ORDERS_ENABLED=false           # Set 'true' to enable live POST /api/orders intake
+STARKIT_DB_APPROVAL_AUTHORITATIVE=true # Lets Supabase store_variants 7-gate flags authorize runtime sales
+STARKIT_PUBLIC_URL=https://your-domain.vercel.app
+
+# Meta Pixel & Conversions API (Server-side only for META_ACCESS_TOKEN)
 META_PIXEL_ID=1390081606323661
 META_DATASET_ID=1390081606323661
 META_ACCESS_TOKEN=<set-rotated-meta-system-user-token-in-vercel-env>
 META_TEST_EVENT_CODE=<optional-test-code>
-
-# Store Commercial Operation Controls
-STARKIT_STORE_MODE=preview        # 'preview' or 'public' (keep preview until owner sign-off)
-STARKIT_ORDERS_ENABLED=false      # 'true' only after legal, stock, and pricing approval
-STARKIT_ADMIN_API_KEY=<generate-32plus-char-cryptographic-secret>
-STARKIT_MEDIA_BUCKET=starkit-media
-STARKIT_PUBLIC_URL=https://your-domain.vercel.app
 ```
 
 ---
@@ -45,48 +49,40 @@ STARKIT_PUBLIC_URL=https://your-domain.vercel.app
 ### 3. Database Migration & Seeding Steps
 
 1. **Log in to Supabase Dashboard**: Navigate to **SQL Editor**.
-2. **Execute Schema Migration**:
-   - Run the contents of `supabase/001_starkit_store.sql` to establish `store_products`, `store_variants`, `store_orders`, `store_order_items`, and the atomic stored procedure `submit_starkit_order`.
-3. **Execute 44-Variant Seed Script**:
-   - Run the contents of `supabase/002_catalog_seed.sql` (or `supabase/seed.sql`).
-   - This populates all 11 designs, 44 variant slots (15 live documented + 29 in-development provisional), and 35 Fariza's Territory accessories.
+2. **Execute Migrations in Order**:
+   - Run `supabase/001_starkit_store.sql` — creates `store_settings`, `store_variants`, `store_orders`, `store_order_items`, RLS policies, and `submit_starkit_order` RPC.
+   - Run `supabase/002_catalog_seed.sql` — seeds all `60` Drop 01 hoodie colorway slots (`15 DOCUMENTED` + `45 PROVISIONAL`), `35` Drop 02 Fariza's Territory accessories, `50` `store_products`, and `4` `store_promotions`.
+   - Run `supabase/003_admin_views_and_helpers.sql` — installs `v_starkit_orders_dashboard`, `update_starkit_order_status`, and evidence-gated `starkit_publish_sku`.
+   - Run `supabase/005_security_and_60_variant_upgrade.sql` — creates `store_products`, `store_product_approvals`, `store_promotions`, `store_media_assets`, `store_admin_users`, and `store_audit_logs` (with idempotent catalog/promotion backfill).
+   - *(Staging / sandbox testing only)* Run `supabase/004_quick_enable_demo.sql` to activate sample stock (`25` units) on `STK-H001`–`STK-H011` documented SKUs. Never run `004` on unverified production inventory.
+3. **Create Storage Bucket**:
+   - In Supabase Storage, create bucket `starkit-media` (public read if displaying uploaded product previews directly on storefront) for `/admin.html` direct uploads & Google Drive imports.
 4. **Verify Seed**:
    ```sql
    select status, count(*) from public.store_variants group by status;
-   -- Expected: DOCUMENTED: 50 (15 hoodies + 35 accessories), PROVISIONAL: 29
+   -- Expected: DOCUMENTED: 50 (15 hoodies + 35 accessories), PROVISIONAL: 45 (Total: 95)
+   select drop_code, count(*) from public.store_products group by drop_code;
+   -- Expected: DROP_01: 15, DROP_02: 35 (Total: 50)
    ```
 
 ---
 
 ### 4. Vercel Deployment Instructions
 
-#### Deploy via Vercel CLI
-```bash
-# 1. Install Vercel CLI
-npm install -g vercel
-
-# 2. Link & Deploy to Preview
-vercel
-
-# 3. Deploy to Production
-vercel --prod
-```
-
-#### Deploy via GitHub Integration
-1. Push code to `notrealenginellc/StarKiT:main`.
-2. Connect repository in Vercel Dashboard.
-3. Configure Environment Variables as specified above.
-4. Set Build Command: `None` (Static project with Serverless Functions).
-5. Set Output Directory: `.` (Root directory).
-6. Click **Deploy**.
+1. Ensure `.vercelignore` keeps `docs/`, `supabase/`, `catalog/`, `scripts/`, `tests/`, and build archives out of public static hosting.
+2. Push code to `notrealenginellc/StarKiT:main` or deploy via `vercel --prod`.
+3. In Vercel Project Settings:
+   - **Framework Preset**: `Other`
+   - **Build Command**: *(leave empty / None)*
+   - **Output Directory**: `.`
+4. Configure all environment variables from Section 2 and redeploy.
 
 ---
 
 ### 5. Post-Deployment Verification Checklist
-- [ ] Homepage loads in under 1.5 seconds on 4G mobile connection.
-- [ ] 3D Polyhedral Monolith renders at 60fps in `#spatialHeroContainer`.
-- [ ] Test purchase of STK-H001-BLK via Cash on Delivery completes and returns HTTP 201 with reference number.
-- [ ] Meta Pixel Helper extension verifies `PageView`, `ViewContent`, `AddToCart`, `InitiateCheckout`, and `Purchase` events.
-- [ ] Meta Events Manager verifies server-side Conversions API (CAPI) events with matching `event_id`.
-- [ ] Switching to a provisional colorway (e.g. STK-H001-MRN) displays `COLORWAY IN DEVELOPMENT / AWAITING APPROVAL` and disables checkout.
-- [ ] Admin portal at `/admin.html` displays live order records and inventory controls.
+- [ ] Homepage `/` loads cleanly with 3D Polyhedral Monolith in `#spatialHeroContainer` and zero console errors.
+- [ ] All 61 HTML routes resolve cleanly without broken images or missing `/assets/js/vendor/*` modules.
+- [ ] Switching to a provisional colorway (e.g. `STK-H001-MRN` or `STK-H013-BLK`) renders the hex-matched `Media Pending` stage and blocks checkout (`HTTP 409` server-side).
+- [ ] Admin portal at `/admin.html` authenticates with `STARKIT_ADMIN_API_KEY` or Supabase JWT, completes 7-gate approval on an intended SKU, and persists stock/promotion updates.
+- [ ] Test COD checkout (`POST /api/orders`) returns `HTTP 201` with a `STK-...` reference and displays `/order-confirmation.html`.
+- [ ] Meta Pixel Helper verifies `PageView`, `ViewContent`, `AddToCart`, `InitiateCheckout`, and `Purchase` events with matching `event_id` in Meta Events Manager.

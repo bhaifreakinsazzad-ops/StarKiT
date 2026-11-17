@@ -458,6 +458,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
       state.tier = tierCode || 'All';
       if (tierSelect) tierSelect.value = state.tier;
       render();
+    },
+    refresh() {
+      render();
     }
   };
 }

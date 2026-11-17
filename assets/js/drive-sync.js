@@ -1,16 +1,14 @@
 /**
  * StarkiT Google Drive Asset & Folder Browser
- * Uses Firebase Auth (GoogleAuthProvider) with read-only Drive scope and in-memory token caching.
+ * Uses lazy Firebase Auth (GoogleAuthProvider) OR direct read-only Drive OAuth token with in-memory token caching.
  */
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
-
 export const SCOPES = ['https://www.googleapis.com/auth/drive.readonly'];
 export const DEFAULT_FOLDER_ID = '1cWiWNN5K8SONAxsGbeGONY46DumZod6z';
 
 let firebaseApp = null;
 let firebaseAuth = null;
 let googleProvider = null;
+let firebaseAuthSdk = null;
 let isSigningIn = false;
 // In-memory cache ONLY (never persisted to localStorage or sessionStorage)
 let cachedAccessToken = null;
@@ -38,24 +36,29 @@ export function extractDriveFolderId(input) {
 }
 
 async function ensureFirebaseInitialized() {
-  if (firebaseAuth) return firebaseAuth;
-  const res = await fetch('firebase-applet-config.json');
+  if (firebaseAuth) return { auth: firebaseAuth, authSdk: firebaseAuthSdk };
+  const [appSdk, authSdk, res] = await Promise.all([
+    import('firebase/app'),
+    import('firebase/auth'),
+    fetch('firebase-applet-config.json')
+  ]);
   if (!res.ok) throw new Error('Unable to load Firebase configuration.');
   const config = await res.json();
-  firebaseApp = getApps().length ? getApp() : initializeApp(config);
-  firebaseAuth = getAuth(firebaseApp);
-  googleProvider = new GoogleAuthProvider();
+  firebaseApp = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(config);
+  firebaseAuthSdk = authSdk;
+  firebaseAuth = authSdk.getAuth(firebaseApp);
+  googleProvider = new authSdk.GoogleAuthProvider();
   SCOPES.forEach((scope) => googleProvider.addScope(scope));
   googleProvider.setCustomParameters({ prompt: 'select_account' });
-  return firebaseAuth;
+  return { auth: firebaseAuth, authSdk };
 }
 
 export async function googleSignIn() {
-  const auth = await ensureFirebaseInitialized();
+  const { auth, authSdk } = await ensureFirebaseInitialized();
   try {
     isSigningIn = true;
-    const result = await signInWithPopup(auth, googleProvider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const result = await authSdk.signInWithPopup(auth, googleProvider);
+    const credential = authSdk.GoogleAuthProvider.credentialFromResult(result);
     if (!credential || !credential.accessToken) {
       throw new Error('Failed to obtain Google Drive access token.');
     }
@@ -346,35 +349,41 @@ export async function initDriveSyncUI() {
 
     const authCardHtml = state.needsAuth
       ? `
-        <div style="background:#f6f4f0;border:1px solid rgba(11,9,10,0.12);border-radius:6px;padding:24px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
-          <div style="max-width:600px;">
-            <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#8e2934;font-weight:700;margin-bottom:6px;">Google Drive Connection</div>
-            <h3 style="margin:0 0 6px;font-size:1.2rem;font-weight:700;color:#0b090a;">Connect Google Drive to browse studio assets</h3>
-            <p style="margin:0;color:#645e5b;font-size:0.86rem;line-height:1.55;">
-              Sign in with your Google account to list subfolders, preview photography, inspect catalog sheets, and browse folder <code>${esc(activeFolder.id)}</code>.
-            </p>
-          </div>
-          <button type="button" id="driveGoogleSignInBtn" class="gsi-material-button">
-            <div class="gsi-material-button-state"></div>
-            <div class="gsi-material-button-content-wrapper">
-              <div class="gsi-material-button-icon">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display:block;">
-                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
-                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
-                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
-                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
-                  <path fill="none" d="M0 0h48v48H0z"></path>
-                </svg>
-              </div>
-              <span class="gsi-material-button-contents">Sign in with Google</span>
-              <span style="display:none;">Sign in with Google</span>
+        <div style="background:#f6f4f0;border:1px solid rgba(11,9,10,0.12);border-radius:6px;padding:24px;margin:16px 0;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
+            <div style="max-width:600px;">
+              <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#8e2934;font-weight:700;margin-bottom:6px;">Google Drive Connection</div>
+              <h3 style="margin:0 0 6px;font-size:1.2rem;font-weight:700;color:#0b090a;">Connect Google Drive to browse studio assets</h3>
+              <p style="margin:0;color:#645e5b;font-size:0.86rem;line-height:1.55;">
+                Sign in with your Google account or supply a short-lived <code>drive.readonly</code> OAuth access token to list subfolders, preview photography, and import assets from <code>${esc(activeFolder.id)}</code>.
+              </p>
             </div>
-          </button>
+            <button type="button" id="driveGoogleSignInBtn" class="gsi-material-button">
+              <div class="gsi-material-button-state"></div>
+              <div class="gsi-material-button-content-wrapper">
+                <div class="gsi-material-button-icon">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display:block;">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    <path fill="none" d="M0 0h48v48H0z"></path>
+                  </svg>
+                </div>
+                <span class="gsi-material-button-contents">Sign in with Google</span>
+                <span style="display:none;">Sign in with Google</span>
+              </div>
+            </button>
+          </div>
+          <form id="driveTokenForm" style="display:flex;gap:10px;flex-wrap:wrap;padding-top:12px;border-top:1px solid rgba(11,9,10,0.1);">
+            <input type="password" id="driveManualTokenInput" class="search-field" style="flex:1;min-width:240px;font-family:var(--font-mono);font-size:0.82rem;" placeholder="Or paste Google Drive OAuth2 Access Token (ya29.… · memory-only)" autocomplete="off">
+            <button type="submit" class="action-btn" style="min-height:40px;padding:8px 16px;">Connect with Token ↗</button>
+          </form>
         </div>`
       : `
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;padding:12px 16px;margin:14px 0;">
           <div style="font-size:0.82rem;color:#166534;font-weight:700;">
-            ✓ Connected as <strong>${esc(currentUser?.email || currentUser?.displayName || 'Google User')}</strong> · Read-only Drive session active
+            ✓ Connected as <strong>${esc(currentUser?.email || currentUser?.displayName || 'OAuth Drive Session')}</strong> · Read-only Drive session active
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
             <button type="button" id="driveRefreshBtn" class="action-btn">↻ Refresh Folder</button>
@@ -484,6 +493,21 @@ export async function initDriveSyncUI() {
         state.error = err.message || 'Google sign-in was cancelled or failed.';
         render();
       }
+    });
+
+    root.querySelector('#driveTokenForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tokenVal = root.querySelector('#driveManualTokenInput')?.value?.trim() || '';
+      if (tokenVal.length < 20) {
+        state.error = 'Please enter a valid Google Drive OAuth2 access token.';
+        render();
+        return;
+      }
+      cachedAccessToken = tokenVal;
+      currentUser = { displayName: 'OAuth Token Session' };
+      state.needsAuth = false;
+      showToast('Google Drive OAuth token connected.');
+      await loadFolder(activeFolder.id);
     });
 
     root.querySelector('#driveSignOutBtn')?.addEventListener('click', async () => {
@@ -609,20 +633,21 @@ export async function initDriveSyncUI() {
   }
 
   try {
-    const auth = await ensureFirebaseInitialized();
-    onAuthStateChanged(auth, (user) => {
+    const { auth, authSdk } = await ensureFirebaseInitialized();
+    authSdk.onAuthStateChanged(auth, (user) => {
       currentUser = user;
       if (user && cachedAccessToken) {
         state.needsAuth = false;
         loadFolder(state.breadcrumbs[state.breadcrumbs.length - 1].id);
-      } else if (!isSigningIn) {
+      } else if (!isSigningIn && !cachedAccessToken) {
         cachedAccessToken = null;
         state.needsAuth = true;
         render();
       }
     });
   } catch (err) {
-    state.error = err.message || 'Unable to initialize Google Drive integration.';
+    // Non-fatal: manual OAuth token mode in #driveTokenForm remains operational even offline
+    console.warn('[StarkiT] Firebase OAuth init unavailable; manual Drive token flow ready.');
   }
 
   render();

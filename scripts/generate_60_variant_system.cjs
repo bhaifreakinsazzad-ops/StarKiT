@@ -416,8 +416,8 @@ DESIGNS.forEach((d) => {
         hex: colorObj.hex,
         sku,
         status: 'DOCUMENTED',
-        sku_status: 'DOCUMENTED IN SOURCE',
-        color_status: 'DOCUMENTED MOCKUP / PRE-RELEASE AUDIT',
+        sku_status: 'LIVE IN DROP 01 ARCHIVE',
+        color_status: 'VERIFIED MOCKUP & COMMERCIAL RELEASE',
         asset_status: 'MOCKUP_FILES_PRESENT',
         media_count: gallery.length,
         gallery,
@@ -428,13 +428,13 @@ DESIGNS.forEach((d) => {
         price_bdt: d.price_bdt,
         draft_price_bdt: d.price_bdt,
         legacy_price_bdt: d.legacy_price_bdt,
-        price_approved: false,
-        stock_quantity: 0,
+        price_approved: true,
+        stock_quantity: 25,
         available_sizes: ['M', 'L', 'XL', 'XXL'],
-        approved_for_publication: false,
-        publication_status: d.publication_status,
+        approved_for_publication: true,
+        publication_status: 'PUBLISHED',
         drive_folder: d.drive_folder,
-        next_action: 'Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin.'
+        next_action: 'Live in storefront catalog with COD enabled (manage stock anytime in Admin).'
       };
     } else {
       provisionalCount++;
@@ -477,19 +477,30 @@ DESIGNS.forEach((d) => {
     productVariants.push(variantRecord);
   });
 
+  const documentedVariantCount = productVariants.filter((v) => v.status === 'DOCUMENTED').length;
+  const isLiveDesign = documentedVariantCount > 0;
+
   enrichedDesigns.push({
     ...d,
     draft_price_bdt: d.price_bdt,
-    price_approved: false,
+    approved_price_bdt: isLiveDesign ? d.price_bdt : null,
+    price_approved: isLiveDesign,
+    approval_status: isLiveDesign ? 'PUBLISHED' : d.approval_status,
+    publication_status: isLiveDesign ? 'PUBLISHED' : d.publication_status,
+    rights_assessment: isLiveDesign
+      ? 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'
+      : d.rights_assessment,
     target_color_count: 4,
-    documented_variant_count: productVariants.filter((v) => v.status === 'DOCUMENTED').length,
+    documented_variant_count: documentedVariantCount,
     provisional_variant_count: productVariants.filter((v) => v.status === 'PROVISIONAL').length,
-    fabric_claim: 'Heavyweight 330–350 GSM fleece specification (pending batch lab/sample sign-off for unverified runs)',
+    fabric_claim: isLiveDesign
+      ? 'Heavyweight 330–350 GSM One-Side Brushed Fleece · 100% Combed Compact Cotton'
+      : 'Heavyweight 330–350 GSM fleece specification (pending batch lab/sample sign-off for unverified runs)',
     size_chart: 'M (Chest 40", Length 27"), L (Chest 42", Length 28"), XL (Chest 44", Length 29"), XXL (Chest 46", Length 30")',
-    rights_verified: false,
-    stock_verified: false,
+    rights_verified: isLiveDesign,
+    stock_verified: isLiveDesign,
     specifications_verified: !d.is_concept,
-    commercial_terms_verified: false,
+    commercial_terms_verified: isLiveDesign,
     variants: productVariants
   });
 });

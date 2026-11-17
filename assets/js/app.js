@@ -327,9 +327,86 @@ function setupVipEarlyAccess() {
   });
 }
 
+function applyPublicStorefrontState({ stateJson, products, storeConfig }) {
+  if (!stateJson || typeof stateJson !== 'object') return false;
+  let mutated = false;
+
+  if (Array.isArray(stateJson.settings) && stateJson.settings.length) {
+    const lookup = Object.fromEntries(stateJson.settings.map((s) => [s.key, s.value]));
+    if (typeof lookup.cod_enabled === 'boolean') {
+      storeConfig.cod_enabled = lookup.cod_enabled;
+      mutated = true;
+    }
+    if (typeof lookup.store_mode === 'string' && lookup.store_mode) {
+      storeConfig.mode = lookup.store_mode;
+      mutated = true;
+    }
+    if (Number.isFinite(Number(lookup.delivery_dhaka_bdt))) {
+      storeConfig.delivery_dhaka = Number(lookup.delivery_dhaka_bdt);
+      mutated = true;
+    }
+    if (Number.isFinite(Number(lookup.delivery_outside_bdt))) {
+      storeConfig.delivery_outside = Number(lookup.delivery_outside_bdt);
+      mutated = true;
+    }
+    if (Number.isFinite(Number(lookup.free_shipping_threshold))) {
+      storeConfig.free_shipping_threshold = Number(lookup.free_shipping_threshold);
+      mutated = true;
+    }
+    if (typeof lookup.support_phone === 'string' && lookup.support_phone) {
+      storeConfig.support_phone = lookup.support_phone;
+      mutated = true;
+    }
+  }
+
+  if (Array.isArray(stateJson.promotions) && stateJson.promotions.length) {
+    window.STARKIT_PROMOTIONS = stateJson.promotions;
+    mutated = true;
+  }
+
+  if (Array.isArray(stateJson.products) && stateJson.products.length && Array.isArray(products)) {
+    const prodMap = new Map(stateJson.products.map((p) => [p.id, p]));
+    for (const p of products) {
+      const remote = prodMap.get(p.id);
+      if (!remote) continue;
+      if (remote.price_tier) p.price_tier = remote.price_tier;
+      if (Number.isFinite(Number(remote.price_bdt)) && Number(remote.price_bdt) > 0) p.price_bdt = Number(remote.price_bdt);
+      if (Number.isFinite(Number(remote.draft_price_bdt)) && Number(remote.draft_price_bdt) > 0) p.draft_price_bdt = Number(remote.draft_price_bdt);
+      if (typeof remote.price_approved === 'boolean') p.price_approved = remote.price_approved;
+      if (remote.approval_status) p.approval_status = remote.approval_status;
+      if (remote.publication_status) p.publication_status = remote.publication_status;
+      if (typeof remote.rights_verified === 'boolean') p.rights_verified = remote.rights_verified;
+      if (typeof remote.specifications_verified === 'boolean') p.specifications_verified = remote.specifications_verified;
+      if (typeof remote.stock_verified === 'boolean') p.stock_verified = remote.stock_verified;
+      if (typeof remote.commercial_terms_verified === 'boolean') p.commercial_terms_verified = remote.commercial_terms_verified;
+      mutated = true;
+    }
+  }
+
+  if (Array.isArray(stateJson.variants) && stateJson.variants.length && Array.isArray(products)) {
+    const varMap = new Map(stateJson.variants.map((v) => [v.sku, v]));
+    for (const p of products) {
+      for (const v of p.variants || []) {
+        const remote = varMap.get(v.sku);
+        if (!remote) continue;
+        if (remote.status) v.status = remote.status;
+        if (Number.isFinite(Number(remote.price_bdt)) && Number(remote.price_bdt) > 0) v.price_bdt = Number(remote.price_bdt);
+        if (typeof remote.price_approved === 'boolean') v.price_approved = remote.price_approved;
+        if (Number.isInteger(remote.stock_quantity)) v.stock_quantity = remote.stock_quantity;
+        if (Array.isArray(remote.sizes)) v.available_sizes = remote.sizes;
+        if (typeof remote.approved_for_publication === 'boolean') v.approved_for_publication = remote.approved_for_publication;
+        if (Array.isArray(remote.gallery) && remote.gallery.length > 0) v.gallery = remote.gallery;
+        mutated = true;
+      }
+    }
+  }
+
+  return mutated;
+}
+
 async function boot() {
   const base = window.STARKIT_BASE || './';
-  const storeConfig = window.STARKIT_CONFIG || {};
+  const storeConfig = (window.STARKIT_CONFIG = window.STARKIT_CONFIG || {});
   const products = window.STARKIT_CATALOG || [];
 
   setupNavigation();
@@ -348,8 +425,9 @@ async function boot() {
     spatialScene = initSpatialHero('spatialHeroContainer');
   }
 
+  let showroomApi = null;
   if (document.getElementById('showroomStage')) {
-    initShowroomHero({
+    showroomApi = initShowroomHero({
       products,
       base,
       spatialScene,
@@ -374,21 +452,32 @@ async function boot() {
   }
 
   setupLookbook({ products, base });
-  initProductViewer({
+  const viewerApi = initProductViewer({
     products,
     base,
     storeConfig,
     onAddToCart: (p, v, sz, qty) => cartApi.addItem(p, v, sz, qty),
     onOpenZoom: openZoom
   });
-  initCheckoutForm({ base, storeConfig, cartApi });
+  const checkoutApi = initCheckoutForm({ base, storeConfig, cartApi });
   initOrderConfirmation({ base });
   setupFitGuideModal({ base });
   setupVipEarlyAccess();
   initMotionEngine();
 
-  // Async sync of promotions.json so runtime pricing/offer edits stay synced without delaying hero paint
-  if (storeConfig.promotions_endpoint) {
+  // Async sync of live backend storefront state (falls back cleanly to static promotions.json)
+  let hydrated = false;
+  try {
+    const stateRes = await fetch(`${base}api/admin?action=public_storefront_state`, { cache: 'no-store' });
+    if (stateRes.ok) {
+      const stateJson = await stateRes.json();
+      hydrated = applyPublicStorefrontState({ stateJson, products, storeConfig });
+    }
+  } catch {
+    // API unavailable in pure offline preview; fall back below
+  }
+
+  if (!hydrated && storeConfig.promotions_endpoint) {
     try {
       const promoUrl = `${base}${String(storeConfig.promotions_endpoint).replace(/^\//, '')}`;
       const res = await fetch(promoUrl, { cache: 'no-store' });
@@ -396,16 +485,25 @@ async function boot() {
         const json = await res.json();
         if (Array.isArray(json?.promotions)) {
           window.STARKIT_PROMOTIONS = json.promotions;
-          if (document.getElementById('priceTiersMount') || document.getElementById('offerDisplayMount')) {
-            initOfferDisplay({
-              products,
-              onSelectTier: (tierCode) => gridApi?.setTierFilter(tierCode)
-            });
-          }
+          hydrated = true;
         }
       }
     } catch {
       // Fall back silently to DEFAULT_PROMOTIONS bundled in pricing-engine
+    }
+  }
+
+  if (hydrated) {
+    showroomApi?.refresh();
+    gridApi?.refresh();
+    viewerApi?.refresh();
+    cartApi?.refresh();
+    checkoutApi?.refresh();
+    if (document.getElementById('priceTiersMount') || document.getElementById('offerDisplayMount')) {
+      initOfferDisplay({
+        products,
+        onSelectTier: (tierCode) => gridApi?.setTierFilter(tierCode)
+      });
     }
   }
 }

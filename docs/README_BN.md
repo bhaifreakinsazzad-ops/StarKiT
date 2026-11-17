@@ -1,93 +1,69 @@
-# StarkiT — DROP 01 Interactive Commerce Store
+# StarkiT — WEAR YOUR WORLD. | DROP 01 (১৫টি ডিজাইন / ৬০টি স্লট) ও DROP 02
 
-**ডেলিভারি:** HTML/CSS/JavaScript-ভিত্তিক রেসপনসিভ স্টোর + ১১টি প্রোডাক্ট পেজ + ৬৭টি লোকাল WebP ইমেজ + ক্যাটালগ JSON/CSV + Vercel/Supabase COD API-এর সোর্স + ডেটাবেস মাইগ্রেশন + Node.js টেস্ট স্যুট।
+> **StarkiT** (`ستاركيت`) হলো ঢাকার একটি স্বাধীন স্ট্রিটওয়্যার ও আর্টিসান লাইফস্টাইল ফ্যাশন হাউস, যার প্রতিষ্ঠাতা **নাফে মুনাওয়ার (Nafe Munawer)**। এই রিপোজিটরিতে রয়েছে Three.js ইন্টারেক্টিভ 3D শোরুম, ৫০টি মাস্টার ডিজাইন (`15` Drop 01 হুডি / `60` কালারওয়ে স্লট + `35` Drop 02 Fariza's Territory আর্টিসান পিস), ৪-স্তরের খসড়া প্রাইসিং ইঞ্জিন, ৭-গেট অ্যাডমিন অ্যাপ্রুভাল ওয়ার্কফ্লো, এবং Vercel / Supabase COD API।
 
 ---
 
 ## ১) দ্রুত লোকাল ডেভেলপমেন্ট ও প্রিভিউ
 
 ```bash
-# ডিপেনডেন্সি ইনস্টল করুন
+# ১. ডিপেনডেন্সি ইনস্টল করুন
 npm install
 
-# প্যাকেজ ইন্টিগ্রিটি ও কোড সিনট্যাক্স টেস্ট করুন
+# ২. ইউনিট টেস্ট, API সিকিউরিটি, DOM ইন্টিগ্রিটি এবং প্যাকেজ ভেরিফিকেশন চালান
 npm test
 
-# লোকাল ডেভেলপমেন্ট সার্ভার চালু করুন
+# ৩. লোকাল ডেভেলপমেন্ট সার্ভার চালু করুন (http://localhost:3000)
 npm start
 ```
-ব্রাউজারে `http://localhost:3000` খুলুন। **প্রিভিউ সম্পূর্ণ অফলাইনেও কাজ করে**।
+
+- ডেভেলপমেন্ট বা ক্লায়েন্ট রিভিউয়ের সময় Supabase কনফিগার করা না থাকলেও `runtime-store.js` ইন-মেমরি ফলব্যাকের মাধ্যমে `/admin.html` ও অর্ডার ফ্লো পরীক্ষা করা যাবে।
+- প্রোডাকশনে অনলাইন অর্ডার সক্রিয় করতে `.env` বা Vercel-এ `STARKIT_ORDERS_ENABLED=true`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, এবং ৩২+ অক্ষরের `STARKIT_ADMIN_API_KEY` সেট করুন।
 
 ---
 
-## ২) সিস্টেম ও ফিচার বিবরণ
+## ২) সিস্টেম ও ক্যাটালগ আর্কিটেকচার
 
-- **১১টি অনন্য হুডি ডিজাইন / ১৫টি কালারওয়ে SKU / ৬৭টি অপ্টিমাইজড WebP ছবি / ১৩টি অরিজিনাল রেফারেন্স ছবি।**
-- **ক্যাটালগ মূল্য:** ৳১,২৯০ থেকে ৳১,৬৯০ (বাংলাদেশি টাকা - BDT)।
-- **ডিজাইন সিস্টেম:**
-  - প্রাইমারি ফন্ট: `Afacad Flux` (400–900)
-  - বাংলা ফন্ট: `Hind Siliguri` (400–700)
-  - কালার প্যালেট: Jet Black (`#170000`), Wine (`#44161B`), Paper (`#F6F5F3`), Sand (`#EBE7DF`), Accent Red (`#BC5358`)।
-- **পেজসমূহ:**
-  - `index.html`: ফুল হিরো স্লাইডার, লুকবুক ট্র্যাক, ক্যাটাগরি ফিল্টার, গ্রিড, ব্র্যান্ড স্টোরি, ব্যাগ ড্রয়ার।
-  - `shop.html`: লাইভ সার্চ, সর্টিং, ক্যাটাগরি ফিল্টারসহ সম্পূর্ণ কালেকশন।
-  - `products/*.html`: ১১টি পৃথক এসইও-বান্ধব প্রোডাক্ট পেজ (Front, Back, Details, Composite Gallery, কালার সিলেক্টর, সাইজ চার্ট, স্পেসিফিকেশন)।
-  - `checkout.html`: ক্যাশ অন ডেলিভারি (COD) চেকআউট, বাংলাদেশি ফোন নম্বর ভ্যালিডেশন (+8801X / 01X), ঢাকা (৳৮০) ও ঢাকার বাইরে (৳১৫০) ডেলিভারি জোন।
+- **Drop 01 হুডি ক্যাটালগ (১৫টি ডিজাইন × ৪টি কালার = ৬০টি কালারওয়ে স্লট):**
+  - ৪টি ব্র্যান্ড কালারওয়ে: Black (`#170000`), Cream (`#F3EFE6`), Maroon (`#5B1A24`), Chocolate Brown (`#4B2E24`)।
+  - **১৫টি ডকুমেন্টেড SKU** (৬৭টি লোকাল `.webp` স্টুডিও ইমেজসহ) ও **৪৫টি মিডিয়া-পেন্ডিং প্রোভিশনাল স্লট** (যার মধ্যে ৪টি নতুন কনসেপ্ট ডিজাইন: `STK-H013`–`STK-H016`)।
+  - **আইপি হোল্ড (IP Exclusion):** `STK-H012` (*Kinetic Stage — Marshmello Edition*) তৃতীয় পক্ষের লাইসেন্সিং পর্যালোচনার জন্য মূল ৬০-স্লট তালিকা থেকে আলাদা রাখা হয়েছে।
+- **Drop 02 (Fariza's Territory):** ৩৫টি হ্যান্ডক্রাফটেড আর্টিসান পিস (৫টি ডেকোরেটিভ মিরর, ১৯টি ওয়্যারেবল আর্ট জুয়েলারি, ১১টি চুড়ি ও অ্যাক্সেন্ট — ৩৫টি ভেরিফায়েড `.jpg` ছবি)।
+- **৪-স্তরের খসড়া মূল্য নির্ধারণ (Four-Tier Draft Pricing):**
+  - `CORE`: `৳1,099` · `SELECT`: `৳1,250` · `SIGNATURE`: `৳1,369` · `PREMIUM`: `৳1,499` (ফাউন্ডার অনুমোদনের আগে `price_approved: false`)।
+- **ডিজাইন ও অ্যানিমেশন সিস্টেম:**
+  - ফন্ট: `Afacad Flux` (ল্যাটিন), `Hind Siliguri` (বাংলা), `JetBrains Mono` (SKU/মেটাডেটা)।
+  - থ্রিডি শোরুম ও মাইক্রো-ইন্টারঅ্যাকশন: `Three.js` পলিহেড্রাল মনোলিথ, `Anime.js v4.5.0` ও `Motion.dev`।
+- **৬১টি HTML পেজ:**
+  - `index.html`: 3D শোরুম, ভার্চুয়াল ওয়ার্ডরোব, ৪-স্তরের মূল্য কার্ড, লুকবুক ও ৫০টি ডিজাইনের গ্রিড।
+  - `shop.html`: লাইভ সার্চ, ক্যাটাগরি, টিয়ার, কালার ও সর্টিং ফিল্টার।
+  - `products/*.html`: ১৫টি হুডি ও ৩৫টি অ্যাক্সেসরিজের আলাদা SEO-বান্ধব প্রোডাক্ট পেজ।
+  - `checkout.html` ও `order-confirmation.html`: ক্যাশ অন ডেলিভারি (ঢাকা `৳80`, ঢাকার বাইরে `৳150`, `৳3,000+` অর্ডারে ফ্রি ডেলিভারি), বাংলা/BD ফোন ভ্যালিডেশন ও সেশন রিসিপ্ট।
   - তথ্যবহুল পেজ: `about.html`, `shipping.html`, `returns.html`, `contact.html`, `privacy.html`, `terms.html`।
-- **সার্ভারলেস এপিআই:** `api/orders.js` (Vercel Serverless Function) - ইনপুট স্যানিটাইজেশন, রেট লিমিট, আইডেমপোটেন্সি কি ভ্যালিডেশন এবং Supabase RPC ট্রানজ্যাকশন।
-- **পোস্টগ্রেস ডেটাবেস (Supabase):**
-  - `supabase/001_starkit_store.sql`: টেবিল স্ট্রাকচার, Row Level Security (RLS) ও ট্রানজ্যাকশনাল অর্ডার ফাংশন (`submit_starkit_order`)।
-  - `supabase/002_catalog_seed.sql`: ১৫টি SKU-এর ক্যাটালগ সিড ডেটা।
-  - `supabase/003_admin_views_and_helpers.sql`: অ্যাডমিন ড্যাশবোর্ড ভিউ (`v_starkit_orders_dashboard`) এবং অর্ডার স্ট্যাটাস আপডেট হেল্পার।
-  - `supabase/004_quick_enable_demo.sql`: স্যান্ডবক্স বা স্টেজিং এনভায়রনমেন্টে তাৎক্ষণিক চেকআউট টেস্ট করার জন্য ডেমো স্টক ও সাইজ অ্যাক্টিভেশন স্ক্রিপ্ট।
+  - অ্যাডমিন পোর্টাল (`admin.html`): ৭-গেট প্রোডাক্ট অ্যাপ্রুভাল, প্রোমোশন কনফিগারেশন, অর্ডার ম্যানেজমেন্ট, ইনভয়েস প্রিন্ট, Google Drive/Supabase মিডিয়া আপলোড ও অডিট লগ।
+- **ট্র্যাকিং ও ডেটাবেস:**
+  - Meta Pixel (`1390081606323661`) + সার্ভার-সাইড Conversions API (`PageView`, `ViewContent`, `AddToCart`, `InitiateCheckout`, `Purchase`)।
+  - Supabase PostgreSQL মাইগ্রেশন: `supabase/001_starkit_store.sql` থেকে `005_security_and_60_variant_upgrade.sql`।
 
 ---
 
-## ৩) GitHub-এ পুশ করার নিয়ম
+## ৩) Vercel ও Supabase-এ লাইভ ডিপ্লয়মেন্ট
 
-```bash
-# ১. গিট স্ট্যাটাস চেক করুন
-git status
-
-# ২. আপনার GitHub রিমোট যুক্ত করুন
-git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-
-# ৩. মেইন ব্রাঞ্চে পুশ করুন
-git branch -M main
-git push -u origin main
-```
+১. Supabase SQL Editor-এ ক্রমানুসারে চালান: `001_starkit_store.sql` → `002_catalog_seed.sql` → `003_admin_views_and_helpers.sql` → `005_security_and_60_variant_upgrade.sql` (টেস্টিং স্যান্ডবক্সের জন্য ঐচ্ছিকভাবে `004_quick_enable_demo.sql`)।  
+২. Vercel Dashboard-এ রিপোজিটরি কানেক্ট করুন (Framework Preset: **Other**, Build Command: `None`, Output Directory: `.`)।  
+৩. Environment Variables যুক্ত করুন: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STARKIT_ADMIN_API_KEY` (৩২+ অক্ষর), `STARKIT_ORDERS_ENABLED`, `META_PIXEL_ID`, `META_ACCESS_TOKEN`, `STARKIT_PUBLIC_URL`।  
+৪. `/admin.html`-এ লগইন করে প্রতিটি লঞ্চ হুডির ৭-গেট অ্যাপ্রুভাল ও স্টক কনফার্ম করুন।
 
 ---
 
-## ৪) Vercel-এ ডেপ্লয় করার নিয়ম
-
-১. [vercel.com](https://vercel.com)-এ যান এবং **"Add New Project"** ক্লিক করুন।  
-২. আপনার GitHub রিপোজিটরিটি সিলেক্ট করুন।  
-৩. Framework Preset হিসেবে **Other** (Static HTML) থাকবে।  
-৪. Root Directory `./` রাখুন।  
-৫. Vercel Project Settings > Environment Variables-এ নিচের ভেরিয়েবলগুলো যুক্ত করুন:  
-   - `SUPABASE_URL`: আপনার Supabase প্রজেক্ট URL (`https://your-ref.supabase.co`)  
-   - `SUPABASE_SERVICE_ROLE_KEY`: Supabase সার্ভিস রোল সিক্রেট কি (`service_role` key)  
-   - `STARKIT_ORDERS_ENABLED`: `false` (বাণিজ্যিক বিক্রি শুরু করতে চাইলে `true` করুন)  
-৬. **Deploy** বাটনে ক্লিক করুন। কয়েক সেকেন্ডে সাইট লাইভ হয়ে যাবে!
-
----
-
-## ৫) ফাইল ও ফোল্ডার ডিরেক্টরি
+## ৪) ফাইল ও ডিরেক্টরি পরিচিতি
 
 | পাথ | বিবরণ |
 |---|---|
-| `index.html` | হোমপেজ + ইন্টারেক্টিভ লুকবুক + ফুল ক্যাটালগ |
-| `shop.html` | কালেকশন আর্কাইভ, সার্চ, সর্ট ও ফিল্টার |
-| `products/*.html` | ১১টি ডেডিকেটেড প্রোডাক্ট পেজ |
-| `checkout.html` | ক্যাশ অন ডেলিভারি চেকআউট পেজ |
-| `about.html`, `shipping.html` ... | ব্র্যান্ড স্টোরি, ডেলিভারি ও পলিসি পেজসমূহ |
-| `api/orders.js` | Vercel Serverless Function (অর্ডার প্রসেসিং) |
-| `assets/images/` | ব্র্যান্ড লোগো + ৬৭টি হাই-রেজোলিউশন WebP ইমেজ |
-| `assets/css/styles.css` | সম্পূর্ণ রেসপন্সিভ ডিজাইন সিস্টেম ও সিএসএস |
-| `assets/js/app.js` | অ্যাপের ইন্টারঅ্যাকশন, কার্ট ড্রয়ার ও স্টেট ইঞ্জিন |
-| `assets/js/catalog-data.js` | সম্পূর্ণ ক্যাটালগ ডেটা অবজেক্ট |
-| `supabase/` | পোস্টগ্রেস ডেটাবেস স্কিমা ও সিড স্ক্রিপ্ট |
-| `docs/` | ব্র্যান্ড বুক PDF, মিডিয়া ম্যানিফেস্ট CSV, QA রিপোর্ট |
-| `verify_package.js` | অফলাইন অটোমেটেড টেস্ট স্যুট |
-| `vercel.json` | Vercel ক্যাশিং ও সিকিউরিটি হেডার কনফিগ |
+| `index.html`, `shop.html`, `products/*.html` | শোরুম, সম্পূর্ণ কালেকশন ও ৫০টি প্রোডাক্ট ডিটেইল পেজ |
+| `checkout.html`, `order-confirmation.html` | Cash on Delivery চেকআউট ও কনফার্মেশন পেজ |
+| `admin.html`, `api/admin.js`, `api/orders.js` | অ্যাডমিন অপারেশনস পোর্টাল ও নিরাপদ সার্ভারলেস এপিআই |
+| `assets/js/core/` & `assets/js/modules/` | শেয়ার্ড স্কিমা, প্রাইসিং ইঞ্জিন, ভ্যালিডেশন ও মডুলার ফ্রন্টএন্ড |
+| `supabase/001`–`005` | PostgreSQL স্কিমা, RLS, অ্যাটমিক `submit_starkit_order` RPC ও RBAC |
+| `docs/` & `catalog/` | ব্র্যান্ড গাইড, অডিট, লঞ্চ চেকলিস্ট ও ক্যানোনিকাল ক্যাটালগ ম্যানিফেস্ট |
+| `tests/` & `scripts/` | অটোমেটেড ইউনিট, সিকিউরিটি, DOM, Meta Pixel ও বিল্ড স্ক্রিপ্ট |

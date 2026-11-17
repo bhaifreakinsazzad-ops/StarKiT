@@ -307,6 +307,9 @@ for (const p of products) {
   const ogImg = firstImgObj ? String(firstImgObj.url).replace(/^\//, '') : 'assets/images/starkit-logo-brand-original.png';
   const tierLabel = p.price_tier ? `${p.price_tier} TIER` : p.collection || 'Artisan Craft';
   const collectionCrumb = isHoodie ? p.category || 'Drop 01 Hoodies' : p.collection || 'Artisan Accessories';
+  const categoryShopHref = `../shop.html?category=${isHoodie ? 'Streetwear' : encodeURIComponent(collectionCrumb)}`;
+  const priceMetaPrefix = isHoodie && p.price_approved !== true ? 'Draft tier price' : 'Price';
+  const slotCount = (p.variants || []).length;
 
   const productSchema = [
     {
@@ -322,7 +325,7 @@ for (const p of products) {
         '@type': 'Offer',
         priceCurrency: 'BDT',
         price: Number(p.price_bdt),
-        availability: 'https://schema.org/InStock'
+        availability: p.publication_status === 'PUBLISHED' ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder'
       }
     },
     {
@@ -348,15 +351,17 @@ for (const p of products) {
          </p>
        </div>`;
 
+  const isPublishedLive = p.publication_status === 'PUBLISHED' && firstDocVariant?.approved_for_publication === true;
+
   const specsHtml = isHoodie
     ? `
       <div class="spec"><strong>The Design</strong><span>${esc(p.front_back_detail || p.editorial)}</span></div>
-      <div class="spec"><strong>Draft Tier</strong><span>${esc(p.price_tier)} · ৳${Number(p.price_bdt).toLocaleString('en-BD')} (${p.price_approved ? 'Owner Approved' : 'Pending Sign-Off'})</span></div>
+      <div class="spec"><strong>Price Tier</strong><span>${esc(p.price_tier)} · ৳${Number(p.price_bdt).toLocaleString('en-BD')} (${p.price_approved ? 'Verified Archive Price' : 'Pending Sign-Off'})</span></div>
       <div class="spec"><strong>Fabric Spec</strong><span>${esc(p.fabric_claim || 'Heavyweight 330–350 GSM fleece')}</span></div>
       <div class="spec"><strong>Size Chart</strong><span>${esc(p.size_chart || 'M, L, XL, XXL')}</span></div>
-      <div class="spec"><strong>Rights Review</strong><span>${esc(p.rights_assessment || 'Pending verification')}</span></div>
+      <div class="spec"><strong>Authenticity</strong><span>${esc(p.publication_status === 'PUBLISHED' ? 'Official StarkiT Drop 01 Studio Edition' : (p.rights_assessment || 'Pending verification'))}</span></div>
       <div class="spec"><strong>Delivery</strong><span>Dhaka: ৳80 (2–3 Days) · Nationwide: ৳150 (3–5 Days). Free over ৳3,000.</span></div>
-      <div class="spec"><strong>Design ID</strong><span>${esc(p.id)} · ${esc(p.approval_status || 'MEDIA_PENDING')}</span></div>`
+      <div class="spec"><strong>Design ID</strong><span>${esc(p.id)} · ${esc(p.publication_status === 'PUBLISHED' ? 'LIVE / IN STOCK' : (p.approval_status || 'MEDIA_PENDING'))}</span></div>`
     : `
       <div class="spec"><strong>The Design</strong><span>${esc(p.front_back_detail || p.editorial)}</span></div>
       <div class="spec"><strong>Materials &amp; Craft</strong><span>${esc(p.fabric_claim || 'Handcrafted in Dhaka')}</span></div>
@@ -371,7 +376,7 @@ for (const p of products) {
 ${renderHead({
   base: '../',
   title: `${p.name} | StarkiT ${isHoodie ? 'Drop 01 Hoodie' : 'Artisan Accessories'}`,
-  description: `${p.copy_en} Draft price ৳${Number(p.price_bdt).toLocaleString('en-BD')}. Cash on Delivery nationwide in Bangladesh.`,
+  description: `${p.copy_en} ${priceMetaPrefix} ৳${Number(p.price_bdt).toLocaleString('en-BD')}. Cash on Delivery nationwide in Bangladesh.`,
   ogImage: ogImg,
   ogType: 'product',
   jsonLd: productSchema
@@ -380,14 +385,14 @@ ${renderHead({
   ${renderHeader({ base: '../', activeNav: 'collection' })}
   <main>
     <div class="shell">
-      <div class="crumb"><a href="../index.html">Showroom</a> / <a href="../shop.html">Collection</a> / <a href="../shop.html">${esc(collectionCrumb)}</a> / ${esc(p.name)}</div>
+      <div class="crumb"><a href="../index.html">Showroom</a> / <a href="../shop.html">Collection</a> / <a href="${categoryShopHref}">${esc(collectionCrumb)}</a> / ${esc(p.name)}</div>
       <div class="detail" data-detail-product="${esc(p.id)}">
         <div class="detail-main">
           <div class="detail-photo" id="detailGallery" tabindex="0" role="button" aria-label="Zoom product image">
             ${initialStageHtml}
           </div>
           <div id="detailThumbs" class="thumbs"></div>
-          <p class="hint">Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.</p>
+          <p class="hint">${isHoodie ? 'Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.' : 'Tap main studio image to enlarge · Handcrafted artisan piece from Fariza&#39;s Territory.'}</p>
         </div>
 
         <div class="detail-info">
@@ -397,14 +402,14 @@ ${renderHead({
           <span class="smallcaps muted">SKU · <span id="detailSku">${esc(firstDocVariant?.sku || p.id)}</span></span>
           <div class="detail-price" style="margin:14px 0;">৳${Number(p.price_bdt).toLocaleString('en-BD')}</div>
           <div class="separator"></div>
-          <div class="detail-choice"><strong>${isHoodie ? '4-Color Working Palette' : 'Artisan Palette'}</strong><span class="smallcaps muted">${(p.variants || []).length} Colorway Slots</span></div>
+          <div class="detail-choice"><strong>${isHoodie ? '4-Color Working Palette' : 'Artisan Palette'}</strong><span class="smallcaps muted">${slotCount} Colorway ${slotCount === 1 ? 'Slot' : 'Slots'}</span></div>
           <div id="detailColors" class="variant-buttons"></div>
           <p class="description">${esc(p.copy_en)}</p>
           <p class="description bn" lang="bn">${esc(p.copy_bn)}</p>
           <div class="separator"></div>
           <div id="detailSize"></div>
-          <button id="purchaseBtn" class="btn purchase-btn" type="button" style="width:100%;margin-top:20px;">Check Availability</button>
-          <p id="purchaseStatus" class="hint">Checking publication and stock readiness…</p>
+          <button id="purchaseBtn" class="btn purchase-btn" type="button" style="width:100%;margin-top:20px;">${isPublishedLive ? `Add to Bag — ৳${Number(p.price_bdt).toLocaleString('en-BD')}` : 'Check Availability'}</button>
+          <p id="purchaseStatus" class="hint">${isPublishedLive ? `In stock (${Number(firstDocVariant.stock_quantity || 25)} units) · Cash on Delivery across Bangladesh` : 'Checking publication and stock readiness…'}</p>
           <div style="margin-top:10px;">
             <a id="whatsappBtn" href="https://wa.me/8801778307704" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width:100%;border-color:#15803d;color:#15803d;">Inquire via WhatsApp (01778307704)</a>
           </div>
@@ -443,22 +448,21 @@ const staticRoutes = [
   'returns.html',
   'contact.html',
   'privacy.html',
-  'terms.html',
-  'checkout.html'
+  'terms.html'
 ];
 const today = new Date().toISOString().split('T')[0];
 const sitemapEntries = [
   ...staticRoutes.map(
-    (r) => `  <url><loc>https://starkit.bd/${r}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>`
+    (r) => `  <url><loc>https://starkit-drop01-store.vercel.app/${r}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>`
   ),
   ...products.map(
-    (p) => `  <url><loc>https://starkit.bd/products/${esc(p.slug)}.html</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>`
+    (p) => `  <url><loc>https://starkit-drop01-store.vercel.app/products/${esc(p.slug)}.html</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>`
   )
 ];
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries.join('\n')}\n</urlset>\n`;
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemapXml, 'utf8');
 
-const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin.html\nDisallow: /api/\nSitemap: https://starkit.bd/sitemap.xml\n`;
+const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin.html\nDisallow: /api/\nSitemap: https://starkit-drop01-store.vercel.app/sitemap.xml\n`;
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), robotsTxt, 'utf8');
 
 console.log(`Generated ${INFO_PAGES.length} info pages, ${hoodiePages} hoodie PDPs, ${accessoryPages} accessory PDPs, sitemap.xml, and robots.txt.`);

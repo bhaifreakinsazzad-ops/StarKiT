@@ -108,9 +108,9 @@
   <script type="importmap">
   {
     "imports": {
-      "firebase/app": "/vendor/firebase/firebase-app.js",
-      "firebase/auth": "/vendor/firebase/firebase-auth.js",
-      "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js": "/vendor/firebase/firebase-app.js"
+      "firebase/app": "./assets/js/vendor/firebase-app.js",
+      "firebase/auth": "./assets/js/vendor/firebase-auth.js",
+      "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js": "./assets/js/vendor/firebase-app.js"
     }
   }
   </script>
@@ -344,7 +344,7 @@
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
-              <tr><th>Code</th><th>Offer Title</th><th>Min Qty</th><th>Discount Rule</th><th>State</th><th>Control</th></tr>
+              <tr><th>Code</th><th>Offer Title</th><th>Min Qty</th><th>Discount Rule</th><th>Free Shipping</th><th>State</th><th>Control</th></tr>
             </thead>
             <tbody id="adminPromosBody"></tbody>
           </table>
@@ -522,6 +522,7 @@
       </table>
       <div style="border-top:1px solid var(--border-color);padding-top:12px;text-align:right;font-size:0.9rem;line-height:1.6;">
         <div>Subtotal: <strong id="invSubtotal"></strong></div>
+        <div id="invDiscountRow" style="display:none;color:#15803d;">Promotions: <strong id="invDiscount"></strong></div>
         <div>Delivery Fee: <strong id="invShipping"></strong></div>
         <div style="font-size:1.15rem;font-weight:800;margin-top:6px;">Total Due (COD): <span id="invTotal"></span></div>
       </div>

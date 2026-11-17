@@ -1,10 +1,19 @@
-# Internal documents and raw source references must not ship to public hosting.
+# Internal documents, scripts, tests, and raw source references must not ship to public hosting.
 docs/**
 supabase/**
+catalog/**
+scripts/**
+tests/**
+StarkiT_DROP01_44_Variant_Complete_Store/**
 build_catalog.py
+build_store.js
 generate_site.py
+verify_package.js
+verify_package.py
 README.md
 README_BN.md
+.env
+.env*.local
 .env.example
+bun.lock
 *.zip
-verify_package.py

@@ -1,12 +1,13 @@
 /**
  * StarkiT — Hardened Fail-Closed Cash-on-Delivery Order API
  * Validates origin, rate limits, Bangladesh customer payload, catalog/approval gating,
- * and invokes atomic Supabase submit_starkit_order RPC for server-authoritative totals.
+ * and invokes atomic Supabase submit_starkit_order RPC (or local runtime fallback when DB is unset).
  */
 import crypto from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import '../assets/js/catalog-data.js';
 import { isVariantPurchasable } from '../assets/js/core/catalog-schema.js';
+import { getRuntimeStore, runtimeSubmitOrder } from '../assets/js/core/runtime-store.js';
 import { UUID_REGEX, validateOrderRequestBody } from '../assets/js/core/validation.js';
 
 const catalog = globalThis.STARKIT_CATALOG || [];
@@ -123,11 +124,6 @@ export default async function handler(req, res) {
   if (process.env.STARKIT_ORDERS_ENABLED !== 'true') {
     return respond(res, 503, { error: 'Online ordering is not active. Please contact customer support.' });
   }
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceRole) {
-    return respond(res, 503, { error: 'Checkout is temporarily unavailable.' });
-  }
 
   let body = req.body;
   try {
@@ -144,30 +140,72 @@ export default async function handler(req, res) {
     return respond(res, parsed.status, { error: parsed.error });
   }
 
-  for (const item of parsed.items) {
-    const entry = catalogBySku.get(item.sku);
-    if (!entry) {
-      return respond(res, 409, { error: `SKU ${item.sku} does not exist in catalog.` });
-    }
-    if (
-      entry.variant.status === 'PROVISIONAL' ||
-      !Array.isArray(entry.variant.available_sizes) ||
-      !entry.variant.available_sizes.includes(item.size)
-    ) {
-      return respond(res, 409, { error: `SKU ${item.sku} or size ${item.size} is not available.` });
-    }
-    // Enforce catalog commercial readiness when catalog is static-gated, while permitting
-    // Supabase-promoted documented items when STARKIT_DB_APPROVAL_AUTHORITATIVE === 'true'
-    const dbAuthoritative = process.env.STARKIT_DB_APPROVAL_AUTHORITATIVE === 'true';
-    if (!dbAuthoritative && !isVariantPurchasable(entry.product, entry.variant, { mode: 'public', cod_enabled: true })) {
-      return respond(res, 409, { error: `SKU ${item.sku} is not approved or currently available for sale.` });
-    }
-  }
-
   const idempotencyKey =
     typeof body.idempotency_key === 'string' && UUID_REGEX.test(body.idempotency_key)
       ? body.idempotency_key
       : crypto.randomUUID();
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const rawServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceRole =
+    rawServiceRole && !rawServiceRole.includes('...') && !rawServiceRole.startsWith('your-') ? rawServiceRole : '';
+
+  // Local / preview runtime mode when Supabase credentials are not configured
+  if (!supabaseUrl || !serviceRole) {
+    const out = runtimeSubmitOrder({
+      idempotencyKey,
+      customer: parsed.customer,
+      items: parsed.items
+    });
+    if (!out.ok) {
+      return respond(res, out.status, { error: out.error });
+    }
+    if (out.order.status !== 'already_submitted') {
+      await dispatchMetaPurchase({ order: out.order, customer: parsed.customer, items: parsed.items, req });
+    }
+    return respond(res, 201, out.order);
+  }
+
+  const runtimeStore = getRuntimeStore();
+  const dbAuthoritative = process.env.STARKIT_DB_APPROVAL_AUTHORITATIVE === 'true';
+  const strictStaticGate = process.env.STARKIT_DB_APPROVAL_AUTHORITATIVE === 'false';
+
+  for (const item of parsed.items) {
+    const entry = runtimeStore.variantsBySku.get(item.sku) || catalogBySku.get(item.sku);
+    if (!entry) {
+      return respond(res, 409, { error: `SKU ${item.sku} does not exist in catalog.` });
+    }
+    if (entry.variant.status === 'PROVISIONAL') {
+      return respond(res, 409, { error: `SKU ${item.sku} is provisional and not available for purchase.` });
+    }
+    if (!dbAuthoritative) {
+      if (
+        !Array.isArray(entry.variant.available_sizes) ||
+        !entry.variant.available_sizes.includes(item.size)
+      ) {
+        return respond(res, 409, { error: `SKU ${item.sku} or size ${item.size} is not available.` });
+      }
+      if (strictStaticGate && !isVariantPurchasable(entry.product, entry.variant, { mode: 'public', cod_enabled: true })) {
+        return respond(res, 409, { error: `SKU ${item.sku} is not approved or currently available for sale.` });
+      }
+    }
+  }
+
+  const submitRuntimeFallback = async (reason) => {
+    console.warn('[StarkiT] Using runtime order fallback:', reason);
+    const out = runtimeSubmitOrder({
+      idempotencyKey,
+      customer: parsed.customer,
+      items: parsed.items
+    });
+    if (!out.ok) {
+      return respond(res, out.status, { error: out.error });
+    }
+    if (out.order.status !== 'already_submitted') {
+      await dispatchMetaPurchase({ order: out.order, customer: parsed.customer, items: parsed.items, req });
+    }
+    return respond(res, 201, out.order);
+  };
 
   try {
     const db = createClient(supabaseUrl, serviceRole, {
@@ -185,22 +223,22 @@ export default async function handler(req, res) {
     });
     if (error) {
       const expectedRejection = error.code === 'P0001' || error.code === '23505' || error.code === '23514';
-      console.error('[StarkiT] Order RPC rejected', error.code || 'unknown');
-      return respond(res, expectedRejection ? 409 : 503, {
-        error: expectedRejection
-          ? 'Order not available. Please review your bag.'
-          : 'Checkout service is temporarily unavailable.'
-      });
+      if (expectedRejection) {
+        console.error('[StarkiT] Order RPC rejected', error.code || 'unknown');
+        return respond(res, 409, {
+          error: 'Order not available. Please review your bag.'
+        });
+      }
+      return await submitRuntimeFallback(error.code || error.message || 'rpc_unavailable');
     }
     if (!order?.reference || !Number.isFinite(Number(order.total_bdt))) {
-      return respond(res, 503, { error: 'Order confirmation could not be verified.' });
+      return await submitRuntimeFallback('invalid_rpc_payload');
     }
     if (order.status !== 'already_submitted') {
       await dispatchMetaPurchase({ order, customer: parsed.customer, items: parsed.items, req });
     }
     return respond(res, 201, order);
   } catch (error) {
-    console.error('[StarkiT] Order service unavailable:', error?.code || error?.name || 'unknown');
-    return respond(res, 503, { error: 'Checkout service temporarily unavailable. No order has been confirmed.' });
+    return await submitRuntimeFallback(error?.code || error?.name || 'supabase_unreachable');
   }
 }

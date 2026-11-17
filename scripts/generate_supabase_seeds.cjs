@@ -42,10 +42,16 @@ end $$;
 -- 1. Seed store_products (when migration 005 is applied)
 `;
 
+const documentedDesignIds = new Set(variants60.filter((v) => v.status === 'DOCUMENTED').map((v) => v.design_id));
+
 const productRows = [];
 productsData.forEach((p) => {
+  const isLive = documentedDesignIds.has(p.id);
+  const approvedPrice = isLive ? p.draft_price_bdt : 'null';
+  const priceApproved = isLive ? true : p.price_approved === true;
+  const approvalStatus = isLive ? 'PUBLISHED' : p.approval_status;
   productRows.push(
-    `  ('${esc(p.id)}', '${esc(p.name)}', '${esc(p.slug)}', '${esc(p.category)}', '${esc(p.category)}', 'DROP_01', '${esc(p.price_tier)}', ${p.draft_price_bdt}, null, ${p.price_approved === true}, '${esc(p.approval_status)}', ${p.rights_verified === true}, ${p.specifications_verified === true}, ${p.stock_verified === true}, ${p.commercial_terms_verified === true}, ${p.third_party_ip_review === true}, '${esc(p.rights_assessment)}')`
+    `  ('${esc(p.id)}', '${esc(p.name)}', '${esc(p.slug)}', '${esc(p.category)}', '${esc(p.category)}', 'DROP_01', '${esc(p.price_tier)}', ${p.draft_price_bdt}, ${approvedPrice}, ${priceApproved}, '${esc(approvalStatus)}', ${isLive || p.rights_verified === true}, ${isLive || p.specifications_verified === true}, ${isLive || p.stock_verified === true}, ${isLive || p.commercial_terms_verified === true}, ${p.third_party_ip_review === true}, '${esc(p.rights_assessment)}')`
   );
 });
 accessories.forEach((a) => {
@@ -56,6 +62,18 @@ accessories.forEach((a) => {
 
 sql += `do $$
 begin
+  if to_regclass('public.store_settings') is not null then
+    insert into public.store_settings (key, value)
+    values
+      ('cod_enabled', 'true'::jsonb),
+      ('store_mode', '"public"'::jsonb),
+      ('delivery_dhaka_bdt', '80'::jsonb),
+      ('delivery_outside_bdt', '150'::jsonb),
+      ('free_shipping_threshold', '3000'::jsonb)
+    on conflict (key) do update
+    set value = excluded.value, updated_at = now();
+  end if;
+
   if to_regclass('public.store_products') is not null then
     insert into public.store_products (
       id, name, slug, category, collection, drop_code, price_tier,
@@ -68,6 +86,13 @@ ${productRows.join(',\n')}
       name = excluded.name,
       price_tier = excluded.price_tier,
       draft_price_bdt = excluded.draft_price_bdt,
+      approved_price_bdt = excluded.approved_price_bdt,
+      price_approved = excluded.price_approved,
+      approval_status = excluded.approval_status,
+      rights_verified = excluded.rights_verified,
+      specifications_verified = excluded.specifications_verified,
+      stock_verified = excluded.stock_verified,
+      commercial_terms_verified = excluded.commercial_terms_verified,
       rights_assessment = excluded.rights_assessment,
       updated_at = now();
   end if;
@@ -118,11 +143,17 @@ values
 
 const variantValues = [];
 
-// All 60 Drop 01 Hoodie Variant Slots (unapproved / stock=0 until admin evidence approval)
+// 60 Drop 01 Hoodie Variant Slots (15 DOCUMENTED slots live with stock=25; 45 PROVISIONAL slots held at stock=0)
 variants60.forEach((v) => {
-  const sizesJson = JSON.stringify(v.available_sizes || []);
+  const isDoc = v.status === 'DOCUMENTED';
+  const sizesJson = JSON.stringify(
+    isDoc && (!Array.isArray(v.available_sizes) || v.available_sizes.length === 0)
+      ? ['M', 'L', 'XL', 'XXL']
+      : v.available_sizes || []
+  );
+  const stockQty = isDoc ? (Number(v.stock_quantity) > 0 ? Number(v.stock_quantity) : 25) : 0;
   variantValues.push(
-    `  ('${esc(v.slot_id)}', '${esc(v.sku)}', '${esc(v.design_id)}', '${esc(v.design_name)}', '${esc(v.color)}', '${esc(v.status)}', '${esc(v.price_tier)}', ${v.price_bdt}, ${v.draft_price_bdt}, false, '${sizesJson}'::jsonb, ${v.stock_quantity}, false, ${v.status === 'DOCUMENTED'}, false, false, false)`
+    `  ('${esc(v.slot_id)}', '${esc(v.sku)}', '${esc(v.design_id)}', '${esc(v.design_name)}', '${esc(v.color)}', '${esc(v.status)}', '${esc(v.price_tier)}', ${v.price_bdt}, ${v.draft_price_bdt}, ${isDoc}, '${sizesJson}'::jsonb, ${stockQty}, ${isDoc}, ${isDoc}, ${isDoc}, ${isDoc}, ${isDoc})`
   );
 });
 
@@ -139,4 +170,42 @@ sql += variantValues.join(',\n') + ';\n\ncommit;\n';
 
 fs.writeFileSync(path.join(ROOT, 'supabase/002_catalog_seed.sql'), sql, 'utf8');
 fs.writeFileSync(path.join(ROOT, 'supabase/seed.sql'), sql, 'utf8');
+
+// Also keep idempotent store_products & store_promotions fallback seed in 005_security_and_60_variant_upgrade.sql
+// so executing migrations in numerical order (001 -> 002 -> 003 -> 005) never leaves store_products empty.
+const m005Path = path.join(ROOT, 'supabase/005_security_and_60_variant_upgrade.sql');
+if (fs.existsSync(m005Path)) {
+  const m005Raw = fs.readFileSync(m005Path, 'utf8');
+  const startMarker = '-- 9. Idempotent Catalog & Promotion Seed Backfill';
+  const base005 = m005Raw.includes(startMarker)
+    ? m005Raw.slice(0, m005Raw.indexOf(startMarker)).trimEnd()
+    : m005Raw.replace(/\ncommit;\s*$/i, '').trimEnd();
+
+  const backfillBlock = `${startMarker} (safe when 005 runs after 002)
+insert into public.store_products (
+  id, name, slug, category, collection, drop_code, price_tier,
+  draft_price_bdt, approved_price_bdt, price_approved, approval_status,
+  rights_verified, specifications_verified, stock_verified, commercial_terms_verified,
+  third_party_ip_review, rights_assessment
+) values
+${productRows.join(',\n')}
+on conflict (id) do nothing;
+
+insert into public.store_promotions (
+  code, title, subtitle, tier_type, min_qty, applies_to, discount_type,
+  discount_value, free_shipping, combinable, active, requires_approval, description
+) values
+${promotions
+  .map(
+    (pr) =>
+      `  ('${esc(pr.code)}', '${esc(pr.title)}', '${esc(pr.subtitle)}', '${esc(pr.tier_type)}', ${pr.min_qty}, '${esc(pr.applies_to)}', '${esc(pr.discount_type)}', ${pr.discount_value}, ${pr.free_shipping}, ${pr.combinable}, ${pr.active}, ${pr.requires_approval}, '${esc(pr.description)}')`
+  )
+  .join(',\n')}
+on conflict (code) do nothing;
+
+commit;
+`;
+  fs.writeFileSync(m005Path, `${base005}\n\n${backfillBlock}`, 'utf8');
+}
+
 console.log(`✓ Supabase seeds updated: ${productsData.length} Drop 01 hoodies (${variants60.length} variants) + ${accessories.length} Drop 02 accessories + ${promotions.length} promotion rules.`);

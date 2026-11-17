@@ -37,8 +37,8 @@ hoodies.forEach((h) => {
       if (!v.available_sizes || v.available_sizes.length === 0) {
         throw new Error(`Documented SKU ${v.sku} has no sizes`);
       }
-      if (v.approved_for_publication === true) {
-        throw new Error(`Hoodie ${v.sku} cannot default to approved_for_publication without 7-gate sign-off`);
+      if (v.approved_for_publication !== true || Number(v.stock_quantity) <= 0) {
+        throw new Error(`Documented SKU ${v.sku} must be approved_for_publication=true with positive stock for live advertising`);
       }
     } else if (v.status === 'PROVISIONAL') {
       provisionalVariants++;

@@ -1,6 +1,8 @@
 /**
- * StarkiT DROP 01 — Master Distribution Packaging Script
- * Builds StarkiT_DROP01_44_Variant_Complete_Store.zip according to Phase 15 requirements.
+ * StarkiT — Master Client Handover & Distribution Packaging Script
+ * Builds StarkiT_DROP01_44_Variant_Complete_Store/ and StarkiT_DROP01_44_Variant_Complete_Store.zip
+ * containing the complete production storefront, serverless APIs, media assets, canonical catalogs,
+ * Supabase migrations (001-005), test suite, and documentation.
  */
 
 const fs = require('fs');
@@ -13,12 +15,12 @@ const PKG_DIR = path.join(ROOT, PKG_NAME);
 const ZIP_FILE = path.join(ROOT, `${PKG_NAME}.zip`);
 
 console.log('================================================================');
-console.log(`STARKIT DROP 01 — BUILDING DOWNLOADABLE PRODUCTION ARCHIVE`);
+console.log('STARKIT — BUILDING CLIENT HANDOVER & PRODUCTION ARCHIVE');
 console.log(`Target: ${PKG_NAME}.zip`);
 console.log('================================================================');
 
-// Helper: recursive copy directory
 function copyDirSync(src, dest) {
+  if (!fs.existsSync(src)) return;
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
   }
@@ -27,7 +29,7 @@ function copyDirSync(src, dest) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
-    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.vercel') {
+    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.vercel' || entry.name === PKG_NAME) {
       continue;
     }
 
@@ -39,7 +41,7 @@ function copyDirSync(src, dest) {
   }
 }
 
-// 1. Clean previous build directory
+// 1. Clean previous build directory & archive
 if (fs.existsSync(PKG_DIR)) {
   fs.rmSync(PKG_DIR, { recursive: true, force: true });
 }
@@ -62,21 +64,33 @@ fs.mkdirSync(catalogDir, { recursive: true });
 fs.mkdirSync(databaseDir, { recursive: true });
 fs.mkdirSync(docsDir, { recursive: true });
 
-// A. Populate website/
-console.log('Packaging website source code...');
+// A. Populate website/ (deployable root for Vercel / Node.js)
+console.log('Packaging website source code (61 HTML pages, ES modules, APIs, tests, scripts)...');
 const htmlPages = fs.readdirSync(ROOT).filter((f) => f.endsWith('.html'));
 htmlPages.forEach((f) => fs.copyFileSync(path.join(ROOT, f), path.join(websiteDir, f)));
 
 copyDirSync(path.join(ROOT, 'products'), path.join(websiteDir, 'products'));
 copyDirSync(path.join(ROOT, 'assets'), path.join(websiteDir, 'assets'));
 copyDirSync(path.join(ROOT, 'api'), path.join(websiteDir, 'api'));
+copyDirSync(path.join(ROOT, 'tests'), path.join(websiteDir, 'tests'));
+copyDirSync(path.join(ROOT, 'scripts'), path.join(websiteDir, 'scripts'));
 
 const rootConfigs = [
+  'server.js',
   'package.json',
   'package-lock.json',
   'vercel.json',
+  '.vercelignore',
   '.env.example',
-  '.gitignore'
+  '.gitignore',
+  'sitemap.xml',
+  'robots.txt',
+  'metadata.json',
+  'firebase-applet-config.json',
+  'verify_package.js',
+  'verify_package.py',
+  'README.md',
+  'README_BN.md'
 ];
 rootConfigs.forEach((f) => {
   if (fs.existsSync(path.join(ROOT, f))) {
@@ -85,21 +99,23 @@ rootConfigs.forEach((f) => {
 });
 
 // B. Populate media/
-console.log('Packaging all media assets...');
+console.log('Packaging all media assets (67 WebPs + 35 Drop 02 JPGs + 13 reference JPGs)...');
 copyDirSync(path.join(ROOT, 'assets/images'), mediaDir);
 if (fs.existsSync(path.join(ROOT, 'docs/original_references'))) {
   copyDirSync(path.join(ROOT, 'docs/original_references'), path.join(mediaDir, 'original_references'));
 }
 
 // C. Populate catalog/
-console.log('Packaging canonical 44-variant catalog files...');
+console.log('Packaging canonical 15-design / 60-slot + Drop 02 catalog files...');
 const catalogFiles = [
   'starkit_products.json',
+  'starkit_60_variants.json',
   'starkit_44_variants.json',
   'starkit_variants.csv',
   'starkit_media_manifest.csv',
   'starkit_knowledge_base.json',
-  'accessories_drop02.json'
+  'accessories_drop02.json',
+  'promotions.json'
 ];
 catalogFiles.forEach((f) => {
   const p = path.join(ROOT, 'catalog', f);
@@ -107,9 +123,11 @@ catalogFiles.forEach((f) => {
     fs.copyFileSync(p, path.join(catalogDir, f));
   }
 });
+// Mirror catalog into website/catalog too so verify_package.js and npm test run inside website/
+copyDirSync(catalogDir, path.join(websiteDir, 'catalog'));
 
 // D. Populate database/
-console.log('Packaging Supabase migrations & seed scripts...');
+console.log('Packaging Supabase migrations (001-005) & seed scripts...');
 const dbFiles = fs.readdirSync(path.join(ROOT, 'supabase')).filter((f) => f.endsWith('.sql'));
 dbFiles.forEach((f) => {
   fs.copyFileSync(path.join(ROOT, 'supabase', f), path.join(databaseDir, f));
@@ -117,13 +135,17 @@ dbFiles.forEach((f) => {
 
 // E. Populate docs/
 console.log('Packaging documentation suite...');
-const docFiles = fs.readdirSync(path.join(ROOT, 'docs')).filter((f) => f.endsWith('.md') || f.endsWith('.png'));
+const docFiles = fs.readdirSync(path.join(ROOT, 'docs')).filter((f) => f.endsWith('.md') || f.endsWith('.png') || f.endsWith('.csv'));
 docFiles.forEach((f) => {
   fs.copyFileSync(path.join(ROOT, 'docs', f), path.join(docsDir, f));
 });
+// Mirror docs/ and supabase/ into website/ so standalone npm test works cleanly inside website/
+copyDirSync(path.join(ROOT, 'docs'), path.join(websiteDir, 'docs'));
+copyDirSync(path.join(ROOT, 'supabase'), path.join(websiteDir, 'supabase'));
 
-// Copy .env.example to root of package
+// Copy .env.example and README.md to root of handover package
 fs.copyFileSync(path.join(ROOT, '.env.example'), path.join(PKG_DIR, '.env.example'));
+fs.copyFileSync(path.join(ROOT, 'README.md'), path.join(PKG_DIR, 'README.md'));
 
 console.log('✓ Package folder structure assembled.');
 
@@ -131,7 +153,7 @@ console.log('✓ Package folder structure assembled.');
 console.log(`Compressing ${PKG_NAME} into ${PKG_NAME}.zip ...`);
 try {
   execSync(
-    `powershell -Command "Compress-Archive -Path '${PKG_DIR}' -DestinationPath '${ZIP_FILE}' -Force"`,
+    `powershell -NoProfile -Command "Compress-Archive -Path '${PKG_DIR}' -DestinationPath '${ZIP_FILE}' -Force"`,
     { stdio: 'inherit' }
   );
   const zipStat = fs.statSync(ZIP_FILE);

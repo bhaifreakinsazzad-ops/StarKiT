@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import orderHandler from '../api/orders.js';
 import adminHandler from '../api/admin.js';
+import { resetRuntimeStore } from '../assets/js/core/runtime-store.js';
 
 function createMockRes() {
   const state = { statusCode: 200, headers: {}, body: null };
@@ -149,4 +150,180 @@ test('Admin API rejects direct approved_for_publication bypass inside update_sto
   else process.env.SUPABASE_URL = prevUrl;
   if (prevSrv === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   else process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
+});
+
+test('Admin public_storefront_state hydrates non-PII catalog/settings without exposing orders or audit logs', async () => {
+  resetRuntimeStore();
+  const prevUrl = process.env.SUPABASE_URL;
+  const prevSrv = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  try {
+    const res = createMockRes();
+    await adminHandler({ method: 'GET', url: '/api/admin?action=public_storefront_state', headers: {} }, res);
+    assert.equal(res.state.statusCode, 200);
+    assert.equal(res.state.body.orders, undefined);
+    assert.equal(res.state.body.audit_logs, undefined);
+    assert.equal(Array.isArray(res.state.body.settings), true);
+    assert.equal(Array.isArray(res.state.body.promotions), true);
+    assert.equal(res.state.body.products.length, 50);
+    assert.equal(res.state.body.variants.length, 95);
+  } finally {
+    if (prevUrl !== undefined) process.env.SUPABASE_URL = prevUrl;
+    if (prevSrv !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
+  }
+});
+
+test('Runtime admin 7-gate approval & promo activation unlock live storefront COD checkout end-to-end', async () => {
+  resetRuntimeStore();
+  const prevKey = process.env.STARKIT_ADMIN_API_KEY;
+  const prevUrl = process.env.SUPABASE_URL;
+  const prevSrv = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const prevEnabled = process.env.STARKIT_ORDERS_ENABLED;
+
+  const adminKey = 'c'.repeat(40);
+  process.env.STARKIT_ADMIN_API_KEY = adminKey;
+  process.env.STARKIT_ORDERS_ENABLED = 'true';
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  try {
+    // 1. Update stock on documented STK-H002-BLK
+    const stockRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'POST',
+        url: '/api/admin?action=update_stock',
+        headers: { host: 'starkit.bd', 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.20.1' },
+        body: { sku: 'STK-H002-BLK', stock_quantity: 12 }
+      },
+      stockRes
+    );
+    assert.equal(stockRes.state.statusCode, 200);
+    assert.equal(stockRes.state.body.variant.stock_quantity, 12);
+
+    const allSevenEvidence = {
+      artwork_rights_ok: true,
+      garment_specs_ok: true,
+      sample_photo_ok: true,
+      size_run_ok: true,
+      stock_count_ok: true,
+      pricing_approved_ok: true,
+      commercial_terms_ok: true,
+      evidence_notes: 'Verified by Nafe Munawer'
+    };
+
+    // 2. Transition READY_FOR_APPROVAL -> APPROVED -> PUBLISHED
+    const approveRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'POST',
+        url: '/api/admin?action=submit_approval_evidence',
+        headers: { host: 'starkit.bd', 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.20.1' },
+        body: { product_id: 'STK-H002', next_status: 'APPROVED', approve_tier_price: true, evidence: allSevenEvidence }
+      },
+      approveRes
+    );
+    assert.equal(approveRes.state.statusCode, 200);
+    assert.equal(approveRes.state.body.product.approval_status, 'APPROVED');
+
+    const publishRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'POST',
+        url: '/api/admin?action=submit_approval_evidence',
+        headers: { host: 'starkit.bd', 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.20.1' },
+        body: { product_id: 'STK-H002', next_status: 'PUBLISHED', approve_tier_price: true, evidence: allSevenEvidence }
+      },
+      publishRes
+    );
+    assert.equal(publishRes.state.statusCode, 200);
+    assert.equal(publishRes.state.body.product.approval_status, 'PUBLISHED');
+
+    // 3. Activate DUO_SELECTION promo rule
+    const promoRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'POST',
+        url: '/api/admin?action=update_promotion',
+        headers: { host: 'starkit.bd', 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.20.1' },
+        body: {
+          code: 'DUO_SELECTION',
+          title: 'Duo Selection',
+          tier_type: 'DUO',
+          min_qty: 2,
+          applies_to: 'hoodies',
+          discount_type: 'FIXED_BDT',
+          discount_value: 200,
+          free_shipping: true,
+          combinable: false,
+          active: true,
+          requires_approval: false
+        }
+      },
+      promoRes
+    );
+    assert.equal(promoRes.state.statusCode, 200);
+    assert.equal(promoRes.state.body.promotion.active, true);
+
+    // 4. Verify public hydration reflects approved SKU & active promo
+    const pubRes = createMockRes();
+    await adminHandler({ method: 'GET', url: '/api/admin?action=public_storefront_state', headers: {} }, pubRes);
+    const pubVariant = pubRes.state.body.variants.find((v) => v.sku === 'STK-H002-BLK');
+    assert.equal(pubVariant.approved_for_publication, true);
+    assert.equal(pubVariant.stock_quantity, 12);
+
+    // 5. Place COD order for 2x STK-H002-BLK (2 * 1099 - 200 + 0 shipping = 1998)
+    const orderRes = createMockRes();
+    await orderHandler(
+      {
+        method: 'POST',
+        headers: { host: 'starkit.bd', 'x-forwarded-for': '10.10.20.2' },
+        body: {
+          customer: {
+            name: 'Tanvir Ahmed',
+            phone: '01778307704',
+            address: 'House 20, Road 4, Dhanmondi, Dhaka',
+            district: 'Dhaka',
+            zone: 'outside'
+          },
+          items: [{ sku: 'STK-H002-BLK', size: 'L', quantity: 2 }]
+        }
+      },
+      orderRes
+    );
+    assert.equal(orderRes.state.statusCode, 201);
+    assert.match(orderRes.state.body.reference, /^STK-[A-Z0-9]{8,16}$/);
+    assert.equal(orderRes.state.body.subtotal_bdt, 2198);
+    assert.equal(orderRes.state.body.discount_bdt, 200);
+    assert.equal(orderRes.state.body.shipping_bdt, 0);
+    assert.equal(orderRes.state.body.total_bdt, 1998);
+
+    // 6. Verify admin dashboard records the order and decremented stock
+    const dashRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'GET',
+        url: '/api/admin?action=get_dashboard',
+        headers: { 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.20.1' }
+      },
+      dashRes
+    );
+    assert.equal(dashRes.state.statusCode, 200);
+    assert.equal(dashRes.state.body.orders.length, 1);
+    assert.equal(dashRes.state.body.orders[0].reference, orderRes.state.body.reference);
+    const updatedVariant = dashRes.state.body.variants.find((v) => v.sku === 'STK-H002-BLK');
+    assert.equal(updatedVariant.stock_quantity, 10);
+  } finally {
+    resetRuntimeStore();
+    if (prevKey === undefined) delete process.env.STARKIT_ADMIN_API_KEY;
+    else process.env.STARKIT_ADMIN_API_KEY = prevKey;
+    if (prevUrl === undefined) delete process.env.SUPABASE_URL;
+    else process.env.SUPABASE_URL = prevUrl;
+    if (prevSrv === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    else process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
+    if (prevEnabled === undefined) delete process.env.STARKIT_ORDERS_ENABLED;
+    else process.env.STARKIT_ORDERS_ENABLED = prevEnabled;
+  }
 });

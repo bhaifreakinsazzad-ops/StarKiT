@@ -250,6 +250,7 @@ export function initCartDrawer({ products, base, storeConfig }) {
     close,
     addItem,
     clear,
+    refresh: render,
     getItems: () => [...cart],
     getPricingSummary
   };

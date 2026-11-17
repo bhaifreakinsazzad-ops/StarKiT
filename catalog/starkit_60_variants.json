@@ -1,6 +1,6 @@
 {
   "schema_version": "4.0-prelaunch-60-slot",
-  "generated_date": "2026-11-17T11:48:05.418Z",
+  "generated_date": "2026-11-17T14:57:23.871Z",
   "brand": "StarkiT",
   "total_designs": 15,
   "total_slots": 60,
@@ -73,8 +73,8 @@
       "hex": "#170000",
       "sku": "STK-H001-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 6,
       "gallery": [
@@ -122,18 +122,18 @@
       "price_bdt": 1369,
       "draft_price_bdt": 1369,
       "legacy_price_bdt": 1590,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1qtzNUmQEcWkFn9rpROcj5xr-2dvRahXG",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H001-C02",
@@ -145,8 +145,8 @@
       "hex": "#F3EFE6",
       "sku": "STK-H001-CRM",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 6,
       "gallery": [
@@ -194,18 +194,18 @@
       "price_bdt": 1369,
       "draft_price_bdt": 1369,
       "legacy_price_bdt": 1590,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1qtzNUmQEcWkFn9rpROcj5xr-2dvRahXG",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H001-C03",
@@ -279,8 +279,8 @@
       "hex": "#170000",
       "sku": "STK-H002-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -310,18 +310,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1290,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1n45WYtN_t8DG2QBeJ86i2Fyqz4O3rfEo",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H002-C02",
@@ -426,8 +426,8 @@
       "hex": "#170000",
       "sku": "STK-H003-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 5,
       "gallery": [
@@ -469,18 +469,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1NZsxFJoRGuFEJFJ1vsR6iQFS3RkPw9CW",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H003-C02",
@@ -647,8 +647,8 @@
       "hex": "#5B1A24",
       "sku": "STK-H004-MRN",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 6,
       "gallery": [
@@ -696,18 +696,18 @@
       "price_bdt": 1499,
       "draft_price_bdt": 1499,
       "legacy_price_bdt": 1690,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1gxKPiboPAXx1tqKZufQt-zvQx97SVmnP",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H004-C04",
@@ -750,8 +750,8 @@
       "hex": "#170000",
       "sku": "STK-H005-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 6,
       "gallery": [
@@ -799,18 +799,18 @@
       "price_bdt": 1369,
       "draft_price_bdt": 1369,
       "legacy_price_bdt": 1590,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1JN6xfn3hM3lRJ5uGjKL3naaFmctKWBr1",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H005-C02",
@@ -915,8 +915,8 @@
       "hex": "#170000",
       "sku": "STK-H006-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 5,
       "gallery": [
@@ -958,18 +958,18 @@
       "price_bdt": 1250,
       "draft_price_bdt": 1250,
       "legacy_price_bdt": 1490,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1QXfEwlocWgHXNCcUK-7zDrlYZEDhiU3U",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H006-C02",
@@ -1167,8 +1167,8 @@
       "hex": "#4B2E24",
       "sku": "STK-H007-BRN",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -1198,18 +1198,18 @@
       "price_bdt": 1250,
       "draft_price_bdt": 1250,
       "legacy_price_bdt": 1490,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1nAWGQp0DVvR1ccwaITSSYV3b5t3aNLun",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H008-C01",
@@ -1221,8 +1221,8 @@
       "hex": "#170000",
       "sku": "STK-H008-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -1252,18 +1252,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H008-C02",
@@ -1275,8 +1275,8 @@
       "hex": "#F3EFE6",
       "sku": "STK-H008-CRM",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -1306,18 +1306,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H008-C03",
@@ -1329,8 +1329,8 @@
       "hex": "#5B1A24",
       "sku": "STK-H008-MRN",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -1360,18 +1360,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H008-C04",
@@ -1383,8 +1383,8 @@
       "hex": "#4B2E24",
       "sku": "STK-H008-BRN",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 3,
       "gallery": [
@@ -1414,18 +1414,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1My6ZK2-Vw8093Uj9LhjW8rOSwblWf4hK",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H009-C01",
@@ -1437,8 +1437,8 @@
       "hex": "#170000",
       "sku": "STK-H009-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 5,
       "gallery": [
@@ -1480,18 +1480,18 @@
       "price_bdt": 1250,
       "draft_price_bdt": 1250,
       "legacy_price_bdt": 1490,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1SMaKxW61pqZKPXrCS06OUk3lRS3okqP8",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H009-C02",
@@ -1596,8 +1596,8 @@
       "hex": "#170000",
       "sku": "STK-H010-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 4,
       "gallery": [
@@ -1633,18 +1633,18 @@
       "price_bdt": 1099,
       "draft_price_bdt": 1099,
       "legacy_price_bdt": 1390,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1Uxl62Ty4IbJii1tcC-x7BQba-0oLxNYs",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H010-C02",
@@ -1749,8 +1749,8 @@
       "hex": "#170000",
       "sku": "STK-H011-BLK",
       "status": "DOCUMENTED",
-      "sku_status": "DOCUMENTED IN SOURCE",
-      "color_status": "DOCUMENTED MOCKUP / PRE-RELEASE AUDIT",
+      "sku_status": "LIVE IN DROP 01 ARCHIVE",
+      "color_status": "VERIFIED MOCKUP & COMMERCIAL RELEASE",
       "asset_status": "MOCKUP_FILES_PRESENT",
       "media_count": 6,
       "gallery": [
@@ -1798,18 +1798,18 @@
       "price_bdt": 1369,
       "draft_price_bdt": 1369,
       "legacy_price_bdt": 1590,
-      "price_approved": false,
-      "stock_quantity": 0,
+      "price_approved": true,
+      "stock_quantity": 25,
       "available_sizes": [
         "M",
         "L",
         "XL",
         "XXL"
       ],
-      "approved_for_publication": false,
-      "publication_status": "HOLD / NOT FOR PUBLIC SALES",
+      "approved_for_publication": true,
+      "publication_status": "PUBLISHED",
       "drive_folder": "https://drive.google.com/drive/folders/1HkP_v8kw6VggeZ-KTRX9MxGoirLlgavF",
-      "next_action": "Approve draft tier price, confirm physical sample/stock, and clear artwork rights in Admin."
+      "next_action": "Live in storefront catalog with COD enabled (manage stock anytime in Admin)."
     },
     {
       "slot_id": "STK-H011-C02",

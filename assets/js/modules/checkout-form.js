@@ -8,7 +8,9 @@ export function initCheckoutForm({ base, storeConfig, cartApi }) {
   const zoneSelect = document.getElementById('zone');
   const submitBtn = document.getElementById('checkoutSubmit');
   const noticeEl = document.getElementById('checkoutNotice');
-  if (!form || !cartApi) return;
+  if (!form || !cartApi) return null;
+
+  let trackedInitiateCheckout = false;
 
   function renderSummary() {
     const zone = zoneSelect ? zoneSelect.value : 'dhaka';
@@ -21,6 +23,19 @@ export function initCheckoutForm({ base, storeConfig, cartApi }) {
       if (totalEl) totalEl.textContent = '৳0';
       if (submitBtn) submitBtn.disabled = true;
       return;
+    }
+
+    if (!trackedInitiateCheckout && typeof window.fbq === 'function') {
+      trackedInitiateCheckout = true;
+      try {
+        window.fbq('track', 'InitiateCheckout', {
+          content_ids: pricing.items.map((i) => i.sku),
+          content_type: 'product',
+          num_items: pricing.item_count,
+          value: Number(pricing.total_bdt) || 0,
+          currency: 'BDT'
+        });
+      } catch {}
     }
 
     if (summaryEl) {
@@ -45,10 +60,12 @@ export function initCheckoutForm({ base, storeConfig, cartApi }) {
 
     if (totalEl) totalEl.textContent = formatBdt(pricing.total_bdt);
 
-    const isLiveMode = storeConfig?.mode === 'public' && storeConfig?.cod_enabled === true;
+    const isLiveMode = (storeConfig?.mode === 'public' || storeConfig?.mode === 'live') && storeConfig?.cod_enabled === true;
     if (!isLiveMode && noticeEl) {
       noticeEl.textContent =
         'Storefront is currently in Commercial Preview Mode until all 7 product gates and Cash on Delivery activation are signed off in Admin.';
+    } else if (isLiveMode && noticeEl && noticeEl.textContent.includes('Commercial Preview Mode')) {
+      noticeEl.textContent = 'Enter your delivery details below to confirm your Cash on Delivery order.';
     }
     if (submitBtn) submitBtn.disabled = false;
   }
@@ -189,4 +206,8 @@ export function initCheckoutForm({ base, storeConfig, cartApi }) {
   });
 
   renderSummary();
+
+  return {
+    refresh: renderSummary
+  };
 }

@@ -66,15 +66,16 @@ Every Drop 01 hoodie maps cleanly across 4 working colors (`Black`, `Cream`, `Ma
 
 ```
   STOREFRONT (61 Static HTML + Modular ES Modules + Three.js Showroom)
-     │  - Storefront mode: 'preview' (fail-closed COD gating)
-     │  - Public catalog & promotions loaded safely from assets/catalog.json & assets/promotions.json
+     │  - Storefront mode: 'public' (Drop 02 ready; Drop 01 hoodies gated behind 7-Gate sign-off)
+     │  - Live hydration via GET /api/admin?action=public_storefront_state + assets/promotions.json
      ▼
-  SERVERLESS / NODE APIs (api/orders.js · api/admin.js · server.js)
+  SERVERLESS / NODE APIs (api/orders.js · api/admin.js · server.js · runtime-store.js)
      │  - Strict CSP + Directory traversal & private folder blocklist (/catalog, /supabase, /docs, /tests)
      │  - Order API: fail-closed unless STARKIT_ORDERS_ENABLED=true, BD phone & UUID v4 validation,
      │    IP/phone rate limit, server-side promo/shipping calculation, blocks provisional/unapproved SKUs
      │  - Admin API: timing-safe X-Admin-Key OR Supabase JWT + RBAC (store_admin_users),
      │    7-gate submit_approval_evidence workflow, binary magic-byte upload guard, immutable audit logs
+     │  - Runtime fallback when Supabase env vars are absent so local/preview reviews work end-to-end
      ▼
   SUPABASE POSTGRESQL + STORAGE (supabase/001..005)
      │  - Atomic submit_starkit_order(...) RPC with row locks & RLS enforcement

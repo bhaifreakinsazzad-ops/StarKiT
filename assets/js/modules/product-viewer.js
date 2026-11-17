@@ -21,6 +21,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
   const mobileStickyBtn = document.getElementById('mobileStickyBtn');
   const mobileStickyLabel = document.getElementById('mobileStickyLabel');
 
+  const isHoodieProduct = String(product.id).startsWith('STK-');
   let activeVariant = getPrimaryVariant(product);
   let activeGalleryIndex = 0;
   let selectedSize =
@@ -50,10 +51,11 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
             SKU <strong>${escapeHtml(activeVariant.sku)}</strong> is allocated in the 60-variant catalog architecture. Product photography and fit verification must be uploaded in Admin before checkout is enabled.
           </p>
         </div>`;
-      thumbsEl.innerHTML = `
-        <button class="thumb" type="button" disabled title="Model shoot pending">
-          <span style="font-size:0.65rem;font-family:var(--font-mono);color:var(--mute);">Model Pending</span>
-        </button>`;
+      thumbsEl.innerHTML = isHoodieProduct
+        ? `<button class="thumb" type="button" disabled title="Model shoot pending">
+             <span style="font-size:0.65rem;font-family:var(--font-mono);color:var(--mute);">Model Pending</span>
+           </button>`
+        : '';
       return;
     }
 
@@ -94,9 +96,11 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
             </button>`;
         })
         .join('') +
-      `<button type="button" class="thumb" disabled aria-label="Model shoot pending studio schedule" title="Model View — Shoot Pending">
-         <span style="display:grid;place-items:center;height:100%;font-size:0.64rem;font-family:var(--font-mono);color:var(--mute);line-height:1.15;">Model<br>Pending</span>
-       </button>`;
+      (isHoodieProduct
+        ? `<button type="button" class="thumb" disabled aria-label="Model shoot pending studio schedule" title="Model View — Shoot Pending">
+             <span style="display:grid;place-items:center;height:100%;font-size:0.64rem;font-family:var(--font-mono);color:var(--mute);line-height:1.15;">Model<br>Pending</span>
+           </button>`
+        : '');
 
     thumbsEl.querySelectorAll('[data-thumb-idx]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -149,6 +153,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       sizeContainer.innerHTML = `
         <div class="notice">
           Size availability is paused for <strong>${escapeHtml(activeVariant.sku)}</strong> while photography and garment inspection remain pending.
+          ${isHoodieProduct ? `<div style="margin-top:8px;"><button type="button" class="fit-trigger-link" data-open-fit-guide>Open Fit &amp; Size Guide (M–XXL)</button></div>` : ''}
         </div>`;
       return;
     }
@@ -320,4 +325,31 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
   renderSizes();
   updatePurchaseState();
   renderRelatedDesigns();
+
+  if (typeof window.fbq === 'function' && activeVariant) {
+    try {
+      window.fbq('track', 'ViewContent', {
+        content_ids: [activeVariant.sku],
+        content_name: product.name,
+        content_category: product.collection || product.category || 'Archive',
+        content_type: 'product',
+        value: Number(product.price_bdt) || 0,
+        currency: 'BDT'
+      });
+    } catch {}
+  }
+
+  return {
+    refresh() {
+      if (activeVariant) {
+        activeVariant = (product.variants || []).find((v) => v.sku === activeVariant.sku) || getPrimaryVariant(product);
+      }
+      const priceEl = detailRoot.querySelector('.detail-price');
+      if (priceEl) priceEl.textContent = formatBdt(product.price_bdt);
+      renderColors();
+      renderGallery();
+      renderSizes();
+      updatePurchaseState();
+    }
+  };
 }

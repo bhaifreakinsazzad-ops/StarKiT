@@ -54,16 +54,48 @@ export function initAdminManager() {
       state.promotions = data.promotions;
     }
 
+    if (Array.isArray(data.products) && data.products.length) {
+      const prodMap = new Map(data.products.map((p) => [p.id, p]));
+      state.catalog.forEach((p) => {
+        const remote = prodMap.get(p.id);
+        if (!remote) return;
+        if (remote.approval_status) p.approval_status = remote.approval_status;
+        if (typeof remote.price_approved === 'boolean') p.price_approved = remote.price_approved;
+        if (typeof remote.rights_verified === 'boolean') p.rights_verified = remote.rights_verified;
+        if (typeof remote.specifications_verified === 'boolean') p.specifications_verified = remote.specifications_verified;
+        if (typeof remote.stock_verified === 'boolean') p.stock_verified = remote.stock_verified;
+        if (typeof remote.commercial_terms_verified === 'boolean') p.commercial_terms_verified = remote.commercial_terms_verified;
+        if (remote.price_tier) p.price_tier = remote.price_tier;
+        if (remote.price_approved && Number.isFinite(Number(remote.approved_price_bdt))) {
+          p.price_bdt = Number(remote.approved_price_bdt);
+        } else if (Number.isFinite(Number(remote.draft_price_bdt))) {
+          p.price_bdt = Number(remote.draft_price_bdt);
+        }
+        p.publication_status =
+          remote.approval_status === 'PUBLISHED'
+            ? 'PUBLISHED'
+            : remote.approval_status === 'ARCHIVED'
+            ? 'ARCHIVED'
+            : 'HOLD / NOT FOR PUBLIC SALES';
+      });
+    }
+
     if (Array.isArray(data.variants) && data.variants.length) {
       const map = new Map(data.variants.map((v) => [v.sku, v]));
       state.catalog.forEach((p) => {
         (p.variants || []).forEach((v) => {
           const remote = map.get(v.sku);
           if (!remote) return;
+          if (remote.status) v.status = remote.status;
           if (typeof remote.stock_quantity === 'number') v.stock_quantity = remote.stock_quantity;
           if (Array.isArray(remote.sizes)) v.available_sizes = remote.sizes;
+          if (Number.isFinite(Number(remote.price_bdt))) v.price_bdt = Number(remote.price_bdt);
+          if (typeof remote.price_approved === 'boolean') v.price_approved = remote.price_approved;
           if (typeof remote.approved_for_publication === 'boolean') {
             v.approved_for_publication = remote.approved_for_publication;
+          }
+          if (Array.isArray(remote.gallery) && remote.gallery.length > 0) {
+            v.gallery = remote.gallery;
           }
           if (remote.approval_status) v.approval_status = remote.approval_status;
         });
@@ -77,7 +109,9 @@ export function initAdminManager() {
       if (lookup.free_shipping_threshold != null) document.getElementById('settingFreeThreshold').value = lookup.free_shipping_threshold;
       if (lookup.cod_enabled != null) document.getElementById('settingCodStatus').value = String(lookup.cod_enabled);
       if (lookup.support_phone != null) document.getElementById('settingPhone').value = lookup.support_phone;
-      if (lookup.store_mode != null) document.getElementById('settingStoreMode').value = lookup.store_mode;
+      if (lookup.store_mode != null) {
+        document.getElementById('settingStoreMode').value = lookup.store_mode === 'live' ? 'public' : lookup.store_mode;
+      }
     }
   }
 
@@ -255,6 +289,16 @@ export function initAdminManager() {
       .join('');
 
     document.getElementById('invSubtotal').textContent = formatBdt(o.subtotal_bdt || 0);
+    const invDiscountRow = document.getElementById('invDiscountRow');
+    const invDiscount = document.getElementById('invDiscount');
+    if (invDiscountRow && invDiscount) {
+      if (Number(o.discount_bdt) > 0) {
+        invDiscountRow.style.display = 'block';
+        invDiscount.textContent = `−${formatBdt(o.discount_bdt)}`;
+      } else {
+        invDiscountRow.style.display = 'none';
+      }
+    }
     document.getElementById('invShipping').textContent = o.shipping_bdt === 0 ? 'FREE' : formatBdt(o.shipping_bdt || 0);
     document.getElementById('invTotal').textContent = formatBdt(o.total_bdt || 0);
     document.getElementById('invoiceModal').style.display = 'grid';
@@ -264,7 +308,7 @@ export function initAdminManager() {
     const tbody = document.getElementById('inventoryTableBody');
     if (!tbody) return;
 
-    const approvalBySku = new Map(state.approvals.map((a) => [a.sku, a]));
+    const approvalByProduct = new Map(state.approvals.map((a) => [a.product_id, a]));
     const rows = [];
 
     state.catalog.forEach((p) => {
@@ -275,8 +319,12 @@ export function initAdminManager() {
             ? `<img class="sku-img" src="${escapeHtml(String(v.gallery[0].url || '').replace(/^\//, ''))}" alt="${escapeHtml(p.name)}">`
             : `<div class="sku-img" style="display:flex;align-items:center;justify-content:center;background:${escapeHtml(v.hex)};color:${v.hex === '#F3EFE6' ? '#170000' : '#ffffff'};font-size:0.62rem;font-weight:700;">PEND</div>`;
 
-        const approvalRec = approvalBySku.get(v.sku);
-        const gatesReady = v.approved_for_publication ? 'PUBLISHED' : approvalRec?.approval_state || (isProv ? 'PROVISIONAL' : 'MEDIA_VERIFIED');
+        const approvalRec = approvalByProduct.get(p.id);
+        const gatesReady = v.approved_for_publication
+          ? 'PUBLISHED'
+          : isProv
+          ? 'PROVISIONAL'
+          : p.approval_status || (approvalRec?.reviewed_at ? 'IN_REVIEW' : 'MEDIA_VERIFIED');
 
         rows.push(`
           <tr>
@@ -312,7 +360,8 @@ export function initAdminManager() {
     const statusSelect = document.getElementById('gateTargetStatus');
     if (!modal || !titleEl) return;
     const prod = state.catalog.find((p) => p.id === productId);
-    const currentStatus = prod?.approval_status || 'DRAFT';
+    const ev = state.approvals.find((a) => a.product_id === productId);
+    const currentStatus = prod?.approval_status || (String(productId).startsWith('FT-') ? 'PUBLISHED' : 'DRAFT');
     titleEl.textContent = `${productId} / ${sku} (Current: ${currentStatus})`;
     modal.dataset.productId = productId;
     modal.dataset.sku = sku;
@@ -323,6 +372,23 @@ export function initAdminManager() {
         .map((st) => `<option value="${escapeHtml(st)}">${escapeHtml(st)}</option>`)
         .join('');
     }
+    const setCheck = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = Boolean(val);
+    };
+    setCheck('gateLegal', ev ? ev.artwork_rights_ok : prod?.rights_verified);
+    setCheck('gateSpecs', ev ? ev.garment_specs_ok : prod?.specifications_verified);
+    setCheck('gateMedia', ev ? ev.sample_photo_ok : (prod?.variants || []).some((v) => v.status === 'DOCUMENTED'));
+    setCheck('gateDesign', ev ? ev.size_run_ok : (prod?.variants || []).some((v) => Array.isArray(v.available_sizes) && v.available_sizes.length > 0));
+    setCheck('gateStock', ev ? ev.stock_count_ok : prod?.stock_verified || (prod?.variants || []).some((v) => Number(v.stock_quantity || 0) > 0));
+    setCheck('gatePricing', ev ? ev.pricing_approved_ok : prod?.price_approved);
+    setCheck('gateCommercial', ev ? ev.commercial_terms_ok : prod?.commercial_terms_verified);
+
+    const ownerEl = document.getElementById('gateOwner');
+    const notesEl = document.getElementById('gateNotes');
+    if (ownerEl) ownerEl.value = ev?.reviewed_by && ev.reviewed_by !== 'system_seed' ? ev.reviewed_by : '';
+    if (notesEl) notesEl.value = ev?.evidence_notes || '';
+
     modal.style.display = 'grid';
   }
 
@@ -333,12 +399,25 @@ export function initAdminManager() {
       tiersBody.innerHTML = Object.values(PRICE_TIERS)
         .map((tier) => {
           const designs = hoodies.filter((p) => (p.price_tier || p.tier) === tier.code || Number(p.price_bdt) === tier.price_bdt);
+          const approvedCount = designs.filter((d) => d.price_approved === true).length;
+          const badgeStyle =
+            approvedCount === designs.length && designs.length > 0
+              ? 'background:#15803d;'
+              : approvedCount > 0
+              ? 'background:#1d4ed8;'
+              : 'background:#b45309;';
+          const badgeText =
+            approvedCount === designs.length && designs.length > 0
+              ? `Approved (${approvedCount}/${designs.length})`
+              : approvedCount > 0
+              ? `${approvedCount}/${designs.length} Approved`
+              : 'Draft Pending Owner Sign-Off';
           return `
             <tr>
               <td><strong>${escapeHtml(tier.code)}</strong></td>
               <td class="tabular"><strong>${formatBdt(tier.price_bdt)}</strong></td>
               <td>${designs.map((d) => `${escapeHtml(d.id)} ${escapeHtml(d.name)}`).join(', ')}</td>
-              <td><span class="status-badge" style="background:#b45309;">Draft Pending Owner Sign-Off</span></td>
+              <td><span class="status-badge" style="${badgeStyle}">${badgeText}</span></td>
             </tr>`;
         })
         .join('');
@@ -353,52 +432,96 @@ export function initAdminManager() {
             <td><code style="font-family:var(--font-mono);">${escapeHtml(pr.code)}</code></td>
             <td><strong>${escapeHtml(pr.title)}</strong><br><small style="color:var(--mute);">${escapeHtml(pr.description || '')}</small></td>
             <td class="tabular">${Number(pr.min_qty || 1)}</td>
-            <td class="tabular">${escapeHtml(pr.discount_type)} (${Number(pr.discount_value || 0)})</td>
+            <td>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <select class="sort-field" data-promo-type="${escapeHtml(pr.code)}" style="padding:5px 8px;font-size:0.76rem;">
+                  ${['NONE', 'FIXED_BDT', 'PERCENT', 'INQUIRY']
+                    .map((dt) => `<option value="${dt}" ${pr.discount_type === dt ? 'selected' : ''}>${dt}</option>`)
+                    .join('')}
+                </select>
+                <input type="number" class="stock-input" data-promo-value="${escapeHtml(pr.code)}" value="${Number(pr.discount_value || 0)}" min="0" max="50000" aria-label="Discount value for ${escapeHtml(pr.code)}">
+              </div>
+            </td>
+            <td>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;white-space:nowrap;cursor:pointer;">
+                <input type="checkbox" data-promo-freeship="${escapeHtml(pr.code)}" ${pr.free_shipping ? 'checked' : ''}>
+                Free Ship
+              </label>
+            </td>
             <td><span class="status-badge" style="background:${pr.active && !pr.requires_approval ? '#15803d' : '#5b1a24'};">${pr.active && !pr.requires_approval ? 'Active' : 'Inactive / Draft'}</span></td>
             <td>
-              <button type="button" class="action-btn" data-toggle-promo="${escapeHtml(pr.code)}">
-                ${pr.active && !pr.requires_approval ? 'Pause' : 'Approve & Activate'}
-              </button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="action-btn" data-save-promo="${escapeHtml(pr.code)}">Save</button>
+                <button type="button" class="action-btn" data-toggle-promo="${escapeHtml(pr.code)}">
+                  ${pr.active && !pr.requires_approval ? 'Pause' : 'Approve & Activate'}
+                </button>
+              </div>
             </td>
           </tr>`
         )
         .join('');
 
+      async function savePromo(code, nextActive) {
+        const promo = state.promotions.find((x) => x.code === code);
+        if (!promo) return;
+        const typeEl = promoBody.querySelector(`[data-promo-type="${code}"]`);
+        const valEl = promoBody.querySelector(`[data-promo-value="${code}"]`);
+        const shipEl = promoBody.querySelector(`[data-promo-freeship="${code}"]`);
+        const discountType = typeEl ? typeEl.value : promo.discount_type || 'NONE';
+        const discountValue = valEl ? Math.max(0, parseInt(valEl.value, 10) || 0) : Number(promo.discount_value || 0);
+        const freeShipping = shipEl ? Boolean(shipEl.checked) : Boolean(promo.free_shipping);
+
+        try {
+          const res = await adminFetch('api/admin?action=update_promotion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              code: promo.code,
+              title: promo.title,
+              subtitle: promo.subtitle || '',
+              tier_type: promo.tier_type || 'SINGLE',
+              min_qty: Number(promo.min_qty || 1),
+              applies_to: promo.applies_to || 'hoodies',
+              discount_type: discountType,
+              discount_value: discountValue,
+              free_shipping: freeShipping,
+              combinable: Boolean(promo.combinable),
+              active: nextActive,
+              requires_approval: !nextActive,
+              description: promo.description || ''
+            })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Failed to update promotion');
+          promo.discount_type = discountType;
+          promo.discount_value = discountValue;
+          promo.free_shipping = freeShipping;
+          promo.active = nextActive;
+          promo.requires_approval = !nextActive;
+          renderPricingAndPromotions();
+          adminToast(`Promotion ${code} saved (${nextActive ? 'Active' : 'Draft/Paused'}).`);
+        } catch (err) {
+          adminToast(err.message);
+        }
+      }
+
+      promoBody.querySelectorAll('[data-save-promo]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const code = btn.dataset.savePromo;
+          const promo = state.promotions.find((x) => x.code === code);
+          if (!promo) return;
+          const currentActive = Boolean(promo.active && !promo.requires_approval);
+          savePromo(code, currentActive);
+        });
+      });
+
       promoBody.querySelectorAll('[data-toggle-promo]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const code = btn.dataset.togglePromo;
           const promo = state.promotions.find((x) => x.code === code);
           if (!promo) return;
           const nextActive = !(promo.active && !promo.requires_approval);
-          try {
-            const res = await adminFetch('api/admin?action=update_promotion', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                code: promo.code,
-                title: promo.title,
-                subtitle: promo.subtitle || '',
-                tier_type: promo.tier_type || 'SINGLE',
-                min_qty: Number(promo.min_qty || 1),
-                applies_to: promo.applies_to || 'hoodies',
-                discount_type: promo.discount_type || 'NONE',
-                discount_value: Number(promo.discount_value || 0),
-                free_shipping: Boolean(promo.free_shipping),
-                combinable: Boolean(promo.combinable),
-                active: nextActive,
-                requires_approval: !nextActive,
-                description: promo.description || ''
-              })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Failed to update promotion');
-            promo.active = nextActive;
-            promo.requires_approval = !nextActive;
-            renderPricingAndPromotions();
-            adminToast(`Promotion ${code} ${nextActive ? 'activated' : 'paused'}.`);
-          } catch (err) {
-            adminToast(err.message);
-          }
+          savePromo(code, nextActive);
         });
       });
     }
@@ -588,6 +711,11 @@ export function initAdminManager() {
       if (!res.ok) throw new Error(data.error || 'Upload failed');
       adminToast(`Uploaded ${file.name} for ${sku} (${view}) → ${data.storage_path}.`);
       fileInput.value = '';
+      const dashRes = await adminFetch('api/admin?action=get_dashboard');
+      if (dashRes.ok) {
+        applyDashboardData(await dashRes.json());
+        renderDashboard();
+      }
     } catch (err) {
       adminToast(err.message);
     }

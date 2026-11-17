@@ -132,4 +132,73 @@ alter table public.store_media_assets enable row level security;
 alter table public.store_admin_users enable row level security;
 alter table public.store_audit_logs enable row level security;
 
+-- 9. Idempotent Catalog & Promotion Seed Backfill (safe when 005 runs after 002)
+insert into public.store_products (
+  id, name, slug, category, collection, drop_code, price_tier,
+  draft_price_bdt, approved_price_bdt, price_approved, approval_status,
+  rights_verified, specifications_verified, stock_verified, commercial_terms_verified,
+  third_party_ip_review, rights_assessment
+) values
+  ('STK-H001', 'SHINOBI SUNSET', 'shinobi-sunset', 'Anime Archive', 'Anime Archive', 'DROP_01', 'SIGNATURE', 1369, 1369, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H002', 'PEACE BRO CLUB', 'peace-bro-club', 'Playful Street', 'Playful Street', 'DROP_01', 'CORE', 1099, 1099, true, 'PUBLISHED', true, true, true, true, false, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H003', 'FOLK ROUTE', 'folk-route', 'Bangla Heritage', 'Bangla Heritage', 'DROP_01', 'CORE', 1099, 1099, true, 'PUBLISHED', true, true, true, true, false, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H004', 'THE RIDER CODE', 'the-rider-code', 'Moto Culture', 'Moto Culture', 'DROP_01', 'PREMIUM', 1499, 1499, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H005', 'MOONLIT HERO', 'moonlit-hero', 'Anime Archive', 'Anime Archive', 'DROP_01', 'SIGNATURE', 1369, 1369, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H006', 'CELLULOID NIGHTS', 'celluloid-nights', 'Bangla Heritage', 'Bangla Heritage', 'DROP_01', 'SELECT', 1250, 1250, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H007', 'DHAKA AFTERGLOW', 'dhaka-afterglow', 'City Stories', 'City Stories', 'DROP_01', 'SELECT', 1250, 1250, true, 'PUBLISHED', true, true, true, true, false, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H008', 'COLLECTIVE VOICE', 'collective-voice', 'Statement Graphics', 'Statement Graphics', 'DROP_01', 'CORE', 1099, 1099, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H009', 'RICKSHAW BLOOM', 'rickshaw-bloom', 'Bangla Heritage', 'Bangla Heritage', 'DROP_01', 'SELECT', 1250, 1250, true, 'PUBLISHED', true, true, true, true, false, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H010', 'CHEESE CHASE', 'cheese-chase', 'Playful Street', 'Playful Street', 'DROP_01', 'CORE', 1099, 1099, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H011', 'NIGHT CIRCUIT', 'night-circuit', 'Moto Culture', 'Moto Culture', 'DROP_01', 'SIGNATURE', 1369, 1369, true, 'PUBLISHED', true, true, true, true, true, 'Verified Drop 01 Archive Release — Approved for Public Commercial Sale.'),
+  ('STK-H013', 'SHADOW SHINOBI', 'shadow-shinobi', 'Anime Archive', 'Anime Archive', 'DROP_01', 'SIGNATURE', 1369, null, false, 'MEDIA_PENDING', false, false, false, false, true, 'Concept-stage design: original illustration confirmation, studio mockups, and licensing review pending.'),
+  ('STK-H014', 'URBAN HERITAGE', 'urban-heritage', 'Bangla Heritage', 'Bangla Heritage', 'DROP_01', 'SELECT', 1250, null, false, 'MEDIA_PENDING', false, false, false, false, false, 'Concept-stage original artwork: graphic sign-off, production sample, and photography pending.'),
+  ('STK-H015', 'HERITAGE STATIC', 'heritage-static', 'Statement Graphics', 'Statement Graphics', 'DROP_01', 'PREMIUM', 1499, null, false, 'MEDIA_PENDING', false, false, false, false, false, 'Concept-stage collector piece: screen-separation proof, GSM sample, and studio photos pending.'),
+  ('STK-H016', 'MIDNIGHT SIGNAL', 'midnight-signal', 'City Stories', 'City Stories', 'DROP_01', 'PREMIUM', 1499, null, false, 'MEDIA_PENDING', false, false, false, false, false, 'Concept-stage flagship design: artwork approval, sample shoot, and stock allocation pending.'),
+  ('FT-HM-001', 'LAVENDER ROSE MIRROR', 'ft-hm-001-lavender-rose-mirror', 'Artisan Accessories', 'Decorative Mirrors', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-HM-002', 'GOLDEN MARIGOLD MIRROR', 'ft-hm-002-golden-marigold-mirror', 'Artisan Accessories', 'Decorative Mirrors', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-HM-003', 'CRIMSON HERITAGE MIRROR', 'ft-hm-003-crimson-heritage-mirror', 'Artisan Accessories', 'Decorative Mirrors', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-HM-004', 'ROYAL PLUM MIRROR', 'ft-hm-004-royal-plum-mirror', 'Artisan Accessories', 'Decorative Mirrors', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-HM-005', 'TEAL BLOOM MIRROR', 'ft-hm-005-teal-bloom-mirror', 'Artisan Accessories', 'Decorative Mirrors', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-001', 'INDIGO FOLK RELIEF SET', 'ft-jwl-001-indigo-folk-relief-set', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 699, 699, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-002', 'SAFFRON FOLK RELIEF SET', 'ft-jwl-002-saffron-folk-relief-set', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 649, 649, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-003', 'WILDFLOWER BOUQUET PENDANT', 'ft-jwl-003-wildflower-bouquet-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 349, 349, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-004', 'CRIMSON MANDALA PENDANT', 'ft-jwl-004-crimson-mandala-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 349, 349, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-005', 'CARNIVAL SUNFLOWER SET', 'ft-jwl-005-carnival-sunflower-set', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 699, 699, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-006', 'SCARLET BLOSSOM PENDANT', 'ft-jwl-006-scarlet-blossom-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 349, 349, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-007', 'PAISLEY FOLK DROP', 'ft-jwl-007-paisley-folk-drop', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 399, 399, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-008', 'GOLDEN JASMINE GARLAND', 'ft-jwl-008-golden-jasmine-garland', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 349, 349, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-009', 'RUBY SUNBURST PENDANT', 'ft-jwl-009-ruby-sunburst-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 329, 329, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-010', 'HERITAGE RICKSHAW PENDANT', 'ft-jwl-010-heritage-rickshaw-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 449, 449, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-011', 'AZURE LACE SQUARE', 'ft-jwl-011-azure-lace-square', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 359, 359, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-012', 'KALEIDO MIRROR BLOOM', 'ft-jwl-012-kaleido-mirror-bloom', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 399, 399, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-013', 'TURQUOISE PINWHEEL', 'ft-jwl-013-turquoise-pinwheel', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 389, 389, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-014', 'VIOLET GARDEN MEDALLION', 'ft-jwl-014-violet-garden-medallion', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 379, 379, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-015', 'COCOA CROSSHATCH PENDANT', 'ft-jwl-015-cocoa-crosshatch-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 299, 299, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-016', 'SPRING LEAF PENDANT', 'ft-jwl-016-spring-leaf-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 329, 329, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-017', 'MIDNIGHT SHELL FRINGE', 'ft-jwl-017-midnight-shell-fringe', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 379, 379, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-018', 'AQUA DAISY BLOOM', 'ft-jwl-018-aqua-daisy-bloom', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 349, 349, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-JWL-019', 'MARIGOLD SUNFLOWER PENDANT', 'ft-jwl-019-marigold-sunflower-pendant', 'Artisan Accessories', 'Wearable Art', 'DROP_02', 'ACCESSORY', 329, 329, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-001', 'PAINTED BANGLE HARMONY SELECTION', 'ft-ba-001-painted-bangle-harmony-selection', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 219, 219, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-002', 'NOIR SILVER-TONE BEAD BANGLES', 'ft-ba-002-noir-silver-tone-bead-bangles', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 479, 479, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-003', 'SUNBURST FOLK ACCENT BANGLE', 'ft-ba-003-sunburst-folk-accent-bangle', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 449, 449, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-004', 'BLUSH BEADED STITCH TRIO', 'ft-ba-004-blush-beaded-stitch-trio', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 549, 549, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-005', 'COLOR POP STITCH TRIO', 'ft-ba-005-color-pop-stitch-trio', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 549, 549, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-006', 'MIDNIGHT BLOOM BANGLES', 'ft-ba-006-midnight-bloom-bangles', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 599, 599, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-007', 'DAISY SKY FLORAL PAIR', 'ft-ba-007-daisy-sky-floral-pair', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 399, 399, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-008', 'SUNSET BLOOM BANGLES', 'ft-ba-008-sunset-bloom-bangles', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 399, 399, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-009', 'EVERYDAY THREAD LUXE TRIO', 'ft-ba-009-everyday-thread-luxe-trio', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 499, 499, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-010', 'SAGE CHARM STITCH TRIO', 'ft-ba-010-sage-charm-stitch-trio', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 549, 549, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation'),
+  ('FT-BA-011', 'CARVED FLORA COLORWAY PAIR', 'ft-ba-011-carved-flora-colorway-pair', 'Artisan Accessories', 'Bangles & Accents', 'DROP_02', 'ACCESSORY', 449, 449, true, 'PUBLISHED', true, true, true, true, false, 'Authentic Fariza’s Territory Artisan Creation')
+on conflict (id) do nothing;
+
+insert into public.store_promotions (
+  code, title, subtitle, tier_type, min_qty, applies_to, discount_type,
+  discount_value, free_shipping, combinable, active, requires_approval, description
+) values
+  ('SINGLE_PIECE', 'Single Piece', 'Standard Archive Tier', 'SINGLE', 1, 'hoodies', 'NONE', 0, false, false, true, false, 'Order any single hoodie at its official four-tier price (Core ৳1,099 to Premium ৳1,499) with nationwide Cash on Delivery.'),
+  ('DUO_SELECTION', 'Duo Selection', '2 Hoodies · Configurable Offer Slot', 'DUO', 2, 'hoodies', 'FIXED_BDT', 0, false, false, false, true, 'Configurable 2-hoodie bundle rule. Owner can assign a fixed BDT discount or free delivery inside Admin when launching this offer.'),
+  ('TRIO_PLUS', 'Three or More', '3+ Hoodies · Multi-Piece Offer Slot', 'TRIO_PLUS', 3, 'hoodies', 'FIXED_BDT', 0, false, false, false, true, 'Configurable 3+ hoodie volume offer. Activated only after owner sets exact margin-verified savings in Admin.'),
+  ('WHOLESALE_RESELLER', 'Wholesale & Reseller', '10+ Units · Studio Inquiry', 'WHOLESALE', 10, 'hoodies', 'INQUIRY', 0, false, false, false, true, 'Stockists, campus clubs, and bulk orders (10+ pieces). Configure reseller rules in Admin or contact Dhaka support.')
+on conflict (code) do nothing;
+
 commit;
