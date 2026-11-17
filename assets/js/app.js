@@ -28,9 +28,9 @@ import {
         if (s.key === 'delivery_dhaka_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_dhaka = Number(s.value);
         if (s.key === 'delivery_outside_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_outside = Number(s.value);
         if (s.key === 'free_shipping_threshold' && Number.isFinite(Number(s.value))) cfg.free_shipping_threshold = Number(s.value);
-        if (s.key === 'cod_enabled') cfg.cod_enabled = Boolean(s.value);
+        // Commercial settings are server-owned; never trust browser overrides.
         if (s.key === 'support_phone' && s.value) cfg.support_phone = String(s.value);
-        if (s.key === 'store_mode' && s.value) cfg.mode = String(s.value);
+        // Preview/production mode is deployment-controlled.
       });
     }
     const stockOverrides = JSON.parse(localStorage.getItem('starkit_stock_overrides') || '{}');
@@ -1174,38 +1174,14 @@ import {
       btn.textContent = 'SUBMITTING ORDER…';
 
       try {
-        let data = null;
-        let response = null;
-        try {
-          response = await fetch(ROOT + 'api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-          });
-          data = await response.json();
-        } catch (netErr) {
-          console.warn('API direct connection fallback:', netErr);
-        }
-
-        if (response && !response.ok) {
-          if ((response.status >= 400 && response.status < 500) || response.status === 503) {
-            throw new Error(data?.error || 'Order could not be submitted. Please check your details.');
-          }
-          data = null;
-        }
-
-        if (!data || !data.reference) {
-          const fallbackRef = 'STK-' + generateUUID().replace(/-/g, '').substring(0, 10).toUpperCase();
-          const totals = calculateCartTotals();
-          const ship = (totals.isFreeShipping || totals.subtotal >= (cfg.free_shipping_threshold || 3000)) ? 0 : (body.customer.zone === 'dhaka' ? (cfg.delivery_dhaka || 80) : (cfg.delivery_outside || 150));
-          data = {
-            reference: fallbackRef,
-            subtotal_bdt: totals.subtotal,
-            discount_bdt: totals.bundleDiscount,
-            shipping_bdt: ship,
-            total_bdt: totals.netTotal + ship,
-            status: 'pending_confirmation'
-          };
+        const response = await fetch(ROOT + 'api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (response.status !== 201 || !response.ok || !data.reference) {
+          throw new Error(data.error || 'Your order could not be submitted. No purchase was recorded.');
         }
 
         const storedOrder = {

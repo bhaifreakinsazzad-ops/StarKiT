@@ -1,6 +1,6 @@
 // StarkiT DROP 01 Storefront Configuration — Live Commercial Mode
 window.STARKIT_CONFIG = {
-  mode: 'public',
+  mode: 'preview',
   currency: 'BDT',
   brand: 'StarkiT',
   founder: 'Nafe Munawer',
@@ -8,7 +8,7 @@ window.STARKIT_CONFIG = {
   support_phone: '01778307704',
   support_whatsapp: '+8801778307704',
   contact_verified: true,
-  cod_enabled: true,
+  cod_enabled: false,
   delivery_dhaka: 80,
   delivery_outside: 150,
   free_shipping_threshold: 3000,
