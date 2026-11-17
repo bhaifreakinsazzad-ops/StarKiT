@@ -30,6 +30,7 @@ if (missingPixel > 0) {
 console.log(`✓ PASS: All ${allHtmlFiles.length} HTML files verified with Dataset ID 1390081606323661.\n`);
 
 // 2. Import api/orders.js handler and simulate an order
+process.env.META_TEST_EVENT_CODE = process.env.META_TEST_EVENT_CODE || 'TEST30949';
 console.log('Simulating live order checkout with Meta Conversions API (CAPI)...');
 const { default: orderHandler } = await import('../api/orders.js');
 
@@ -51,7 +52,8 @@ const mockReq = {
     },
     items: [
       { sku: 'STK-H007-BRN', size: 'L', quantity: 1 },
-      { sku: 'FT-HM-001', size: 'Standard', quantity: 1 }
+      { sku: 'FT-HM-001', size: 'Standard', quantity: 1 },
+      { sku: 'FT-JWL-001', size: 'One Size (Adjustable)', quantity: 1 }
     ],
     idempotency_key: 'b7a2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e'
   }

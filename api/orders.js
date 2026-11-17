@@ -14,6 +14,7 @@ for (const p of CATALOG) {
       product_name: p.name,
       color: v.color,
       price_bdt: p.price_bdt,
+      available_sizes: Array.isArray(v.available_sizes) ? v.available_sizes : [],
       status: v.status || (v.sku && v.sku.startsWith('STK-') && !v.gallery?.length ? 'PROVISIONAL' : 'DOCUMENTED'),
       approved_for_publication: v.approved_for_publication === true
     });
@@ -40,7 +41,7 @@ const clean = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 async function sendMetaConversionEvent({
   eventName = 'Purchase',
   eventId,
-  eventSourceUrl = 'https://starkit.store/checkout.html',
+  eventSourceUrl,
   customer,
   totalBdt,
   items = [],
@@ -50,7 +51,11 @@ async function sendMetaConversionEvent({
   const accessToken =
     process.env.META_ACCESS_TOKEN ||
     'EAAMeeTDHXlcBTNf2tyMplwmR5qLvKB5ZAtoihPXBa4Maq2mY375fpZCL2AjJ7LlZBJ2WqIDAfmmp9Hi5jZC8pB0sghkcrqZBZA3X7J6Am9xfAsUcO29XhZA2UEUMvKmMz66q7gIoi3mddfEf30wnpJGZBuNFVtswE47XBxiPRzeQdSIysnRBI1Ibo5XcZA51jWQZDZD';
-  const testCode = process.env.META_TEST_EVENT_CODE || 'TEST30949';
+  const testCode = process.env.META_TEST_EVENT_CODE || '';
+  const resolvedSourceUrl =
+    eventSourceUrl ||
+    req?.headers?.referer ||
+    (req?.headers?.host ? `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}/checkout.html` : 'https://starkit.store/checkout.html');
 
   if (!pixelId || !accessToken) return;
 
@@ -89,7 +94,7 @@ async function sendMetaConversionEvent({
         event_name: eventName,
         event_time: Math.floor(Date.now() / 1000),
         event_id: eventId,
-        event_source_url: eventSourceUrl,
+        event_source_url: resolvedSourceUrl,
         action_source: 'website',
         user_data: userData,
         custom_data: {
@@ -187,8 +192,8 @@ export default async function handler(req, res) {
       !i ||
       !/^(?:STK-H\d{3}-(?:BLK|BRN|MRN|CRM)|FT-(?:HM|JWL|BA)-\d{3})$/.test(i.sku) ||
       typeof i.size !== 'string' ||
-      i.size.length < 1 ||
-      i.size.length > 10 ||
+      i.size.trim().length < 1 ||
+      i.size.trim().length > 32 ||
       !Number.isInteger(i.quantity) ||
       i.quantity < 1 ||
       i.quantity > 20
@@ -196,6 +201,7 @@ export default async function handler(req, res) {
       return json(res, 400, { error: 'An item has an invalid SKU, size, or quantity.' });
     }
 
+    const cleanSize = i.size.trim();
     const skuMeta = SKU_CATALOG.get(i.sku);
     if (!skuMeta) {
       return json(res, 400, { error: `SKU ${i.sku} was not found in the verified store catalog.` });
@@ -205,13 +211,18 @@ export default async function handler(req, res) {
         error: `SKU ${i.sku} (${skuMeta.product_name} · ${skuMeta.color}) is currently in development and awaiting physical sample verification. It cannot be purchased at this time.`
       });
     }
+    if (skuMeta.available_sizes.length > 0 && !skuMeta.available_sizes.includes(cleanSize)) {
+      return json(res, 400, {
+        error: `Size "${cleanSize}" is not available for SKU ${i.sku}. Available options: ${skuMeta.available_sizes.join(', ')}.`
+      });
+    }
 
     quantityTotal += i.quantity;
-    rows.push({ sku: i.sku, size: i.size, quantity: i.quantity });
+    rows.push({ sku: i.sku, size: cleanSize, quantity: i.quantity });
   }
 
   if (quantityTotal > 50) {
-    return json(res, 400, { error: 'Order quantity limit exceeded (maximum 50 hoodies per order).' });
+    return json(res, 400, { error: 'Order quantity limit exceeded (maximum 50 items per order).' });
   }
 
   // Ensure robust UUIDv4 idempotency key

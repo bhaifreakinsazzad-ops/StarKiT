@@ -32,9 +32,35 @@
 }
 
 #spatialHeroContainer {
+  grid-column: 1;
+  grid-row: 1;
   position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: var(--ink);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-copy {
+  grid-column: 1;
+  grid-row: 1;
+  background: radial-gradient(circle at 12% 95%, rgba(64, 23, 27, 0.72) 0, rgba(23, 0, 0, 0.32) 60%, rgba(23, 0, 0, 0.15) 100%) !important;
+  z-index: 2;
+}
+
+.hero-visual {
+  grid-column: 2;
+  grid-row: 1;
+  z-index: 2;
+}
+
+@media (max-width: 800px) {
+  .hero-visual {
+    grid-column: 1;
+    grid-row: 2;
+  }
 }
 
 #spatialHeroContainer canvas {
@@ -680,6 +706,14 @@
   text-shadow: 0 1px 4px rgba(0,0,0,0.4) !important;
 }
 
+.badge-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  border-radius: 3px;
+}
+
 /* 6. Magnetic Buttons with Physical Spring Feedback */
 .btn, .btn-light, .icon-btn, .filter-btn, .fav {
   position: relative;
@@ -712,15 +746,21 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   opacity: 0;
   transform: scale(1.04);
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
 }
 
-.card:hover .card-media img.front {
+.card:hover .card-media:has(img.back) img.front {
   opacity: 0;
   transform: scale(1.04);
+}
+
+.card:hover .card-media:not(:has(img.back)) img.front,
+.card:hover .card-media img.single-view {
+  opacity: 1;
+  transform: scale(1.06);
 }
 
 .card:hover .card-media img.back {
@@ -731,10 +771,6 @@
 /* For Single View Accessories */
 .card-media img.single-view {
   transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card:hover .card-media img.single-view {
-  transform: scale(1.06);
 }
 
 /* 8. Filter Button Spring Hover & Active Glides */
@@ -751,9 +787,9 @@
 }
 
 .filter-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ded3cc;
+  background: #ffffff;
+  border: 1px solid #cfc5bf;
+  color: var(--ink);
   padding: 12px 22px;
   font-size: 0.75rem;
   letter-spacing: 0.14em;
@@ -765,16 +801,16 @@
 }
 
 .filter-btn:hover {
-  background: rgba(197, 168, 128, 0.15);
-  border-color: #c5a880;
-  color: #fff;
+  background: #efe9e1;
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .filter-btn.active {
-  background: #c5a880;
-  border-color: #c5a880;
-  color: #170000;
-  box-shadow: 0 4px 18px rgba(197, 168, 128, 0.4);
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(23, 0, 0, 0.22);
 }
 
 /* 9. High-Precision Modern Scrollbar */

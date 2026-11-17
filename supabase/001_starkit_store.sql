@@ -174,7 +174,7 @@ begin
     end if;
     v_qty := (v_item->>'quantity')::int;
 
-    if v_qty < 1 or v_qty > 20 or v_sku is null or v_size is null or length(v_size) > 10 then
+    if v_qty < 1 or v_qty > 20 or v_sku is null or v_size is null or length(v_size) > 32 then
       raise exception 'Invalid item specification' using errcode = 'P0001';
     end if;
 

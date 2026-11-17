@@ -202,7 +202,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       <form id="loginForm">
         <input type="password" id="passkeyInput" class="search-field" style="width:100%;text-align:center;font-size:1.1rem;margin-bottom:14px;" placeholder="Enter Passkey" required autofocus autocomplete="current-password">
         <button type="submit" class="btn" style="width:100%;">AUTHENTICATE &amp; ENTER ↗</button>
-        <p id="loginError" style="color:#dc2626;font-size:0.75rem;margin-top:10px;font-weight:700;display:none;">Invalid passkey. Default passkey: starkit2026</p>
+        <p id="loginError" style="color:#dc2626;font-size:0.75rem;margin-top:10px;font-weight:700;display:none;">Invalid passkey. Please verify and try again.</p>
       </form>
     </div>
   </div>
@@ -251,8 +251,8 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
         </div>
         <div class="kpi-card">
           <div class="kpi-label">CATALOG ARCHITECTURE</div>
-          <div class="kpi-value" id="kpiSkus">44</div>
-          <div class="kpi-sub">11 Designs · 15 Documented / 29 In-Dev</div>
+          <div class="kpi-value" id="kpiSkus">50</div>
+          <div class="kpi-sub" id="kpiSkusSub">46 Designs · 50 Active SKUs / 29 In-Dev</div>
         </div>
       </div>
 
@@ -322,7 +322,8 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
               <tr>
                 <th>Reference</th>
                 <th>Timestamp</th>
-                <th>Customer Details</th>
+                <th>Customer</th>
+                <th>Phone</th>
                 <th>Delivery Address</th>
                 <th>Items &amp; Sizes</th>
                 <th>Total (BDT)</th>
@@ -342,7 +343,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       <div class="section-card">
         <div class="section-head-bar">
           <div>
-            <h2>DROP 01 INVENTORY &amp; SKU CONTROL</h2>
+            <h2>DROP 01 &amp; 02 INVENTORY &amp; SKU CONTROL</h2>
             <p style="margin:4px 0 0;font-size:0.85rem;color:var(--mute);">Update stock quantities, available sizes, and BDT prices in real time.</p>
           </div>
           <div>
@@ -475,16 +476,64 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
     </div>
   </div>
 
+  <!-- Manual Order Modal -->
+  <div id="manualOrderModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:520px;text-align:left;background:#fff;padding:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dcd4cc;padding-bottom:12px;margin-bottom:16px;">
+        <h3 style="margin:0;font-size:1.25rem;font-weight:900;">ADD MANUAL / WHATSAPP ORDER</h3>
+        <button type="button" onclick="document.getElementById('manualOrderModal').style.display='none'" style="background:transparent;border:0;font-size:1.5rem;cursor:pointer;">×</button>
+      </div>
+      <form id="manualOrderForm">
+        <div class="form-grid">
+          <div class="form-row"><label>Customer Name *</label><input type="text" id="manName" required placeholder="Full name"></div>
+          <div class="form-row"><label>BD Mobile *</label><input type="tel" id="manPhone" required placeholder="017XXXXXXXX"></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>SKU *</label><select id="manSku" required></select></div>
+          <div class="form-row"><label>Size *</label><input type="text" id="manSize" value="L" required></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Quantity *</label><input type="number" id="manQty" value="1" min="1" max="20" required></div>
+          <div class="form-row"><label>Delivery Zone *</label><select id="manZone"><option value="dhaka">Inside Dhaka (৳80)</option><option value="outside">Outside Dhaka (৳150)</option></select></div>
+        </div>
+        <div class="form-row"><label>District *</label><input type="text" id="manDistrict" value="Dhaka" required></div>
+        <div class="form-row"><label>Address *</label><input type="text" id="manAddress" required placeholder="House, Road, Area"></div>
+        <button type="submit" class="btn" style="width:100%;margin-top:8px;">SAVE MANUAL ORDER ↗</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminToast" role="status" aria-live="polite" style="display:none;position:fixed;bottom:24px;right:24px;z-index:200;background:#170000;color:#fff;padding:14px 20px;font-weight:800;font-size:0.85rem;border:1px solid #c5a880;box-shadow:0 12px 32px rgba(0,0,0,0.3);"></div>
+
   <script src="assets/js/store-config.js"></script>
   <script src="assets/js/catalog-data.js"></script>
   <script>
     (function(){
       const PASSKEY = 'starkit2026';
+      const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      let dirtyInventory = new Set();
       let state = {
         authenticated: false,
         orders: [],
         catalog: window.STARKIT_CATALOG || []
       };
+
+      function adminToast(msg) {
+        const el = document.getElementById('adminToast');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.display = 'block';
+        clearTimeout(adminToast._t);
+        adminToast._t = setTimeout(() => { el.style.display = 'none'; }, 3400);
+      }
+
+      // Restore any persisted local stock overrides
+      try {
+        const stockOverrides = JSON.parse(localStorage.getItem('starkit_stock_overrides') || '{}');
+        state.catalog.forEach(p => (p.variants || []).forEach(v => {
+          if (typeof stockOverrides[v.sku] === 'number') v.stock_quantity = stockOverrides[v.sku];
+        }));
+      } catch (e) {}
 
       // 1. Initial Sample Seed Orders for testing
       const SAMPLE_ORDERS = [
@@ -607,17 +656,22 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       });
 
       function renderDashboard() {
-        // Compute KPIs
         const totalRev = state.orders
           .filter(o => o.status !== 'cancelled')
           .reduce((sum, o) => sum + (o.total_bdt || 0), 0);
         const pendingCount = state.orders.filter(o => o.status === 'pending_confirmation').length;
         const shippedCount = state.orders.filter(o => o.status === 'shipped').length;
 
+        const allVariants = state.catalog.flatMap(p => p.variants || []);
+        const activeCount = allVariants.filter(v => v.approved_for_publication === true).length;
+        const provCount = allVariants.length - activeCount;
+
         document.getElementById('kpiRevenue').textContent = '৳' + totalRev.toLocaleString('en-US');
         document.getElementById('kpiTotalOrders').textContent = state.orders.length;
         document.getElementById('kpiPending').textContent = pendingCount;
         document.getElementById('kpiShipped').textContent = shippedCount;
+        document.getElementById('kpiSkus').textContent = activeCount;
+        document.getElementById('kpiSkusSub').textContent = `${state.catalog.length} Designs · ${activeCount} Active SKUs / ${provCount} In-Dev`;
         document.getElementById('ordersCountBadge').textContent = state.orders.length;
 
         renderOrdersTable();
@@ -643,26 +697,27 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
         const masterBody = document.getElementById('ordersMasterBody');
 
         const makeRow = (o, isMaster) => {
-          const itemsSummary = (o.items || o.store_order_items || []).map(i => `${i.product_name || i.sku} (${i.size} × ${i.quantity})`).join(', ') || '1 Item';
+          const itemsSummary = (o.items || o.store_order_items || []).map(i => `${esc(i.product_name || i.sku)} (${esc(i.size)} × ${Number(i.quantity) || 1})`).join(', ') || '1 Item';
           const dateStr = new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-          const waUrl = `https://wa.me/${o.customer_phone.replace(/^0/, '880')}?text=${encodeURIComponent(`Hello ${o.customer_name}! This is StarkiT customer service regarding your order ${o.reference}.`)}`;
+          const rawPhone = String(o.customer_phone || '');
+          const waUrl = `https://wa.me/${encodeURIComponent(rawPhone.replace(/^0/, '880'))}?text=${encodeURIComponent(`Hello ${o.customer_name || ''}! This is StarkiT customer service regarding your order ${o.reference}.`)}`;
 
           return `
             <tr>
-              <td><strong>${o.reference}</strong></td>
-              <td><small>${dateStr}</small></td>
-              <td><strong>${o.customer_name}</strong></td>
+              <td><strong>${esc(o.reference)}</strong></td>
+              <td><small>${esc(dateStr)}</small></td>
+              <td><strong>${esc(o.customer_name)}</strong></td>
               <td>
-                <a href="tel:${o.customer_phone}" style="text-decoration:underline;">${o.customer_phone}</a>
-                <a href="${waUrl}" target="_blank" class="action-btn action-btn-wa" style="padding:2px 6px;margin-left:4px;font-size:0.68rem;">WA ↗</a>
+                <a href="tel:${esc(rawPhone)}" style="text-decoration:underline;">${esc(rawPhone)}</a>
+                <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-wa" style="padding:2px 6px;margin-left:4px;font-size:0.68rem;">WA ↗</a>
               </td>
-              ${isMaster ? `<td><small>${o.shipping_address}, ${o.district} (${o.zone})</small></td>` : `<td>${o.district}</td>`}
+              ${isMaster ? `<td><small>${esc(o.shipping_address)}, ${esc(o.district)} (${esc(o.zone)})</small></td>` : `<td>${esc(o.district)}</td>`}
               <td><small>${itemsSummary}</small></td>
               <td><strong>৳${(o.total_bdt || 0).toLocaleString()}</strong></td>
-              <td><span class="status-badge status-${o.status}">${o.status.replace(/_/g, ' ')}</span></td>
+              <td><span class="status-badge status-${esc(o.status)}">${esc((o.status || '').replace(/_/g, ' '))}</span></td>
               ${isMaster ? `
                 <td>
-                  <select onchange="updateOrderStatus('${o.reference}', this.value)" style="padding:4px;font-size:0.75rem;">
+                  <select onchange="updateOrderStatus('${esc(o.reference)}', this.value)" style="padding:4px;font-size:0.75rem;">
                     <option value="pending_confirmation" ${o.status==='pending_confirmation'?'selected':''}>Pending</option>
                     <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
                     <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
@@ -673,7 +728,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
                 </td>
               ` : ''}
               <td>
-                <button class="action-btn" onclick="openInvoice('${o.reference}')">Invoice</button>
+                <button class="action-btn" onclick="openInvoice('${esc(o.reference)}')">Invoice</button>
               </td>
             </tr>
           `;
@@ -683,7 +738,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           recentBody.innerHTML = state.orders.slice(0, 5).map(o => makeRow(o, false)).join('') || '<tr><td colspan="9" style="text-align:center;">No orders yet.</td></tr>';
         }
         if (masterBody) {
-          masterBody.innerHTML = filtered.map(o => makeRow(o, true)).join('') || '<tr><td colspan="9" style="text-align:center;">No matching orders found.</td></tr>';
+          masterBody.innerHTML = filtered.map(o => makeRow(o, true)).join('') || '<tr><td colspan="10" style="text-align:center;">No matching orders found.</td></tr>';
         }
       }
 
@@ -693,8 +748,8 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           order.status = newStatus;
           localStorage.setItem('starkit_orders', JSON.stringify(state.orders));
           renderDashboard();
+          adminToast(`Order ${ref} updated to ${newStatus.replace(/_/g, ' ')}.`);
           
-          // Send to API in background
           fetch('api/admin?action=update_status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -716,9 +771,9 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
         const items = o.items || o.store_order_items || [];
         document.getElementById('invItemsBody').innerHTML = items.map(i => `
           <tr style="border-bottom:1px solid #eee;">
-            <td style="padding:6px;">${i.product_name || i.sku} (${i.color || ''})</td>
-            <td style="padding:6px;text-align:center;">${i.size}</td>
-            <td style="padding:6px;text-align:center;">${i.quantity}</td>
+            <td style="padding:6px;">${esc(i.product_name || i.sku)} (${esc(i.color || '')})</td>
+            <td style="padding:6px;text-align:center;">${esc(i.size)}</td>
+            <td style="padding:6px;text-align:center;">${Number(i.quantity) || 1}</td>
             <td style="padding:6px;text-align:right;">৳${(i.line_total_bdt || (i.unit_price_bdt * i.quantity) || 0).toLocaleString()}</td>
           </tr>
         `).join('');
@@ -739,25 +794,25 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           (p.variants || []).forEach(v => {
             const isProv = v.status === 'PROVISIONAL' || (!v.gallery || v.gallery.length === 0);
             const imgHtml = (!isProv && v.gallery && v.gallery[0])
-              ? `<img class="sku-img" src="${v.gallery[0].url.replace(/^\//,'')}" alt="${p.name}">`
-              : `<div class="sku-img" style="display:flex;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#000' : '#fff'};font-size:0.6rem;font-weight:800;border:1px solid #c5a880;">DEV</div>`;
+              ? `<img class="sku-img" src="${esc(v.gallery[0].url.replace(/^\//,''))}" alt="${esc(p.name)}">`
+              : `<div class="sku-img" style="display:flex;align-items:center;justify-content:center;background:${esc(v.hex)};color:${v.hex === '#F3EFE6' ? '#000' : '#fff'};font-size:0.6rem;font-weight:800;border:1px solid #c5a880;">DEV</div>`;
             const badgeHtml = isProv
               ? `<span class="status-badge" style="background:#be555c;">PROVISIONAL · IN DEV</span>`
               : `<span class="status-badge" style="background:#15803d;">LIVE DOCUMENTED</span>`;
             const sizesHtml = isProv
               ? `<span style="font-size:0.75rem;color:#be555c;font-style:italic;">Pending specs</span>`
-              : `<span style="font-size:0.75rem;font-weight:700;">${(v.available_sizes || []).join(', ')}</span>`;
+              : `<span style="font-size:0.75rem;font-weight:700;">${esc((v.available_sizes || []).join(', '))}</span>`;
 
             rows.push(`
               <tr>
                 <td>${imgHtml}</td>
-                <td><strong>${p.name}</strong><br><small style="color:#777;">${p.collection}</small></td>
-                <td><code>${p.id}</code></td>
-                <td><code>${v.sku}</code></td>
-                <td><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${v.hex};margin-right:6px;border:1px solid #ccc;"></span>${v.color}</td>
+                <td><strong>${esc(p.name)}</strong><br><small style="color:#777;">${esc(p.collection)}</small></td>
+                <td><code>${esc(p.id)}</code></td>
+                <td><code>${esc(v.sku)}</code></td>
+                <td><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${esc(v.hex)};margin-right:6px;border:1px solid #ccc;"></span>${esc(v.color)}</td>
                 <td><strong>৳${p.price_bdt}</strong></td>
                 <td>
-                  <input type="number" class="stock-input" value="${v.stock_quantity || (isProv ? 0 : 50)}" min="0" onchange="updateVariantStock('${v.sku}', this.value)">
+                  <input type="number" class="stock-input" value="${typeof v.stock_quantity === 'number' ? v.stock_quantity : (isProv ? 0 : 50)}" min="0" onchange="updateVariantStock('${esc(v.sku)}', this.value)">
                 </td>
                 <td>${sizesHtml}</td>
                 <td>${badgeHtml}</td>
@@ -769,15 +824,88 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       }
 
       window.updateVariantStock = function(sku, qty) {
-        const num = parseInt(qty, 10);
+        const num = Math.max(0, parseInt(qty, 10) || 0);
         state.catalog.forEach(p => {
-          const v = p.variants.find(x => x.sku === sku);
-          if (v) v.stock_quantity = num;
+          const v = (p.variants || []).find(x => x.sku === sku);
+          if (v) {
+            v.stock_quantity = num;
+            dirtyInventory.add(sku);
+          }
         });
       };
 
-      document.getElementById('saveInventoryBtn').addEventListener('click', function(){
-        alert('Inventory stock levels saved successfully.');
+      document.getElementById('saveInventoryBtn').addEventListener('click', async function(){
+        try {
+          const overrides = {};
+          state.catalog.forEach(p => (p.variants || []).forEach(v => {
+            if (typeof v.stock_quantity === 'number') overrides[v.sku] = v.stock_quantity;
+          }));
+          localStorage.setItem('starkit_stock_overrides', JSON.stringify(overrides));
+          for (const sku of dirtyInventory) {
+            await fetch('api/admin?action=update_stock', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sku, stock_quantity: overrides[sku] })
+            }).catch(() => {});
+          }
+          dirtyInventory.clear();
+          adminToast('Inventory stock levels saved successfully.');
+        } catch (err) {
+          adminToast('Saved inventory locally.');
+        }
+      });
+
+      document.getElementById('newOrderModalBtn').addEventListener('click', function(){
+        const skuSel = document.getElementById('manSku');
+        if (skuSel && !skuSel.options.length) {
+          state.catalog.forEach(p => (p.variants || []).filter(v => v.approved_for_publication).forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.sku;
+            opt.textContent = `${v.sku} — ${p.name} (${v.color}) · ৳${p.price_bdt}`;
+            opt.dataset.sizes = JSON.stringify(v.available_sizes || ['Standard']);
+            skuSel.appendChild(opt);
+          }));
+        }
+        document.getElementById('manualOrderModal').style.display = 'grid';
+      });
+
+      document.getElementById('manualOrderForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const sku = document.getElementById('manSku').value;
+        const size = document.getElementById('manSize').value.trim() || 'Standard';
+        const qty = Math.max(1, parseInt(document.getElementById('manQty').value, 10) || 1);
+        const zone = document.getElementById('manZone').value;
+        let prod = null, variant = null;
+        for (const p of state.catalog) {
+          const v = (p.variants || []).find(x => x.sku === sku);
+          if (v) { prod = p; variant = v; break; }
+        }
+        const unit = prod ? prod.price_bdt : 1490;
+        const subtotal = unit * qty;
+        const shipping = subtotal >= 3000 ? 0 : (zone === 'dhaka' ? 80 : 150);
+        const ref = 'STK-M' + Math.random().toString(36).substring(2, 10).toUpperCase();
+        const newOrder = {
+          id: 'manual-' + Date.now(),
+          reference: ref,
+          customer_name: document.getElementById('manName').value.trim(),
+          customer_phone: document.getElementById('manPhone').value.trim(),
+          shipping_address: document.getElementById('manAddress').value.trim(),
+          district: document.getElementById('manDistrict').value.trim(),
+          zone,
+          subtotal_bdt: subtotal,
+          shipping_bdt: shipping,
+          total_bdt: subtotal + shipping,
+          status: 'confirmed',
+          created_at: new Date().toISOString(),
+          notes: 'Manual admin order',
+          items: [{ sku, product_name: prod?.name || sku, color: variant?.color || '', size, quantity: qty, unit_price_bdt: unit, line_total_bdt: subtotal }]
+        };
+        state.orders.unshift(newOrder);
+        localStorage.setItem('starkit_orders', JSON.stringify(state.orders));
+        renderDashboard();
+        document.getElementById('manualOrderModal').style.display = 'none';
+        e.target.reset();
+        adminToast(`Manual order ${ref} created.`);
       });
 
       document.getElementById('exportCsvBtn').addEventListener('click', function(){
@@ -787,10 +915,10 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           csvRows.push([
             o.reference,
             o.created_at,
-            `"${o.customer_name}"`,
-            `"${o.customer_phone}"`,
-            `"${(o.shipping_address||'').replace(/"/g, '""')}"`,
-            `"${o.district}"`,
+            `"${(o.customer_name || '').replace(/"/g, '""')}"`,
+            `"${(o.customer_phone || '').replace(/"/g, '""')}"`,
+            `"${(o.shipping_address || '').replace(/"/g, '""')}"`,
+            `"${(o.district || '').replace(/"/g, '""')}"`,
             o.zone,
             o.subtotal_bdt,
             o.shipping_bdt,
@@ -810,9 +938,25 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       document.getElementById('orderStatusFilter').addEventListener('change', renderOrdersTable);
       document.getElementById('orderZoneFilter').addEventListener('change', renderOrdersTable);
 
-      document.getElementById('storeSettingsForm').addEventListener('submit', function(e){
+      document.getElementById('storeSettingsForm').addEventListener('submit', async function(e){
         e.preventDefault();
-        alert('Store operational settings updated.');
+        const settingsPayload = [
+          { key: 'delivery_dhaka_bdt', value: Number(document.getElementById('settingDhaka').value) },
+          { key: 'delivery_outside_bdt', value: Number(document.getElementById('settingOutside').value) },
+          { key: 'free_shipping_threshold', value: Number(document.getElementById('settingFreeThreshold').value) },
+          { key: 'cod_enabled', value: document.getElementById('settingCodStatus').value === 'true' },
+          { key: 'support_phone', value: document.getElementById('settingPhone').value.trim() },
+          { key: 'store_mode', value: document.getElementById('settingStoreMode').value }
+        ];
+        try {
+          localStorage.setItem('starkit_store_settings', JSON.stringify(settingsPayload));
+          await fetch('api/admin?action=update_settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ settings: settingsPayload })
+          }).catch(() => {});
+        } catch (err) {}
+        adminToast('Store operational settings updated.');
       });
 
       checkAuth();

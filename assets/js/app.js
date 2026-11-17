@@ -12,7 +12,27 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
   const ROOT = window.STARKIT_BASE || './';
   const C = window.STARKIT_CATALOG || [];
-  const cfg = window.STARKIT_CONFIG || {};
+  const cfg = { ...(window.STARKIT_CONFIG || {}) };
+  try {
+    const savedSettings = JSON.parse(localStorage.getItem('starkit_store_settings') || '[]');
+    if (Array.isArray(savedSettings)) {
+      savedSettings.forEach((s) => {
+        if (!s || !s.key) return;
+        if (s.key === 'delivery_dhaka_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_dhaka = Number(s.value);
+        if (s.key === 'delivery_outside_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_outside = Number(s.value);
+        if (s.key === 'free_shipping_threshold' && Number.isFinite(Number(s.value))) cfg.free_shipping_threshold = Number(s.value);
+        if (s.key === 'cod_enabled') cfg.cod_enabled = Boolean(s.value);
+        if (s.key === 'support_phone' && s.value) cfg.support_phone = String(s.value);
+        if (s.key === 'store_mode' && s.value) cfg.mode = String(s.value);
+      });
+    }
+    const stockOverrides = JSON.parse(localStorage.getItem('starkit_stock_overrides') || '{}');
+    if (stockOverrides && typeof stockOverrides === 'object') {
+      C.forEach((p) => (p.variants || []).forEach((v) => {
+        if (typeof stockOverrides[v.sku] === 'number') v.stock_quantity = stockOverrides[v.sku];
+      }));
+    }
+  } catch {}
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -327,7 +347,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
     const mediaHtml = isHoodie
       ? `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)} front"><img class="back" src="${asset(b?.url)}" loading="lazy" alt="${safe(p.name)} back artwork"></a>`
-      : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
+      : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front single-view" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
 
     const swatchesHtml = isHoodie
       ? `<div class="swatches">${p.variants.map((vr) => `<span class="swatch" title="${safe(vr.color)}${vr.status === 'PROVISIONAL' ? ' (In Development)' : ''}" style="background:${vr.hex}"></span>`).join('')}</div>`
@@ -726,6 +746,11 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
               $('#vipSuccessMsg').style.display = 'block';
               vipForm.style.display = 'none';
               message(`Added ${ph} to VIP drop list for ${v.color}!`, 'success');
+              trackMeta('Lead', {
+                content_name: p.name,
+                content_category: p.collection,
+                content_ids: [v.sku]
+              });
             }
           });
         } else if (v.available_sizes.length) {
@@ -1016,11 +1041,16 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
         discountHtml = `<div style="font-size:0.92rem;color:#15803d;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:700;"><span>Bundle Offer (${totals.hoodieCount} Hoodies):</span><span>-${price(totals.bundleDiscount)}</span></div>`;
       }
 
+      if (total.parentElement) {
+        total.parentElement.style.display = 'block';
+        const labelSibling = total.previousElementSibling;
+        if (labelSibling) labelSibling.style.display = 'none';
+      }
       total.innerHTML = `
-        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;"><span>Subtotal:</span><span>${price(totals.subtotal)}</span></div>
+        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:600;"><span>Subtotal:</span><span>${price(totals.subtotal)}</span></div>
         ${discountHtml}
-        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;"><span>Delivery (${zone === 'dhaka' ? 'Dhaka Metro' : 'Outside Dhaka'}):</span><span>${shipping === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(shipping)}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:1.35rem;font-weight:900;border-top:1px solid #ded9d3;padding-top:10px;margin-top:6px;color:#170000;"><span>TOTAL PAYABLE (COD):</span><span>${price(grandTotal)}</span></div>
+        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:600;"><span>Delivery (${zone === 'dhaka' ? 'Dhaka Metro' : 'Outside Dhaka'}):</span><span>${shipping === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(shipping)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:1.3rem;font-weight:900;border-top:1px solid #ded9d3;padding-top:12px;margin-top:8px;color:#170000;"><span>TOTAL PAYABLE (COD):</span><span>${price(grandTotal)}</span></div>
       `;
     }
 
@@ -1058,11 +1088,13 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       return !o || !editable(o.p, o.v) || !o.v.available_sizes.includes(x.size);
     });
 
-    if (cfg.mode === 'preview' || !cart.length || hasInvalid) {
+    if (cfg.mode === 'preview' || cfg.cod_enabled === false || !cart.length || hasInvalid) {
       btn.disabled = true;
       $('#checkoutNotice').textContent =
         cfg.mode === 'preview'
           ? 'This is a visual preview. Commercial ordering opens after approval.'
+          : cfg.cod_enabled === false
+          ? 'Online COD checkout is temporarily paused. Please call or WhatsApp 01778307704.'
           : hasInvalid
           ? 'One or more cart items are unavailable. Please review your bag.'
           : 'Your bag is empty.';
@@ -1103,19 +1135,29 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
       try {
         let data = null;
+        let response = null;
         try {
-          const response = await fetch(ROOT + 'api/orders', {
+          response = await fetch(ROOT + 'api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
           });
           data = await response.json();
-          if (!response.ok) throw new Error(data.error || 'Order could not be submitted.');
         } catch (netErr) {
           console.warn('API direct connection fallback:', netErr);
+        }
+
+        if (response && !response.ok) {
+          if ((response.status >= 400 && response.status < 500) || response.status === 503) {
+            throw new Error(data?.error || 'Order could not be submitted. Please check your details.');
+          }
+          data = null;
+        }
+
+        if (!data || !data.reference) {
           const fallbackRef = 'STK-' + generateUUID().replace(/-/g, '').substring(0, 10).toUpperCase();
           const totals = calculateCartTotals();
-          const ship = (totals.isFreeShipping || totals.subtotal >= 3000) ? 0 : body.customer.zone === 'dhaka' ? 80 : 150;
+          const ship = (totals.isFreeShipping || totals.subtotal >= (cfg.free_shipping_threshold || 3000)) ? 0 : (body.customer.zone === 'dhaka' ? (cfg.delivery_dhaka || 80) : (cfg.delivery_outside || 150));
           data = {
             reference: fallbackRef,
             subtotal_bdt: totals.subtotal,
@@ -1342,10 +1384,16 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     }
 
     const el = $('#menuToggle');
+    const nav = $('#mainNav');
     el?.addEventListener('click', () => {
-      const nav = $('#mainNav');
       nav?.classList.toggle('open');
       el.setAttribute('aria-expanded', String(nav?.classList.contains('open')));
+    });
+    nav?.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        nav.classList.remove('open');
+        el?.setAttribute('aria-expanded', 'false');
+      }
     });
 
     $$('[data-open-cart]').forEach((b) => b.addEventListener('click', () => toggleCart(true)));
