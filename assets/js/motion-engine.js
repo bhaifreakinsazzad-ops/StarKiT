@@ -25,6 +25,12 @@ export function collectShowroomEntranceTargets(root = typeof document !== 'undef
   if (!root || typeof root.querySelector !== 'function') {
     return {
       showroom: null,
+      logo: null,
+      eyebrow: null,
+      headline: null,
+      paragraph: null,
+      ctaButtons: [],
+      metaLine: null,
       introItems: [],
       stage: null,
       stageTabs: [],
@@ -36,7 +42,24 @@ export function collectShowroomEntranceTargets(root = typeof document !== 'undef
   }
   const showroom = root.querySelector('.showroom');
   const introContainer = root.querySelector('.showroom-intro, .hero-copy');
-  const introItems = introContainer ? Array.from(introContainer.children || []) : [];
+  const logo = introContainer?.querySelector?.('.hero-logo-stamp') || null;
+  const eyebrow = introContainer?.querySelector?.('.eyebrow') || null;
+  const headline = introContainer?.querySelector?.('h1') || null;
+  const paragraph = introContainer?.querySelector?.('p') || null;
+  const rawCtas =
+    introContainer && typeof introContainer.querySelectorAll === 'function'
+      ? Array.from(introContainer.querySelectorAll('.showroom-cta-group > *, a.btn, button.btn'))
+      : [];
+  const ctaButtons = Array.from(new Set(rawCtas));
+  const metaLine = introContainer?.querySelector?.('.showroom-meta-line') || null;
+
+  const explicitSequence = [logo, eyebrow, headline, paragraph, ...ctaButtons, metaLine].filter(Boolean);
+  const introItems = explicitSequence.length
+    ? explicitSequence
+    : introContainer
+    ? Array.from(introContainer.children || [])
+    : [];
+
   const stage = root.querySelector('#showroomStage') || root.querySelector('#heroPicture');
   const stageTabs = Array.from(root.querySelectorAll('.stage-view-tabs .stage-view-tab'));
   const panel = root.querySelector('#floatingPurchasePanel');
@@ -45,6 +68,12 @@ export function collectShowroomEntranceTargets(root = typeof document !== 'undef
   const statCells = Array.from(root.querySelectorAll('.stats-strip .stat-cell'));
   return {
     showroom,
+    logo,
+    eyebrow,
+    headline,
+    paragraph,
+    ctaButtons,
+    metaLine,
     introItems,
     stage,
     stageTabs,
@@ -81,7 +110,7 @@ export function animateShowroomHeroEntrance(options = {}) {
   ].filter(Boolean);
 
   if (!allNodes.length) {
-    return { mode: 'empty', timeline: null };
+    return { mode: 'empty', timeline: null, targets };
   }
 
   const reduced = shouldReduceMotion(win);
@@ -95,7 +124,7 @@ export function animateShowroomHeroEntrance(options = {}) {
     if (targets.showroom && typeof targets.showroom.setAttribute === 'function') {
       targets.showroom.setAttribute('data-entrance', 'reduced');
     }
-    return { mode: 'reduced', timeline: null };
+    return { mode: 'reduced', timeline: null, targets };
   }
 
   if (targets.showroom && typeof targets.showroom.setAttribute === 'function') {
@@ -124,7 +153,7 @@ export function animateShowroomHeroEntrance(options = {}) {
       {
         opacity: [0, 1],
         y: [18, 0],
-        delay: stagger(55, { start: 30 }),
+        delay: stagger(65, { start: 20 }),
         duration: 620
       },
       0

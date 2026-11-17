@@ -48,7 +48,8 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     return gallery.find((g) => g.view === 'front') || gallery[0];
   }
 
-  function renderWardrobe() {
+  function renderWardrobe(restoreWardrobeFocus = false) {
+    const total = state.hoodies.length;
     railEl.innerHTML = state.hoodies
       .map((p, idx) => {
         const pv = getPrimaryVariant(p);
@@ -63,10 +64,12 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
             type="button"
             class="wardrobe-item ${active ? 'active' : ''}"
             data-wardrobe-idx="${idx}"
+            data-product-id="${escapeHtml(p.id)}"
             aria-pressed="${active ? 'true' : 'false'}"
-            aria-label="Inspect ${escapeHtml(p.name)} (${escapeHtml(p.id)})"
+            aria-current="${active ? 'true' : 'false'}"
+            aria-label="Inspect ${escapeHtml(p.name)} (${escapeHtml(p.id)}, ${formatBdt(p.price_bdt)}) — Look ${idx + 1} of ${total}"
           >
-            <div class="wardrobe-thumb">${thumbHtml}</div>
+            <div class="wardrobe-thumb" aria-hidden="true">${thumbHtml}</div>
             <div class="wardrobe-meta">
               <strong>${escapeHtml(p.name)}</strong>
               <small>${escapeHtml(p.id)} · ${formatBdt(p.price_bdt)}</small>
@@ -75,22 +78,68 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
       })
       .join('');
 
+    const activateWardrobeIndex = (nextIdx, focusAfter = false) => {
+      if (!Number.isInteger(nextIdx) || nextIdx < 0 || nextIdx >= state.hoodies.length) return;
+      if (nextIdx === state.designIndex) {
+        if (focusAfter) {
+          railEl.querySelector(`[data-wardrobe-idx="${nextIdx}"]`)?.focus();
+        }
+        return;
+      }
+      const dir = nextIdx > state.designIndex ? 1 : -1;
+      state.designIndex = nextIdx;
+      const prod = getActiveProduct();
+      const pv = getPrimaryVariant(prod);
+      state.variantSku = pv ? pv.sku : null;
+      state.viewMode = 'front';
+      render(dir, focusAfter ? { type: 'wardrobe', idx: nextIdx } : null);
+    };
+
     railEl.querySelectorAll('[data-wardrobe-idx]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const nextIdx = Number(btn.dataset.wardrobeIdx);
-        if (!Number.isInteger(nextIdx) || nextIdx === state.designIndex) return;
-        const dir = nextIdx > state.designIndex ? 1 : -1;
-        state.designIndex = nextIdx;
-        const prod = getActiveProduct();
-        const pv = getPrimaryVariant(prod);
-        state.variantSku = pv ? pv.sku : null;
-        state.viewMode = 'front';
-        render(dir);
+        const keepFocus = document.activeElement === btn;
+        activateWardrobeIndex(nextIdx, keepFocus);
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        const currentIdx = Number(btn.dataset.wardrobeIdx);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextIdx = (currentIdx + 1) % state.hoodies.length;
+          activateWardrobeIndex(nextIdx, true);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevIdx = (currentIdx - 1 + state.hoodies.length) % state.hoodies.length;
+          activateWardrobeIndex(prevIdx, true);
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          activateWardrobeIndex(0, true);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          activateWardrobeIndex(state.hoodies.length - 1, true);
+        }
       });
     });
+
+    const activeBtn = railEl.querySelector(`[data-wardrobe-idx="${state.designIndex}"]`);
+    if (activeBtn && restoreWardrobeFocus) {
+      activeBtn.focus();
+      if (typeof activeBtn.scrollIntoView === 'function') {
+        const reduced =
+          typeof window !== 'undefined' &&
+          typeof window.matchMedia === 'function' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        activeBtn.scrollIntoView({
+          behavior: reduced ? 'auto' : 'smooth',
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      }
+    }
   }
 
-  function render(direction = 1) {
+  function render(direction = 1, focusTarget = null) {
     const p = getActiveProduct();
     const v = getActiveVariant(p);
     if (!v) return;
@@ -110,9 +159,9 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     const fullImgUrl = currentPhoto ? base + String(currentPhoto.url || '').replace(/^\//, '') : '';
 
     const stageMediaHtml = currentPhoto
-      ? `<img id="showroomHeroImg" src="${escapeHtml(fullImgUrl)}" alt="${escapeHtml(p.name)} — ${escapeHtml(v.color)}" referrerpolicy="no-referrer">`
+      ? `<img id="showroomHeroImg" src="${escapeHtml(fullImgUrl)}" alt="${escapeHtml(p.name)} — ${escapeHtml(v.color)} (${escapeHtml(state.viewMode)} view)" referrerpolicy="no-referrer">`
       : `<div class="stage-provisional-slate">
-           <div class="stage-swatch-disc" style="background:${escapeHtml(v.hex)};"></div>
+           <div class="stage-swatch-disc" style="background:${escapeHtml(v.hex)};" aria-hidden="true"></div>
            <div class="eyebrow" style="margin-bottom:8px;">${p.is_concept || p.concept_stage ? 'Concept Design · Media Pending' : 'Colorway Slot · Media Pending'}</div>
            <h3 style="margin:0 0 6px;font-size:1.35rem;font-weight:800;">${escapeHtml(p.name)}</h3>
            <p style="margin:0;color:var(--mute);font-size:0.88rem;max-width:30ch;">
@@ -120,27 +169,110 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
            </p>
          </div>`;
 
+    const activeTabId = `stage-tab-${state.viewMode}`;
+    const zoomAttrs = currentPhoto
+      ? `role="button" tabindex="0" aria-label="Zoom studio image for ${escapeHtml(p.name)} — ${escapeHtml(v.color)} (${escapeHtml(state.viewMode)} view)"`
+      : `role="region" aria-label="${escapeHtml(p.name)} — ${escapeHtml(v.color)} studio preview"`;
+
     stageEl.innerHTML = `
-      <div class="stage-frame" id="heroPicture" data-testid="showroom-stage">
+      <div class="stage-frame" id="heroPicture" aria-labelledby="${escapeHtml(activeTabId)}" aria-live="polite" data-testid="showroom-stage" ${zoomAttrs}>
         ${stageMediaHtml}
       </div>
-      <div class="stage-view-tabs" role="tablist" aria-label="Garment studio view">
-        <button type="button" role="tab" class="stage-view-tab ${state.viewMode === 'front' ? 'active' : ''}" data-stage-view="front" ${!gallery.length ? 'disabled' : ''}>Front</button>
-        <button type="button" role="tab" class="stage-view-tab ${state.viewMode === 'back' ? 'active' : ''}" data-stage-view="back" ${!hasBack ? 'disabled' : ''}>Back</button>
-        <button type="button" role="tab" class="stage-view-tab ${state.viewMode === 'detail' ? 'active' : ''}" data-stage-view="detail" ${!hasDetail ? 'disabled' : ''}>Detail</button>
-        <button type="button" role="tab" class="stage-view-tab" disabled title="Model photography pending studio shoot">Model Shoot Pending</button>
+      <div class="stage-view-tabs" role="tablist" aria-label="Garment studio view angles">
+        <button
+          type="button"
+          role="tab"
+          id="stage-tab-front"
+          class="stage-view-tab ${state.viewMode === 'front' ? 'active' : ''}"
+          data-stage-view="front"
+          aria-selected="${state.viewMode === 'front' ? 'true' : 'false'}"
+          aria-controls="heroPicture"
+          aria-label="Front studio view — ${escapeHtml(p.name)} (${escapeHtml(v.color)})${!gallery.length ? ' (Unavailable)' : ''}"
+          ${!gallery.length ? 'disabled aria-disabled="true"' : ''}
+        >Front</button>
+        <button
+          type="button"
+          role="tab"
+          id="stage-tab-back"
+          class="stage-view-tab ${state.viewMode === 'back' ? 'active' : ''}"
+          data-stage-view="back"
+          aria-selected="${state.viewMode === 'back' ? 'true' : 'false'}"
+          aria-controls="heroPicture"
+          aria-label="Back studio view — ${escapeHtml(p.name)} (${escapeHtml(v.color)})${!hasBack ? ' (Unavailable)' : ''}"
+          ${!hasBack ? 'disabled aria-disabled="true"' : ''}
+        >Back</button>
+        <button
+          type="button"
+          role="tab"
+          id="stage-tab-detail"
+          class="stage-view-tab ${state.viewMode === 'detail' ? 'active' : ''}"
+          data-stage-view="detail"
+          aria-selected="${state.viewMode === 'detail' ? 'true' : 'false'}"
+          aria-controls="heroPicture"
+          aria-label="Fabric and print detail view — ${escapeHtml(p.name)} (${escapeHtml(v.color)})${!hasDetail ? ' (Unavailable)' : ''}"
+          ${!hasDetail ? 'disabled aria-disabled="true"' : ''}
+        >Detail</button>
+        <button
+          type="button"
+          role="tab"
+          id="stage-tab-model"
+          class="stage-view-tab"
+          disabled
+          aria-selected="false"
+          aria-disabled="true"
+          aria-controls="heroPicture"
+          aria-label="Model lookbook view (Model shoot pending)"
+          title="Model photography pending studio shoot"
+        >Model Shoot Pending</button>
       </div>`;
 
+    const frameEl = stageEl.querySelector('#heroPicture');
     const imgEl = stageEl.querySelector('#showroomHeroImg');
-    if (imgEl && onOpenZoom) {
-      imgEl.addEventListener('click', () => onOpenZoom(imgEl.src, imgEl.alt));
+    if (imgEl && frameEl && onOpenZoom) {
+      const triggerZoom = () => onOpenZoom(imgEl.src, imgEl.alt);
+      frameEl.addEventListener('click', triggerZoom);
+      frameEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          triggerZoom();
+        }
+      });
     }
 
+    const enabledTabs = Array.from(stageEl.querySelectorAll('[data-stage-view]:not([disabled])'));
     stageEl.querySelectorAll('[data-stage-view]').forEach((btn) => {
       btn.addEventListener('click', () => {
         if (btn.disabled) return;
+        const keepFocus = document.activeElement === btn;
         state.viewMode = btn.dataset.stageView;
-        render(0);
+        render(0, keepFocus ? { type: 'tab', view: state.viewMode } : null);
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        if (!enabledTabs.length) return;
+        const idx = enabledTabs.indexOf(btn);
+        if (idx === -1) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          const nextTab = enabledTabs[(idx + 1) % enabledTabs.length];
+          state.viewMode = nextTab.dataset.stageView;
+          render(0, { type: 'tab', view: state.viewMode });
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prevTab = enabledTabs[(idx - 1 + enabledTabs.length) % enabledTabs.length];
+          state.viewMode = prevTab.dataset.stageView;
+          render(0, { type: 'tab', view: state.viewMode });
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          const firstTab = enabledTabs[0];
+          state.viewMode = firstTab.dataset.stageView;
+          render(0, { type: 'tab', view: state.viewMode });
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          const lastTab = enabledTabs[enabledTabs.length - 1];
+          state.viewMode = lastTab.dataset.stageView;
+          render(0, { type: 'tab', view: state.viewMode });
+        }
       });
     });
 
@@ -158,9 +290,10 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
             type="button"
             class="panel-swatch-btn ${isSelected ? 'active' : ''} ${isProv ? 'provisional' : ''}"
             data-panel-sku="${escapeHtml(variant.sku)}"
+            aria-pressed="${isSelected ? 'true' : 'false'}"
             aria-label="Colorway ${escapeHtml(variant.color)}${isProv ? ' (Media Pending)' : ''}"
           >
-            <span class="color-dot" style="background:${escapeHtml(variant.hex)}"></span>
+            <span class="color-dot" style="background:${escapeHtml(variant.hex)}" aria-hidden="true"></span>
             <span>${escapeHtml(variant.color)}</span>
           </button>`;
       })
@@ -169,7 +302,15 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     const sizesHtml = sizes
       .map((sz) => {
         const disabled = v.status !== 'DOCUMENTED';
-        return `<button type="button" class="size-chip ${state.selectedSize === sz ? 'selected' : ''}" data-panel-size="${escapeHtml(sz)}" ${disabled ? 'disabled' : ''}>${escapeHtml(sz)}</button>`;
+        const isSelected = state.selectedSize === sz;
+        return `<button
+          type="button"
+          class="size-chip ${isSelected ? 'selected' : ''}"
+          data-panel-size="${escapeHtml(sz)}"
+          aria-pressed="${isSelected ? 'true' : 'false'}"
+          aria-label="Size ${escapeHtml(sz)}${disabled ? ' (Unavailable — Media Pending)' : ''}"
+          ${disabled ? 'disabled aria-disabled="true"' : ''}
+        >${escapeHtml(sz)}</button>`;
       })
       .join('');
 
@@ -211,36 +352,39 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
         <span>Colorway · ${escapeHtml(v.color)}</span>
         <span>${v.status === 'DOCUMENTED' ? 'Studio Assets Ready' : 'Media Pending'}</span>
       </div>
-      <div class="panel-swatches">${swatchesHtml}</div>
+      <div class="panel-swatches" role="group" aria-label="Select garment colorway">${swatchesHtml}</div>
       <div class="panel-label">
         <span>Size</span>
-        <a href="${pdpHref}" class="link-arrow">Full Size Guide ↗</a>
+        <a href="${pdpHref}" class="link-arrow" aria-label="Open full size guide and product page for ${escapeHtml(p.name)}">Full Size Guide ↗</a>
       </div>
-      <div class="panel-sizes">${sizesHtml}</div>
-      <div class="panel-status">${statusMessage}</div>
+      <div class="panel-sizes" role="group" aria-label="Select garment size">${sizesHtml}</div>
+      <div class="panel-status" role="status" aria-live="polite">${statusMessage}</div>
       <div class="panel-actions">
         <button
           type="button"
           class="btn"
           id="panelPrimaryCta"
-          ${!purchasable && v.status !== 'DOCUMENTED' ? 'disabled' : ''}
+          aria-label="${escapeHtml(ctaLabel)} — ${escapeHtml(p.name)} (${escapeHtml(v.color)}, Size ${escapeHtml(state.selectedSize)})"
+          ${!purchasable && v.status !== 'DOCUMENTED' ? 'disabled aria-disabled="true"' : ''}
         >${ctaLabel}</button>
         <a href="${pdpHref}" class="btn btn-outline" aria-label="View full page for ${escapeHtml(p.name)}">Details ↗</a>
       </div>`;
 
     panelEl.querySelectorAll('[data-panel-sku]').forEach((btn) => {
       btn.addEventListener('click', () => {
+        const keepFocus = document.activeElement === btn;
         state.variantSku = btn.dataset.panelSku;
         state.viewMode = 'front';
-        render(0);
+        render(0, keepFocus ? { type: 'swatch', sku: state.variantSku } : null);
       });
     });
 
     panelEl.querySelectorAll('[data-panel-size]').forEach((btn) => {
       btn.addEventListener('click', () => {
         if (btn.disabled) return;
+        const keepFocus = document.activeElement === btn;
         state.selectedSize = btn.dataset.panelSize;
-        render(0);
+        render(0, keepFocus ? { type: 'size', size: state.selectedSize } : null);
       });
     });
 
@@ -255,7 +399,16 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
       });
     }
 
-    renderWardrobe();
+    renderWardrobe(focusTarget?.type === 'wardrobe');
+
+    if (focusTarget?.type === 'tab') {
+      stageEl.querySelector(`[data-stage-view="${focusTarget.view}"]`)?.focus();
+    } else if (focusTarget?.type === 'swatch') {
+      panelEl.querySelector(`[data-panel-sku="${focusTarget.sku}"]`)?.focus();
+    } else if (focusTarget?.type === 'size') {
+      panelEl.querySelector(`[data-panel-size="${focusTarget.size}"]`)?.focus();
+    }
+
     if (direction !== 0) {
       animateHeroSwap(stageEl.querySelector('#heroPicture'), panelEl.querySelector('#heroName'), direction);
     }
@@ -266,6 +419,14 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     state.variantSku = null;
     state.viewMode = 'front';
     render(-1);
+    const activeBtn = railEl.querySelector(`[data-wardrobe-idx="${state.designIndex}"]`);
+    if (activeBtn && typeof activeBtn.scrollIntoView === 'function') {
+      const reduced =
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      activeBtn.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest', inline: 'nearest' });
+    }
   });
 
   document.getElementById('wardrobeNextBtn')?.addEventListener('click', () => {
@@ -273,6 +434,14 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     state.variantSku = null;
     state.viewMode = 'front';
     render(1);
+    const activeBtn = railEl.querySelector(`[data-wardrobe-idx="${state.designIndex}"]`);
+    if (activeBtn && typeof activeBtn.scrollIntoView === 'function') {
+      const reduced =
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      activeBtn.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest', inline: 'nearest' });
+    }
   });
 
   render(0);

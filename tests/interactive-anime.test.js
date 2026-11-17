@@ -23,15 +23,31 @@ function createMockNode(id = '', children = []) {
 
 function createMockRoot() {
   const showroom = createMockNode('showroom');
-  const introChildren = [
-    createMockNode('logo'),
-    createMockNode('eyebrow'),
-    createMockNode('headline'),
-    createMockNode('copy'),
-    createMockNode('cta-group'),
-    createMockNode('meta-line')
-  ];
-  const intro = createMockNode('intro', introChildren);
+  const logo = createMockNode('logo');
+  const eyebrow = createMockNode('eyebrow');
+  const headline = createMockNode('headline');
+  const paragraph = createMockNode('paragraph');
+  const ctaExplore = createMockNode('cta-explore');
+  const ctaFit = createMockNode('cta-fit');
+  const ctaGroup = createMockNode('cta-group', [ctaExplore, ctaFit]);
+  const metaLine = createMockNode('meta-line');
+
+  const intro = {
+    ...createMockNode('intro', [logo, eyebrow, headline, paragraph, ctaGroup, metaLine]),
+    querySelector(sel) {
+      if (sel === '.hero-logo-stamp') return logo;
+      if (sel === '.eyebrow') return eyebrow;
+      if (sel === 'h1') return headline;
+      if (sel === 'p') return paragraph;
+      if (sel === '.showroom-meta-line') return metaLine;
+      return null;
+    },
+    querySelectorAll(sel) {
+      if (sel.includes('.showroom-cta-group')) return [ctaExplore, ctaFit];
+      return [];
+    }
+  };
+
   const stage = createMockNode('showroomStage');
   const stageTabs = [createMockNode('tab-front'), createMockNode('tab-back')];
   const panel = createMockNode('floatingPurchasePanel');
@@ -41,7 +57,13 @@ function createMockRoot() {
 
   return {
     showroom,
-    introChildren,
+    logo,
+    eyebrow,
+    headline,
+    paragraph,
+    ctaExplore,
+    ctaFit,
+    metaLine,
     stage,
     stageTabs,
     panel,
@@ -71,10 +93,14 @@ test('shouldReduceMotion evaluates prefers-reduced-motion media query safely', (
   assert.equal(shouldReduceMotion({ matchMedia: () => ({ matches: true }) }), true);
 });
 
-test('collectShowroomEntranceTargets gathers intro, stage, panel, wardrobe, and stats nodes', () => {
+test('collectShowroomEntranceTargets explicitly gathers logo, headline, paragraph, individual CTA buttons, stage, panel, and wardrobe nodes', () => {
   const root = createMockRoot();
   const collected = collectShowroomEntranceTargets(root);
-  assert.equal(collected.introItems.length, 6);
+  assert.equal(collected.logo, root.logo);
+  assert.equal(collected.headline, root.headline);
+  assert.equal(collected.paragraph, root.paragraph);
+  assert.deepEqual(collected.ctaButtons, [root.ctaExplore, root.ctaFit]);
+  assert.equal(collected.introItems.length, 7);
   assert.equal(collected.stage, root.stage);
   assert.equal(collected.stageTabs.length, 2);
   assert.equal(collected.panel, root.panel);
@@ -84,6 +110,9 @@ test('collectShowroomEntranceTargets gathers intro, stage, panel, wardrobe, and 
 
 test('animateShowroomHeroEntrance skips timeline and clears inline styles when prefers-reduced-motion matches', () => {
   const root = createMockRoot();
+  root.logo.style.opacity = '0';
+  root.headline.style.opacity = '0';
+  root.ctaExplore.style.transform = 'translateY(18px)';
   root.panel.style.opacity = '0.2';
   root.panel.style.transform = 'translateY(12px)';
 
@@ -95,6 +124,9 @@ test('animateShowroomHeroEntrance skips timeline and clears inline styles when p
   assert.equal(res.mode, 'reduced');
   assert.equal(res.timeline, null);
   assert.equal(root.showroom.getAttribute('data-entrance'), 'reduced');
+  assert.equal(root.logo.style.opacity, '');
+  assert.equal(root.headline.style.opacity, '');
+  assert.equal(root.ctaExplore.style.transform, '');
   assert.equal(root.panel.style.opacity, '');
   assert.equal(root.panel.style.transform, '');
 });

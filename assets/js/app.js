@@ -258,22 +258,6 @@ async function boot() {
   setupNavigation();
   const openZoom = setupLightbox();
 
-  // Optional async load of promotions.json so runtime pricing/offer edits stay synced
-  if (storeConfig.promotions_endpoint) {
-    try {
-      const promoUrl = `${base}${String(storeConfig.promotions_endpoint).replace(/^\//, '')}`;
-      const res = await fetch(promoUrl, { cache: 'no-store' });
-      if (res.ok) {
-        const json = await res.json();
-        if (Array.isArray(json?.promotions)) {
-          window.STARKIT_PROMOTIONS = json.promotions;
-        }
-      }
-    } catch {
-      // Fall back silently to DEFAULT_PROMOTIONS bundled in pricing-engine
-    }
-  }
-
   // Admin portal initializes only when loginGate exists
   if (document.getElementById('loginGate')) {
     initAdminManager();
@@ -325,6 +309,28 @@ async function boot() {
   setupFitGuideModal({ base });
   setupVipEarlyAccess();
   initMotionEngine();
+
+  // Async sync of promotions.json so runtime pricing/offer edits stay synced without delaying hero paint
+  if (storeConfig.promotions_endpoint) {
+    try {
+      const promoUrl = `${base}${String(storeConfig.promotions_endpoint).replace(/^\//, '')}`;
+      const res = await fetch(promoUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (Array.isArray(json?.promotions)) {
+          window.STARKIT_PROMOTIONS = json.promotions;
+          if (document.getElementById('priceTiersMount') || document.getElementById('offerDisplayMount')) {
+            initOfferDisplay({
+              products,
+              onSelectTier: (tierCode) => gridApi?.setTierFilter(tierCode)
+            });
+          }
+        }
+      }
+    } catch {
+      // Fall back silently to DEFAULT_PROMOTIONS bundled in pricing-engine
+    }
+  }
 }
 
 if (document.readyState === 'loading') {

@@ -77,18 +77,18 @@
 
   <main>
     <section class="showroom" aria-label="StarkiT Interactive Fashion Showroom">
-      <div id="spatialHeroContainer"></div>
+      <div id="spatialHeroContainer" aria-hidden="true"></div>
       <div class="shell showroom-grid">
         <div class="showroom-intro">
           <img class="hero-logo-stamp" src="assets/images/starkit-logo-transparent.png" alt="StarkiT ستاركيت">
           <div class="eyebrow">Drop 01 · Interactive Showroom</div>
           <h1>Wear your <em>world.</em></h1>
           <p>Switch across 15 hoodie designs and 60 planned colorways in studio view. Explore front, back, and fabric details alongside 35 Fariza&#39;s Territory artisan pieces.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <a class="btn btn-light" href="#collection">Explore Archive ↓</a>
-            <button type="button" class="btn btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.34);" data-open-fit-guide>Fit Finder</button>
+          <div class="showroom-cta-group" role="group" aria-label="Showroom primary actions" style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="btn btn-light" href="#collection" aria-label="Explore the Drop 01 and Drop 02 collection archive">Explore Archive ↓</a>
+            <button type="button" class="btn btn-outline" style="color:#ffffff;border-color:rgba(255,255,255,0.34);" data-open-fit-guide aria-label="Open Fit Finder and garment size calculator" aria-haspopup="dialog" aria-controls="fitModal">Fit Finder</button>
           </div>
-          <div class="showroom-meta-line">
+          <div class="showroom-meta-line" aria-label="Collection highlights">
             <span>15 Hoodie Designs</span>
             <span>60 Colorway Slots</span>
             <span>4 Draft Tiers</span>
@@ -96,30 +96,30 @@
         </div>
 
         <div class="showroom-stage" id="showroomStage">
-          <div class="stage-frame" id="heroPicture" data-testid="showroom-stage">
+          <div class="stage-frame" id="heroPicture" role="tabpanel" aria-labelledby="stage-tab-front" aria-live="polite" data-testid="showroom-stage">
             <img id="showroomHeroImg" src="assets/images/STK-H001-BLK__01_front.webp" alt="StarkiT Shinobi Sunset Hoodie">
           </div>
-          <div class="stage-view-tabs" role="tablist" aria-label="Garment studio view">
-            <button type="button" role="tab" class="stage-view-tab active" data-stage-view="front">Front</button>
-            <button type="button" role="tab" class="stage-view-tab" data-stage-view="back">Back</button>
-            <button type="button" role="tab" class="stage-view-tab" data-stage-view="detail">Detail</button>
-            <button type="button" role="tab" class="stage-view-tab" disabled>Model Shoot Pending</button>
+          <div class="stage-view-tabs" role="tablist" aria-label="Garment studio view angles">
+            <button type="button" role="tab" id="stage-tab-front" class="stage-view-tab active" data-stage-view="front" aria-selected="true" aria-controls="heroPicture" aria-label="Front studio view">Front</button>
+            <button type="button" role="tab" id="stage-tab-back" class="stage-view-tab" data-stage-view="back" aria-selected="false" aria-controls="heroPicture" aria-label="Back studio view">Back</button>
+            <button type="button" role="tab" id="stage-tab-detail" class="stage-view-tab" data-stage-view="detail" aria-selected="false" aria-controls="heroPicture" aria-label="Fabric and print detail view">Detail</button>
+            <button type="button" role="tab" id="stage-tab-model" class="stage-view-tab" disabled aria-selected="false" aria-disabled="true" aria-controls="heroPicture" aria-label="Model lookbook view (Model shoot pending)">Model Shoot Pending</button>
           </div>
         </div>
 
         <aside class="floating-panel" id="floatingPurchasePanel" aria-label="Active garment purchase configurator"></aside>
       </div>
 
-      <div class="wardrobe-bar" id="wardrobeBar">
+      <div class="wardrobe-bar" id="wardrobeBar" role="region" aria-label="Virtual Wardrobe hoodie look switcher">
         <div class="shell">
           <div class="wardrobe-head">
-            <span class="wardrobe-head-title">Virtual Wardrobe · 15 Hoodie Looks (Drop 01)</span>
-            <div class="wardrobe-arrows">
-              <button type="button" id="wardrobePrevBtn" aria-label="Previous hoodie design">←</button>
-              <button type="button" id="wardrobeNextBtn" aria-label="Next hoodie design">→</button>
+            <span class="wardrobe-head-title" id="wardrobeHeading">Virtual Wardrobe · 15 Hoodie Looks (Drop 01)</span>
+            <div class="wardrobe-arrows" role="group" aria-label="Wardrobe look navigation controls">
+              <button type="button" id="wardrobePrevBtn" aria-label="Previous hoodie design in Virtual Wardrobe" aria-controls="wardrobeRail">←</button>
+              <button type="button" id="wardrobeNextBtn" aria-label="Next hoodie design in Virtual Wardrobe" aria-controls="wardrobeRail">→</button>
             </div>
           </div>
-          <div class="wardrobe-rail" id="wardrobeRail" role="region" aria-label="Select hoodie look"></div>
+          <div class="wardrobe-rail" id="wardrobeRail" role="region" aria-labelledby="wardrobeHeading" tabindex="0"></div>
         </div>
       </div>
     </section>

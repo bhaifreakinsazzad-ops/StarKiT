@@ -578,8 +578,14 @@ button[disabled] {
   border-radius: var(--radius-sm);
 }
 
+.stage-frame[role="button"]:focus-visible {
+  outline: 2px solid var(--champagne);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(191, 161, 119, 0.42), var(--shadow-float);
+}
+
 .stage-view-tab {
-  border: 0;
+  border: 1px solid transparent;
   background: transparent;
   color: rgba(243, 239, 230, 0.78);
   padding: 6px 12px;
@@ -587,7 +593,12 @@ button[disabled] {
   font-weight: 700;
   border-radius: 3px;
   white-space: nowrap;
-  transition: background-color 180ms var(--ease), color 180ms var(--ease);
+  transition: background-color 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+
+.stage-view-tab:hover:not([disabled]) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .stage-view-tab.active {
@@ -595,9 +606,24 @@ button[disabled] {
   color: var(--ink);
 }
 
+.stage-view-tab:focus-visible {
+  outline: 2px solid var(--champagne);
+  outline-offset: 2px;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(191, 161, 119, 0.48);
+  z-index: 2;
+}
+
 .stage-view-tab[disabled] {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.showroom-intro a:focus-visible,
+.showroom-intro button:focus-visible {
+  outline: 2px solid var(--champagne);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(191, 161, 119, 0.45);
 }
 
 /* Right Floating Purchase Panel */
@@ -730,6 +756,15 @@ button[disabled] {
   color: #ffffff;
 }
 
+.floating-panel button:focus-visible,
+.floating-panel a:focus-visible,
+.panel-swatch-btn:focus-visible,
+.size-chip:focus-visible {
+  outline: 2px solid var(--maroon);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(191, 161, 119, 0.55);
+}
+
 .panel-status {
   margin-top: 12px;
   padding: 10px 12px;
@@ -792,13 +827,27 @@ button[disabled] {
   color: var(--ink);
 }
 
+.wardrobe-arrows button:focus-visible {
+  outline: 2px solid var(--champagne);
+  outline-offset: 2px;
+  background: rgba(191, 161, 119, 0.24);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(191, 161, 119, 0.45);
+}
+
 .wardrobe-rail {
   display: flex;
   gap: 10px;
   overflow-x: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
-  padding-bottom: 4px;
+  padding: 4px 2px 6px;
+}
+
+.wardrobe-rail:focus-visible {
+  outline: 2px solid var(--champagne);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .wardrobe-item {
@@ -812,7 +861,7 @@ button[disabled] {
   border-radius: var(--radius-sm);
   color: #ffffff;
   text-align: left;
-  transition: border-color 180ms var(--ease), background-color 180ms var(--ease);
+  transition: border-color 180ms var(--ease), background-color 180ms var(--ease), box-shadow 180ms var(--ease);
 }
 
 .wardrobe-item:hover {
@@ -823,6 +872,14 @@ button[disabled] {
 .wardrobe-item.active {
   border-color: var(--champagne);
   background: rgba(191, 161, 119, 0.16);
+}
+
+.wardrobe-item:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  border-color: var(--champagne);
+  background: rgba(191, 161, 119, 0.24);
+  box-shadow: 0 0 0 4px rgba(191, 161, 119, 0.48);
 }
 
 .wardrobe-thumb {
