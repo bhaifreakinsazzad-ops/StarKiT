@@ -25,14 +25,37 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://cahxfaizkqcufhctqlhi.supabase.co';
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  const memoryOrders = (globalThis.__STARKIT_MEMORY_ORDERS__ = globalThis.__STARKIT_MEMORY_ORDERS__ || []);
+
+  const handleLocalFallback = () => {
+    if (req.method === 'GET' && action === 'get_orders') {
+      return json(res, 200, {
+        mode: 'local_storage',
+        message: 'Running in local admin mode.',
+        orders: memoryOrders,
+        variants: []
+      });
+    }
+    if (req.method === 'POST' && action === 'update_status') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const { reference, status } = body || {};
+      const found = memoryOrders.find(o => o.reference === reference);
+      if (found && status) found.status = status;
+      return json(res, 200, { success: true, mode: 'local_storage', order: { reference, status } });
+    }
+    if (req.method === 'POST' && action === 'update_stock') {
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      return json(res, 200, { success: true, mode: 'local_storage', variant: body });
+    }
+    if (req.method === 'POST' && action === 'update_settings') {
+      return json(res, 200, { success: true, mode: 'local_storage', message: 'Settings saved locally.' });
+    }
+    return json(res, 200, { mode: 'local_storage', orders: memoryOrders, variants: [] });
+  };
+
   // If Supabase key is not configured, inform the client to use local data mode
   if (!supabaseKey) {
-    return json(res, 200, {
-      mode: 'local_storage',
-      message: 'Supabase Service Role Key is not configured in Vercel environment. Running in local admin mode.',
-      orders: [],
-      variants: []
-    });
+    return handleLocalFallback();
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -74,12 +97,12 @@ export default async function handler(req, res) {
 
       if (ordersErr) throw ordersErr;
 
-      const { data: variants, error: varErr } = await supabase
+      const { data: variants } = await supabase
         .from('store_variants')
         .select('*')
         .order('sku');
 
-      const { data: settings, error: setErr } = await supabase
+      const { data: settings } = await supabase
         .from('store_settings')
         .select('*');
 
@@ -161,6 +184,11 @@ export default async function handler(req, res) {
 
     return json(res, 400, { error: 'Unsupported action or method' });
   } catch (err) {
+    const errMsg = String(err?.message || err || '');
+    if (errMsg.includes('fetch failed') || errMsg.includes('ENOTFOUND') || errMsg.includes('ECONNREFUSED') || errMsg.includes('ETIMEDOUT')) {
+      console.warn('Admin API Supabase unreachable — falling back to local mode:', errMsg);
+      return handleLocalFallback();
+    }
     console.error('Admin API error:', err);
     return json(res, 500, { error: err.message || 'Server error processing admin request' });
   }

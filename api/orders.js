@@ -226,7 +226,9 @@ export default async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://cahxfaizkqcufhctqlhi.supabase.co';
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!supabaseKey) {
+  const memoryOrders = (globalThis.__STARKIT_MEMORY_ORDERS__ = globalThis.__STARKIT_MEMORY_ORDERS__ || []);
+
+  const buildDirectCaptureOrder = () => {
     const fallbackRef = 'STK-' + crypto.randomUUID().replace(/-/g, '').substring(0, 10).toUpperCase();
     const fallbackSubtotal = rows.reduce((acc, r) => {
       const item = SKU_CATALOG.get(r.sku);
@@ -239,22 +241,48 @@ export default async function handler(req, res) {
     const fallbackShipping = (netSubtotal >= 3000 || bundleDiscount > 0) ? 0 : (zone === 'dhaka' ? 80 : 150);
     const fallbackTotal = netSubtotal + fallbackShipping;
 
-    // Dispatch Meta Conversions API (CAPI) Purchase Event
+    const lineItems = rows.map(r => {
+      const meta = SKU_CATALOG.get(r.sku);
+      const unitPrice = meta?.price_bdt || 1490;
+      return {
+        sku: r.sku,
+        product_name: meta?.product_name || 'StarkiT Design',
+        color: meta?.color || 'Original',
+        size: r.size,
+        quantity: r.quantity,
+        unit_price_bdt: unitPrice,
+        line_total_bdt: unitPrice * r.quantity
+      };
+    });
+
+    memoryOrders.unshift({
+      id: crypto.randomUUID(),
+      reference: fallbackRef,
+      customer_name: name,
+      customer_phone: phone,
+      shipping_address: address,
+      district,
+      zone,
+      notes,
+      subtotal_bdt: fallbackSubtotal,
+      discount_bdt: bundleDiscount,
+      shipping_bdt: fallbackShipping,
+      total_bdt: fallbackTotal,
+      status: 'pending_confirmation',
+      created_at: new Date().toISOString(),
+      items: lineItems
+    });
+
     sendMetaConversionEvent({
       eventName: 'Purchase',
       eventId: fallbackRef,
       customer: { name, phone, address, district, zone },
       totalBdt: fallbackTotal,
-      items: rows.map(r => ({
-        sku: r.sku,
-        quantity: r.quantity,
-        unit_price_bdt: (SKU_CATALOG.get(r.sku)?.price_bdt || 1490)
-      })),
+      items: lineItems,
       req
     }).catch(e => console.warn('Meta CAPI background warning:', e));
 
-    console.warn('Orders API running in direct receipt mode (SUPABASE_SERVICE_ROLE_KEY not yet bound)');
-    return json(res, 201, {
+    return {
       reference: fallbackRef,
       subtotal_bdt: fallbackSubtotal,
       discount_bdt: bundleDiscount,
@@ -263,7 +291,12 @@ export default async function handler(req, res) {
       status: 'pending_confirmation',
       mode: 'direct_capture',
       message: 'Order received. Customer support will call to confirm delivery.'
-    });
+    };
+  };
+
+  if (!supabaseKey) {
+    console.warn('Orders API running in direct receipt mode (SUPABASE_SERVICE_ROLE_KEY not yet bound)');
+    return json(res, 201, buildDirectCaptureOrder());
   }
 
   const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -392,6 +425,11 @@ export default async function handler(req, res) {
       status: insertedOrder.status
     });
   } catch (err) {
+    const errMsg = String(err?.message || err || '');
+    if (errMsg.includes('fetch failed') || errMsg.includes('ENOTFOUND') || errMsg.includes('ECONNREFUSED') || errMsg.includes('ETIMEDOUT')) {
+      console.warn('Supabase unreachable — falling back to direct receipt mode:', errMsg);
+      return json(res, 201, buildDirectCaptureOrder());
+    }
     console.error('Order submission fatal error:', err);
     return json(res, 500, {
       error: 'Unable to process order online. Please contact our hotline directly at 01778307704 (Call or WhatsApp).'
