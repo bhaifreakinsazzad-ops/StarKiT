@@ -269,7 +269,7 @@ export async function initDriveSyncUI() {
     }
   }
 
-  async function executeImport(file) {
+  async function executeImport(file, targetSku, viewType) {
     if (!cachedAccessToken) {
       state.needsAuth = true;
       render();
@@ -278,17 +278,23 @@ export async function initDriveSyncUI() {
     const confirmBtn = document.getElementById('confirmDriveImportBtn');
     if (confirmBtn) {
       confirmBtn.disabled = true;
-      confirmBtn.textContent = 'IMPORTING…';
+      confirmBtn.textContent = 'IMPORTING TO SUPABASE…';
     }
     try {
+      const adminHeaders = window.__STARKIT_ADMIN_HEADERS || {};
       const res = await fetch('api/admin?action=import_drive_asset', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Admin-Key': window.__STARKIT_ADMIN_KEY || '',
-          Authorization: `Bearer ${cachedAccessToken}`
+          ...adminHeaders
         },
-        body: JSON.stringify({ fileId: file.id, fileName: file.name })
+        body: JSON.stringify({
+          fileId: file.id,
+          fileName: file.name,
+          sku: targetSku || 'UNASSIGNED',
+          view_type: viewType || 'front',
+          driveAccessToken: cachedAccessToken
+        })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -296,7 +302,7 @@ export async function initDriveSyncUI() {
       }
       state.importedUrls[file.id] = data.url;
       document.getElementById('driveImportConfirmModal').style.display = 'none';
-      showToast(`Imported ${data.fileName} to ${data.url}`);
+      showToast(`Imported ${data.fileName} → ${data.storage_path}`);
       render();
     } catch (err) {
       showToast(`Import error: ${err.message}`);
@@ -566,13 +572,31 @@ export async function initDriveSyncUI() {
         state.pendingImport = file;
         const modal = document.getElementById('driveImportConfirmModal');
         const descEl = document.getElementById('driveImportDesc');
+        const skuSelect = document.getElementById('driveImportSku');
+        const viewSelect = document.getElementById('driveImportView');
+        if (skuSelect && !skuSelect.options.length) {
+          const catalog = window.STARKIT_CATALOG || [];
+          const opts = catalog
+            .flatMap((p) =>
+              (p.variants || []).map(
+                (v) => `<option value="${esc(v.sku)}">${esc(v.sku)} — ${esc(p.name)} (${esc(v.color)})</option>`
+              )
+            )
+            .join('');
+          skuSelect.innerHTML = `<option value="UNASSIGNED">UNASSIGNED (Library Asset)</option>${opts}`;
+        }
         if (descEl && modal) {
-          descEl.innerHTML = `Download <strong>${esc(file.name)}</strong> (${formatBytes(file.size)}) from Google Drive and save it into <code>/assets/images/drive-imports/</code> for storefront use?`;
+          descEl.innerHTML = `Download <strong>${esc(file.name)}</strong> (${formatBytes(file.size)}) from Google Drive and upload it to Supabase Storage for the selected SKU and view.`;
           const confirmBtn = document.getElementById('confirmDriveImportBtn');
           if (confirmBtn) {
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'CONFIRM IMPORT ↗';
-            confirmBtn.onclick = () => executeImport(file);
+            confirmBtn.onclick = () =>
+              executeImport(
+                file,
+                skuSelect ? skuSelect.value : 'UNASSIGNED',
+                viewSelect ? viewSelect.value : 'front'
+              );
           }
           modal.style.display = 'grid';
         }

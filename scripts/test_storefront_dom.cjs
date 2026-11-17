@@ -1,7 +1,7 @@
 /**
- * StarkiT Headless DOM & Commerce Simulation Test
- * Validates dynamic variant selection, 4-color swatch rendering,
- * and gated cart logic across products.
+ * StarkiT Headless DOM & Catalog Architecture Simulation Test
+ * Validates 15 hoodie designs / 60 colorway slots (15 documented / 45 provisional),
+ * 67 WebP media manifest records, and core HTML storefront routes.
  */
 const fs = require('fs');
 const path = require('path');
@@ -9,37 +9,44 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/catalog.json'), 'utf8'));
 
-console.log('--- RUNNING STOREFRONT DOM & COMMERCE SIMULATION ---');
+console.log('--- RUNNING STOREFRONT DOM & CATALOG ARCHITECTURE SIMULATION ---');
 
-// 1. Verify 11 Hoodies each have 4 variants
-const hoodies = catalog.products.filter(p => p.id.startsWith('STK-'));
-console.log(`Auditing ${hoodies.length} hoodie designs...`);
+const hoodies = catalog.products.filter((p) => p.id.startsWith('STK-'));
+if (hoodies.length !== 15) {
+  throw new Error(`Expected 15 Drop 01 hoodie designs, found ${hoodies.length}`);
+}
+if (hoodies.some((h) => h.id === 'STK-H012')) {
+  throw new Error('STK-H012 must remain excluded/on hold');
+}
 
 let totalVariants = 0;
 let documentedVariants = 0;
 let provisionalVariants = 0;
 
-hoodies.forEach(h => {
-  if (h.variants.length !== 4) {
-    throw new Error(`Design ${h.id} (${h.name}) has ${h.variants.length} variants, expected 4!`);
+hoodies.forEach((h) => {
+  if (!Array.isArray(h.variants) || h.variants.length !== 4) {
+    throw new Error(`Design ${h.id} (${h.name}) has ${h.variants?.length ?? 0} variants, expected 4`);
   }
   totalVariants += h.variants.length;
-  h.variants.forEach(v => {
+  h.variants.forEach((v) => {
     if (v.status === 'DOCUMENTED') {
       documentedVariants++;
       if (!v.gallery || v.gallery.length === 0) {
-        throw new Error(`Documented SKU ${v.sku} has no gallery!`);
+        throw new Error(`Documented SKU ${v.sku} has no gallery`);
       }
       if (!v.available_sizes || v.available_sizes.length === 0) {
-        throw new Error(`Documented SKU ${v.sku} has no sizes!`);
+        throw new Error(`Documented SKU ${v.sku} has no sizes`);
+      }
+      if (v.approved_for_publication === true) {
+        throw new Error(`Hoodie ${v.sku} cannot default to approved_for_publication without 7-gate sign-off`);
       }
     } else if (v.status === 'PROVISIONAL') {
       provisionalVariants++;
       if (v.gallery.length > 0) {
-        throw new Error(`Provisional SKU ${v.sku} must not have physical gallery mockups!`);
+        throw new Error(`Provisional SKU ${v.sku} must not have gallery mockups`);
       }
-      if (v.available_sizes.length > 0) {
-        throw new Error(`Provisional SKU ${v.sku} must not have live sizes enabled!`);
+      if (v.approved_for_publication === true || Number(v.stock_quantity) > 0) {
+        throw new Error(`Provisional SKU ${v.sku} must have 0 stock and approved_for_publication=false`);
       }
     } else {
       throw new Error(`Unknown status for ${v.sku}: ${v.status}`);
@@ -47,15 +54,22 @@ hoodies.forEach(h => {
   });
 });
 
-console.log(`✓ PASS: Exactly 11 designs × 4 colors = ${totalVariants} canonical slots.`);
-console.log(`✓ PASS: Exactly ${documentedVariants} Documented Live Variants.`);
-console.log(`✓ PASS: Exactly ${provisionalVariants} Provisional In-Development Variants.`);
+if (totalVariants !== 60 || documentedVariants !== 15 || provisionalVariants !== 45) {
+  throw new Error(`Expected 60 total / 15 doc / 45 prov, got ${totalVariants} / ${documentedVariants} / ${provisionalVariants}`);
+}
 
-// 2. Verify all 67 WebP image files exist and are non-empty
-const mediaManifest = fs.readFileSync(path.join(ROOT, 'catalog/starkit_media_manifest.csv'), 'utf8').trim().split('\n').slice(1);
-console.log(`\nAuditing ${mediaManifest.length} media manifest records...`);
+console.log(`✓ PASS: 15 designs × 4 colors = ${totalVariants} canonical slots (${documentedVariants} documented / ${provisionalVariants} provisional).`);
 
-mediaManifest.forEach(line => {
+const mediaManifest = fs
+  .readFileSync(path.join(ROOT, 'catalog/starkit_media_manifest.csv'), 'utf8')
+  .trim()
+  .split('\n')
+  .slice(1);
+if (mediaManifest.length !== 67) {
+  throw new Error(`Expected 67 media manifest records, found ${mediaManifest.length}`);
+}
+
+mediaManifest.forEach((line) => {
   const parts = line.split(',');
   const filename = parts[4];
   const diskPath = path.join(ROOT, 'assets/images', filename);
@@ -68,14 +82,14 @@ mediaManifest.forEach(line => {
   }
 });
 
-console.log(`✓ PASS: All 67 WebP image assets verified on disk with valid file headers.`);
+console.log('✓ PASS: All 67 WebP image assets verified on disk.');
 
-// 3. Verify HTML pages exist
 const expectedPages = [
   'index.html',
   'shop.html',
   'about.html',
   'checkout.html',
+  'order-confirmation.html',
   'contact.html',
   'shipping.html',
   'returns.html',
@@ -83,10 +97,7 @@ const expectedPages = [
   'terms.html',
   'admin.html'
 ];
-expectedPages.forEach(page => {
-  const pPath = path.join(ROOT, page);
-  if (!fs.existsSync(pPath)) throw new Error(`Missing page: ${page}`);
+expectedPages.forEach((page) => {
+  if (!fs.existsSync(path.join(ROOT, page))) throw new Error(`Missing page: ${page}`);
 });
-console.log(`✓ PASS: All core storefront pages verified.`);
-
-console.log('\n--- ALL STOREFRONT & COMMERCE SIMULATION TESTS PASSED CLEANLY ---');
+console.log('✓ PASS: All core storefront and policy pages verified.');

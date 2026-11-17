@@ -1,8 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
-Disallow: /checkout.html
-Disallow: /order-confirmation.html
 Disallow: /api/
-
-Sitemap: https://starkit.store/sitemap.xml
+Sitemap: https://starkit.bd/sitemap.xml

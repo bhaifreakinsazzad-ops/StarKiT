@@ -1,5 +1,5 @@
--- StarkiT Store Administrator Views and Utility Functions
--- For monitoring orders, updating fulfillment status, and approving SKUs for live commerce.
+-- StarkiT Store Administrator Views and Evidence-Verified Approval Helpers
+-- Replaces blind approval toggles with strict evidence-gated transitions.
 
 -- 1. Administrative view of all customer orders with line-item summaries
 create or replace view public.v_starkit_orders_dashboard as
@@ -13,8 +13,10 @@ select
   o.zone,
   o.notes,
   o.subtotal_bdt,
+  coalesce(o.discount_bdt, 0) as discount_bdt,
   o.shipping_bdt,
   o.total_bdt,
+  coalesce(o.applied_promotions, '[]'::jsonb) as applied_promotions,
   o.status,
   o.created_at,
   coalesce(
@@ -37,7 +39,7 @@ left join public.store_order_items i on o.id = i.order_id
 group by o.id
 order by o.created_at desc;
 
--- 2. Stored function to update order status with audit log check
+-- 2. Stored function to update order status with audit log write
 create or replace function public.update_starkit_order_status(
   p_reference text,
   p_new_status text
@@ -63,6 +65,18 @@ begin
   set status = p_new_status
   where id = v_order_id;
 
+  if to_regclass('public.store_audit_logs') is not null then
+    insert into public.store_audit_logs (actor, auth_method, action, target_type, target_id, details)
+    values (
+      'db_helper',
+      'service_role',
+      'update_order_status',
+      'order',
+      p_reference,
+      jsonb_build_object('previous_status', v_old_status, 'new_status', p_new_status)
+    );
+  end if;
+
   return jsonb_build_object(
     'reference', p_reference,
     'previous_status', v_old_status,
@@ -71,20 +85,58 @@ begin
   );
 end $$;
 
--- 3. Stored function to approve a SKU, assign verified sizes, and stock
+-- 3. Evidence-Gated SKU Approval (replaces blind force-publish helper)
+-- Requires an explicit verified evidence record in store_product_approvals before publishing.
 create or replace function public.starkit_publish_sku(
   p_sku text,
   p_sizes jsonb,
   p_initial_stock int
 ) returns jsonb
 language plpgsql security definer set search_path = public, pg_temp as $$
+declare
+  v_variant public.store_variants%rowtype;
+  v_approval record;
+  v_media_count int := 0;
 begin
   if jsonb_typeof(p_sizes) <> 'array' or jsonb_array_length(p_sizes) < 1 then
     raise exception 'Sizes must be a non-empty JSONB array' using errcode = 'P0001';
   end if;
 
   if p_initial_stock is null or p_initial_stock < 0 then
-    raise exception 'Stock must be non-negative integer' using errcode = 'P0001';
+    raise exception 'Stock must be a non-negative integer' using errcode = 'P0001';
+  end if;
+
+  select * into v_variant from public.store_variants where sku = p_sku for update;
+  if not found then
+    raise exception 'SKU % not found in catalog', p_sku using errcode = 'P0001';
+  end if;
+
+  if v_variant.status <> 'DOCUMENTED' then
+    raise exception 'SKU % is PROVISIONAL and lacks documented media', p_sku using errcode = 'P0001';
+  end if;
+
+  if to_regclass('public.store_media_assets') is not null then
+    select count(*) into v_media_count from public.store_media_assets where sku = p_sku;
+  end if;
+
+  if to_regclass('public.store_product_approvals') is null then
+    raise exception 'Evidence table store_product_approvals is required. Run migration 005 first.' using errcode = 'P0001';
+  end if;
+
+  select * into v_approval
+  from public.store_product_approvals
+  where product_id = v_variant.product_id;
+
+  if not found
+     or not v_approval.artwork_rights_ok
+     or not v_approval.garment_specs_ok
+     or not v_approval.sample_photo_ok
+     or not v_approval.size_run_ok
+     or not v_approval.stock_count_ok
+     or not v_approval.pricing_approved_ok
+     or not v_approval.commercial_terms_ok
+  then
+    raise exception 'Approval blocked for %: all 7 evidence gates must be verified in store_product_approvals first.', p_sku using errcode = 'P0001';
   end if;
 
   update public.store_variants
@@ -93,21 +145,18 @@ begin
     stock_quantity = p_initial_stock,
     rights_verified = true,
     specifications_verified = true,
-    stock_verified = true,
+    stock_verified = (p_initial_stock > 0),
     commercial_terms_verified = true,
-    approved_for_publication = true,
+    approved_for_publication = (p_initial_stock > 0),
     updated_at = now()
   where sku = p_sku;
-
-  if not found then
-    raise exception 'SKU % not found in catalog', p_sku using errcode = 'P0001';
-  end if;
 
   return jsonb_build_object(
     'sku', p_sku,
     'sizes', p_sizes,
     'stock_quantity', p_initial_stock,
-    'status', 'PUBLISHED_AND_ACTIVE'
+    'media_assets_recorded', v_media_count,
+    'status', case when p_initial_stock > 0 then 'PUBLISHED_AND_ACTIVE' else 'APPROVED_ZERO_STOCK' end
   );
 end $$;
 

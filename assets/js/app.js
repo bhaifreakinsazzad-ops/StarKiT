@@ -1,1486 +1,334 @@
 /**
- * StarkiT Storefront Core Application
- * Integrates Three.js 3D Spatial Canvas, Anime.js Micro-Interactions,
- * Full 46-Product Catalog (Streetwear Archive + Fariza's Territory Artisan Edit),
- * Universal Cart & Nationwide Cash on Delivery (COD) Checkout.
+ * StarkiT Application Orchestrator
+ * Coordinates Interactive Showroom, Modular Product Grid, PDP Viewer, Fit Guide,
+ * Cart & Checkout, Order Confirmation, and Hardened Admin Portal.
  */
 import { initSpatialHero } from './spatial-three.js';
-import {
-  initInteractiveUI,
-  luxuryToast,
-  animateHeroSwap,
-  animateGallerySwap,
-  animateCartOpen,
-  animateSpringPop
-} from './interactive-anime.js';
+import { initMotionEngine, luxuryToast } from './interactive-anime.js';
+import { escapeHtml } from './core/validation.js';
+import { getPrimaryVariant, getPrimaryImage } from './core/catalog-schema.js';
+import { initCartDrawer } from './modules/cart-drawer.js';
+import { initShowroomHero } from './modules/showroom-hero.js';
+import { initOfferDisplay } from './modules/offer-display.js';
+import { initProductGrid } from './modules/product-grid.js';
+import { initProductViewer } from './modules/product-viewer.js';
+import { initCheckoutForm } from './modules/checkout-form.js';
+import { initOrderConfirmation } from './modules/order-confirmation.js';
+import { initAdminManager } from './modules/admin-manager.js';
 
-(() => {
-  'use strict';
+function setupNavigation() {
+  const menuToggle = document.getElementById('menuToggle');
+  const mainNav = document.getElementById('mainNav');
+  if (!menuToggle || !mainNav) return;
 
-  const ROOT = window.STARKIT_BASE || './';
-  const C = window.STARKIT_CATALOG || [];
-  const cfg = { ...(window.STARKIT_CONFIG || {}) };
-  try {
-    const savedSettings = JSON.parse(localStorage.getItem('starkit_store_settings') || '[]');
-    if (Array.isArray(savedSettings)) {
-      savedSettings.forEach((s) => {
-        if (!s || !s.key) return;
-        if (s.key === 'delivery_dhaka_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_dhaka = Number(s.value);
-        if (s.key === 'delivery_outside_bdt' && Number.isFinite(Number(s.value))) cfg.delivery_outside = Number(s.value);
-        if (s.key === 'free_shipping_threshold' && Number.isFinite(Number(s.value))) cfg.free_shipping_threshold = Number(s.value);
-        // Commercial settings are server-owned; never trust browser overrides.
-        if (s.key === 'support_phone' && s.value) cfg.support_phone = String(s.value);
-        // Preview/production mode is deployment-controlled.
+  menuToggle.addEventListener('click', () => {
+    const open = mainNav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(open));
+  });
+
+  mainNav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      mainNav.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
+function setupLightbox() {
+  const zoomEl = document.getElementById('zoom');
+  const zoomImg = document.getElementById('zoomImg');
+  if (!zoomEl || !zoomImg) return () => {};
+
+  const closeZoom = () => {
+    zoomEl.classList.remove('open');
+    document.body.classList.remove('locked');
+  };
+
+  zoomEl.querySelector('button')?.addEventListener('click', closeZoom);
+  zoomEl.addEventListener('click', (e) => {
+    if (e.target === zoomEl) closeZoom();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && zoomEl.classList.contains('open')) closeZoom();
+  });
+
+  return (src, alt = '') => {
+    if (!src) return;
+    zoomImg.src = src;
+    zoomImg.alt = alt;
+    zoomEl.classList.add('open');
+    document.body.classList.add('locked');
+  };
+}
+
+function setupLookbook({ products, base }) {
+  const track = document.getElementById('looksTrack');
+  if (!track || !Array.isArray(products)) return;
+
+  const order = [
+    'STK-H007',
+    'FT-HM-001',
+    'STK-H009',
+    'FT-JWL-001',
+    'STK-H001',
+    'FT-BA-001',
+    'STK-H004',
+    'FT-HM-002',
+    'STK-H003',
+    'FT-JWL-005',
+    'STK-H005',
+    'FT-BA-010',
+    'STK-H011',
+    'STK-H013',
+    'STK-H014'
+  ];
+
+  const byId = new Map(products.map((p) => [p.id, p]));
+  track.innerHTML = order
+    .map((id, i) => {
+      const p = byId.get(id);
+      if (!p) return '';
+      const v = getPrimaryVariant(p);
+      const imgObj = getPrimaryImage(p, v);
+      const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+      const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
+      const categoryLabel = p.collection || p.category || 'Drop 01';
+
+      return `
+        <article class="look-tile">
+          <div class="look-photo">
+            <a href="${pdpHref}">
+              ${
+                imgPath
+                  ? `<img loading="lazy" referrerpolicy="no-referrer" src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}">`
+                  : `<div class="concept-slate">
+                       <div class="stage-swatch-disc" style="width:48px;height:48px;background:${escapeHtml(v?.hex || '#170000')};"></div>
+                       <strong>${escapeHtml(p.name)}</strong>
+                       <small>Concept Design · Media Pending</small>
+                     </div>`
+              }
+            </a>
+          </div>
+          <div class="look-meta">
+            <div>
+              <small>Look ${String(i + 1).padStart(2, '0')} · ${escapeHtml(categoryLabel)}</small>
+              <h3>${escapeHtml(p.name)}</h3>
+            </div>
+            <a href="${pdpHref}">Inspect →</a>
+          </div>
+        </article>`;
+    })
+    .join('');
+
+  document.querySelectorAll('[data-look]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      track.scrollBy({
+        left: parseInt(btn.dataset.look, 10) * Math.min(460, track.clientWidth * 0.8),
+        behavior: 'smooth'
       });
+    });
+  });
+}
+
+function setupFitGuideModal({ base }) {
+  const fitTrigger = document.querySelectorAll('[data-open-fit-guide]');
+  if (!fitTrigger.length && !document.querySelector('[data-detail-product]')) return;
+
+  let modal = document.getElementById('fitModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'fitModal';
+    modal.className = 'fit-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'StarkiT Fit Guide & Size Calculator');
+    modal.innerHTML = `
+      <div class="fit-modal-card">
+        <div class="fit-modal-head">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <img src="${base}assets/images/starkit-logo-transparent.png" alt="StarkiT" style="height:24px;width:auto;">
+            <h3>Fit Finder &amp; Garment Specs</h3>
+          </div>
+          <button type="button" id="closeFitModalBtn" class="close-btn" aria-label="Close fit guide">×</button>
+        </div>
+        <div class="fit-modal-body">
+          <p class="muted" style="font-size:0.9rem;margin-bottom:14px;">Heavyweight 330–350 GSM fleece specification (pending batch verification on unapproved runs). Select your stats for a tailored drape suggestion:</p>
+          <div class="form-grid fit-finder-grid">
+            <div class="form-row" style="margin:0;">
+              <label for="fitHeight">Height</label>
+              <select id="fitHeight">
+                <option value="160">Under 5'5"</option>
+                <option value="168" selected>5'5" – 5'7"</option>
+                <option value="175">5'8" – 5'10"</option>
+                <option value="183">5'11"+</option>
+              </select>
+            </div>
+            <div class="form-row" style="margin:0;">
+              <label for="fitBuild">Build</label>
+              <select id="fitBuild">
+                <option value="slim">Slim</option>
+                <option value="regular" selected>Regular</option>
+                <option value="broad">Broad</option>
+              </select>
+            </div>
+            <div class="form-row" style="margin:0;">
+              <label for="fitDrape">Drape</label>
+              <select id="fitDrape">
+                <option value="standard" selected>Standard</option>
+                <option value="oversized">Oversized</option>
+              </select>
+            </div>
+          </div>
+          <div class="notice" id="fitCalcResult" style="margin:16px 0;">
+            <strong>Recommended Fit:</strong> <span id="fitRecSize">Size L (42" Chest × 28" Length)</span>
+          </div>
+          <table class="fit-table">
+            <thead><tr><th>Size</th><th>Chest</th><th>Body Length</th><th>Sleeve</th></tr></thead>
+            <tbody>
+              <tr><td><strong>M</strong></td><td>40 in</td><td>27 in</td><td>24.5 in</td></tr>
+              <tr><td><strong>L</strong></td><td>42 in</td><td>28 in</td><td>25.5 in</td></tr>
+              <tr><td><strong>XL</strong></td><td>44 in</td><td>29 in</td><td>26.5 in</td></tr>
+              <tr><td><strong>XXL</strong></td><td>46 in</td><td>30 in</td><td>27.5 in</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+
+  const updateRec = () => {
+    const h = parseInt(document.getElementById('fitHeight')?.value || '168', 10);
+    const b = document.getElementById('fitBuild')?.value || 'regular';
+    const d = document.getElementById('fitDrape')?.value || 'standard';
+    let idx = h <= 163 ? 0 : h <= 170 ? 1 : h <= 178 ? 2 : 3;
+    if (b === 'broad') idx = Math.min(3, idx + 1);
+    if (b === 'slim' && idx > 0) idx -= 1;
+    if (d === 'oversized') idx = Math.min(3, idx + 1);
+    const specs = ['M (40" Chest × 27" Length)', 'L (42" Chest × 28" Length)', 'XL (44" Chest × 29" Length)', 'XXL (46" Chest × 30" Length)'];
+    const recEl = document.getElementById('fitRecSize');
+    if (recEl) recEl.textContent = `Size ${specs[idx]}`;
+  };
+
+  modal.querySelectorAll('select').forEach((s) => s.addEventListener('change', updateRec));
+  modal.querySelector('#closeFitModalBtn')?.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-open-fit-guide]') || e.target.closest('#openFitModalBtn')) {
+      modal.classList.add('open');
     }
-    const stockOverrides = JSON.parse(localStorage.getItem('starkit_stock_overrides') || '{}');
-    if (stockOverrides && typeof stockOverrides === 'object') {
-      C.forEach((p) => (p.variants || []).forEach((v) => {
-        if (typeof stockOverrides[v.sku] === 'number') v.stock_quantity = stockOverrides[v.sku];
-      }));
-    }
-  } catch {}
+  });
+}
 
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-  const asset = (path) => ROOT + String(path || '').replace(/^\//, '');
-  const price = (n) => '৳' + Number(n || 0).toLocaleString('en-BD');
-  const safe = (s) =>
-    String(s == null ? '' : s).replace(
-      /[&<>"']/g,
-      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
-    );
+function setupVipEarlyAccess() {
+  const form = document.getElementById('vipNotifyForm');
+  const noteEl = document.getElementById('vipNotifyStatus');
+  if (!form) return;
 
-  const getP = (id) => C.find((p) => p.id === id || p.slug === id);
-  const first = (p, v) => (v.gallery && v.gallery.find((g) => g.view === 'front')) || (v.gallery && v.gallery[0]);
-  const back = (p, v) => (v.gallery && v.gallery.find((g) => g.view === 'back')) || first(p, v);
-
-  const editable = (p, v) =>
-    p.rights_verified === true &&
-    p.stock_verified === true &&
-    p.commercial_terms_verified === true &&
-    v.approved_for_publication === true &&
-    Array.isArray(v.available_sizes) &&
-    v.available_sizes.length > 0 &&
-    Number.isInteger(v.stock_quantity) &&
-    v.stock_quantity > 0;
-
-  const visible = (p) => cfg.mode === 'preview' || p.variants.some((v) => editable(p, v));
-
-  let activeCategory = 'All';
-  let search = '';
-  let sort = 'featured';
-  let heroIdx = 0;
-  let heroLocked = false;
-  let spatialHero = null;
-  let cart = [];
-  let favs = [];
-
-  try {
-    cart = JSON.parse(localStorage.getItem('stk_cart_v2') || '[]');
-    if (!Array.isArray(cart)) cart = [];
-  } catch {
-    cart = [];
-  }
-
-  try {
-    favs = JSON.parse(localStorage.getItem('stk_fav_v2') || '[]');
-    if (!Array.isArray(favs)) favs = [];
-  } catch {
-    favs = [];
-  }
-
-  function persist() {
-    try {
-      localStorage.setItem('stk_cart_v2', JSON.stringify(cart));
-      localStorage.setItem('stk_fav_v2', JSON.stringify(favs));
-    } catch {}
-    updateBadge();
-  }
-
-  function updateBadge() {
-    $$('[data-cart-count]').forEach((n) => (n.textContent = cart.reduce((s, i) => s + i.qty, 0)));
-    $$('[data-fav-count]').forEach((n) => (n.textContent = favs.length));
-  }
-
-  function message(txt, type = 'info') {
-    if (typeof luxuryToast === 'function') {
-      luxuryToast(txt, type);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = form.querySelector('input[type="tel"]');
+    const phone = input ? input.value.trim() : '';
+    if (!phone || !/^(?:\+?880|0)1[3-9]\d{8}$/.test(phone.replace(/[\s-]/g, ''))) {
+      luxuryToast('Please enter a valid Bangladesh mobile number (01XXXXXXXXX).');
       return;
     }
-    const t = $('#toast');
-    if (!t) return;
-    t.textContent = txt;
-    t.hidden = false;
-    clearTimeout(message.timer);
-    message.timer = setTimeout(() => (t.hidden = true), 3200);
-  }
-
-  function trackMeta(eventName, params = {}, options = {}) {
+    // Zero persistent localStorage PII — transient confirmation only + optional Meta Lead pixel event
+    form.reset();
+    if (noteEl) {
+      noteEl.hidden = false;
+      noteEl.textContent = 'Request noted for this session. Drop release updates are also announced via WhatsApp at 01778307704.';
+    }
+    luxuryToast('Early release notification noted.');
     if (typeof window.fbq === 'function') {
       try {
-        window.fbq('track', eventName, params, options);
-      } catch (e) {
-        console.warn('Meta Pixel tracking error:', e);
-      }
+        window.fbq('track', 'Lead', { content_name: 'StarkiT Drop 01 Early Access' });
+      } catch {}
     }
-  }
-
-  function closePopups() {
-    document.body.classList.remove('locked');
-    $('#overlay')?.classList.remove('open');
-    $('#cartDrawer')?.classList.remove('open');
-    $('#zoom')?.classList.remove('open');
-  }
-
-  function toggleCart(open) {
-    const ov = $('#overlay');
-    const d = $('#cartDrawer');
-    if (!ov || !d) return;
-    ov.classList.toggle('open', open);
-    d.classList.toggle('open', open);
-    document.body.classList.toggle('locked', open);
-    if (open) {
-      renderCart();
-      animateCartOpen();
-    }
-  }
-
-  function sanitizeCart() {
-    cart = cart
-      .filter((i) => getP(i.product_id)?.variants.find((v) => v.sku === i.sku) && Number.isInteger(i.qty) && i.qty > 0)
-      .map((i) => ({ ...i, qty: Math.min(20, i.qty) }));
-    persist();
-  }
-
-  function calculateCartTotals() {
-    sanitizeCart();
-    const subtotal = cart.reduce((sum, x) => {
-      const o = itemData(x);
-      return sum + (o ? o.p.price_bdt * x.qty : 0);
-    }, 0);
-
-    const hoodieCount = cart.reduce((sum, x) => {
-      const o = itemData(x);
-      return sum + (o && o.p.id.startsWith('STK-') ? x.qty : 0);
-    }, 0);
-
-    let bundleDiscount = 0;
-    let bundleTier = 0;
-    if (hoodieCount >= 3) {
-      bundleDiscount = 300;
-      bundleTier = 2;
-    } else if (hoodieCount === 2) {
-      bundleDiscount = 150;
-      bundleTier = 1;
-    }
-
-    const freeThreshold = cfg.free_shipping_threshold || 3000;
-    const isFreeShipping = subtotal >= freeThreshold || bundleTier > 0;
-    const netTotal = Math.max(0, subtotal - bundleDiscount);
-
-    return {
-      subtotal,
-      hoodieCount,
-      bundleDiscount,
-      bundleTier,
-      freeThreshold,
-      isFreeShipping,
-      netTotal
-    };
-  }
-
-  function pushCart(p, v, size, qty = 1) {
-    if (!editable(p, v)) {
-      message('Preview only — ordering opens after product approval.', 'error');
-      return;
-    }
-    if (!size || !v.available_sizes.includes(size)) {
-      message('Please choose an available size.', 'error');
-      return;
-    }
-    const addQty = Math.max(1, Math.min(20, parseInt(qty, 10) || 1));
-    let x = cart.find((x) => x.sku === v.sku && x.size === size);
-    if (x) {
-      x.qty = Math.min(20, x.qty + addQty);
-    } else {
-      cart.push({ product_id: p.id, sku: v.sku, size, qty: addQty });
-    }
-    persist();
-    animateSpringPop($$('[data-cart-count]'));
-    toggleCart(true);
-    message(`Added "${p.name}" (${size}) × ${addQty} to bag`, 'success');
-    trackMeta('AddToCart', {
-      content_name: p.name,
-      content_category: p.collection,
-      content_ids: [v.sku],
-      content_type: 'product',
-      value: p.price_bdt * addQty,
-      currency: 'BDT'
-    });
-  }
-
-  function removeItem(index) {
-    cart.splice(index, 1);
-    persist();
-    renderCart();
-  }
-
-  function changeQty(index, n) {
-    if (!cart[index]) return;
-    cart[index].qty += n;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    if (cart[index]?.qty > 20) cart[index].qty = 20;
-    persist();
-    renderCart();
-  }
-
-  function itemData(i) {
-    const p = getP(i.product_id);
-    const v = p?.variants.find((v) => v.sku === i.sku);
-    return p && v ? { p, v } : null;
-  }
-
-  function renderCartMeter(totals) {
-    const { subtotal, hoodieCount, bundleTier, freeThreshold, isFreeShipping } = totals;
-    let meterText = '';
-    let badgeText = '';
-    let progressPct = 0;
-    let isUnlocked = false;
-
-    if (isFreeShipping || subtotal >= freeThreshold) {
-      isUnlocked = true;
-      progressPct = 100;
-      if (bundleTier === 2) {
-        meterText = 'Super Bundle unlocked · ৳300 off + Free delivery';
-        badgeText = 'TIER 2';
-      } else if (bundleTier === 1) {
-        meterText = 'Bundle discount unlocked · ৳150 off + Free delivery';
-        badgeText = 'TIER 1';
-      } else {
-        meterText = 'Free nationwide delivery unlocked';
-        badgeText = 'FREE DELIVERY';
-      }
-    } else {
-      progressPct = Math.min(100, Math.round((subtotal / freeThreshold) * 100));
-      const needed = freeThreshold - subtotal;
-      if (hoodieCount === 1) {
-        meterText = `Add 1 more hoodie for ৳150 off + free delivery (or ৳${needed.toLocaleString()} more)`;
-        badgeText = '1/2 BUNDLE';
-      } else {
-        meterText = `Add ৳${needed.toLocaleString()} more for free nationwide delivery`;
-        badgeText = `${progressPct}%`;
-      }
-    }
-
-    return `
-      <div class="cart-meter-wrap">
-        <div class="meter-header">
-          <span>${meterText}</span>
-          <span class="meter-badge ${isUnlocked ? 'unlocked' : ''}">${badgeText}</span>
-        </div>
-        <div class="meter-track">
-          <div class="meter-fill ${isUnlocked ? 'full' : ''}" style="width: ${progressPct}%"></div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderCart() {
-    const wrap = $('#cartItems');
-    const subtotalEl = $('#cartSubtotal');
-    const foot = $('#cartFoot');
-    if (!wrap) return;
-    sanitizeCart();
-    if (!cart.length) {
-      wrap.innerHTML = `<div class="empty-cart"><h3>YOUR BAG IS EMPTY.</h3><p class="muted">Discover Drop 01 & 02 and add your favorite designs.</p><a class="btn btn-outline" href="${ROOT}shop.html">Explore Collection ↗</a></div>`;
-      if (foot) foot.hidden = true;
-      return;
-    }
-
-    const totals = calculateCartTotals();
-    const meterHtml = renderCartMeter(totals);
-
-    const lines = cart
-      .map((x, i) => {
-        const o = itemData(x);
-        if (!o) return '';
-        const { p, v } = o;
-        const im = first(p, v);
-        return `<div class="cart-line"><img src="${asset(im?.url)}" alt="${safe(p.name)}" referrerpolicy="no-referrer"><div><h4>${safe(p.name)}</h4><div class="small">${safe(v.color)} · ${safe(x.size)} · ${safe(v.sku)}</div><b>${price(p.price_bdt * x.qty)}</b><div class="qty"><button type="button" data-qty="${i},-1" aria-label="Decrease quantity">−</button><span>${x.qty}</span><button type="button" data-qty="${i},1" aria-label="Increase quantity">+</button><button type="button" class="remove" data-remove="${i}">Remove</button></div></div></div>`;
-      })
-      .join('');
-
-    wrap.innerHTML = meterHtml + lines;
-
-    if (subtotalEl) {
-      if (totals.bundleDiscount > 0) {
-        subtotalEl.innerHTML = `<span style="text-decoration:line-through;color:#887;font-size:0.95rem;margin-right:6px;">${price(totals.subtotal)}</span> <span style="color:#c5a880;">${price(totals.netTotal)}</span> <span style="font-size:0.75rem;color:#22c55e;display:block;">(৳${totals.bundleDiscount} BUNDLE SAVINGS APPLIED)</span>`;
-      } else {
-        subtotalEl.textContent = price(totals.subtotal);
-      }
-    }
-
-    if (foot) {
-      foot.hidden = false;
-      const waCartBtn = $('#cartWhatsAppBtn');
-      if (waCartBtn) {
-        const waBagSummary = cart
-          .map((x) => {
-            const o = itemData(x);
-            return o ? `• ${o.p.name} (${o.v.color}, Size ${x.size}) × ${x.qty}` : '';
-          })
-          .filter(Boolean)
-          .join('\n');
-        const waMsg = encodeURIComponent(
-          `Hello StarkiT! I would like to order my shopping bag:\n${waBagSummary}\nTotal: ৳${totals.netTotal.toLocaleString()} (Cash on Delivery). Please confirm!`
-        );
-        waCartBtn.href = `https://wa.me/8801778307704?text=${waMsg}`;
-      }
-    }
-  }
-
-  function addFav(id) {
-    favs = favs.includes(id) ? favs.filter((x) => x !== id) : [...favs, id];
-    persist();
-    $$('[data-fav]').forEach((b) => {
-      const is = favs.includes(b.dataset.fav);
-      b.classList.toggle('active', is);
-      b.textContent = is ? '♥' : '♡';
-      b.setAttribute('aria-pressed', String(is));
-      if (b.dataset.fav === id) animateSpringPop(b);
-    });
-  }
-
-  function productCard(p) {
-    const v = p.variants.find((x) => x.status === 'DOCUMENTED') || p.variants[0];
-    const f = first(p, v);
-    const b = back(p, v);
-    const isHoodie = p.id.startsWith('STK-');
-    const kickerText = isHoodie ? safe(p.collection) : `Fariza's Territory · ${safe(p.collection)}`;
-
-    const mediaHtml = isHoodie
-      ? `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)} front"><img class="back" src="${asset(b?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)} back artwork"></a>`
-      : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front single-view" src="${asset(f?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
-
-    const swatchesHtml = isHoodie
-      ? `<div class="swatches">${p.variants.map((vr) => `<span class="swatch" title="${safe(vr.color)}${vr.status === 'PROVISIONAL' ? ' (In Development)' : ''}" style="background:${vr.hex}"></span>`).join('')}</div>`
-      : `<div class="swatches"><span class="craft-note">Handcrafted in Dhaka</span></div>`;
-
-    return `<article class="card reveal" data-product="${p.id}"><div class="card-media">${mediaHtml}<button type="button" class="fav ${favs.includes(p.id) ? 'active' : ''}" data-fav="${p.id}" aria-label="Save ${safe(p.name)} to favorites" aria-pressed="${String(favs.includes(p.id))}">${favs.includes(p.id) ? '♥' : '♡'}</button><div class="card-overlay"><a href="${ROOT}products/${p.slug}.html">${isHoodie ? 'Explore Design →' : 'View Piece →'}</a></div></div><div class="card-meta"><div><span class="card-kicker">${kickerText}</span><a href="${ROOT}products/${p.slug}.html">${safe(p.name)}</a>${p.bengali_name ? `<span class="card-bn">${safe(p.bengali_name)}</span>` : ''}</div><div class="price">${price(p.price_bdt)}</div></div>${swatchesHtml}<a class="card-cta-mobile" href="${ROOT}products/${p.slug}.html">View Piece →</a></article>`;
-  }
-
-  function reveal() {
-    if (!('IntersectionObserver' in window)) {
-      $$('.reveal').forEach((e) => e.classList.add('visible'));
-      return;
-    }
-    const io = new IntersectionObserver(
-      (ents, obs) =>
-        ents.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            obs.unobserve(e.target);
-          }
-        }),
-      { rootMargin: '0px 0px -35px 0px', threshold: 0.08 }
-    );
-    $$('.reveal').forEach((e) => io.observe(e));
-  }
-
-  function filtered() {
-    return C.filter(visible)
-      .filter((p) => {
-        let matchCat = false;
-        if (activeCategory === 'All') {
-          matchCat = true;
-        } else if (activeCategory === 'Streetwear') {
-          matchCat = p.id.startsWith('STK-');
-        } else if (activeCategory === 'Accessories' || activeCategory === 'Artisan Accessories') {
-          matchCat = p.id.startsWith('FT-');
-        } else if (activeCategory === 'Decorative Mirrors') {
-          matchCat = p.collection === 'Decorative Mirrors';
-        } else if (activeCategory === 'Wearable Art') {
-          matchCat = p.collection === 'Wearable Art';
-        } else if (activeCategory === 'Bangles & Accents') {
-          matchCat = p.collection === 'Bangles & Accents';
-        } else {
-          matchCat = p.collection === activeCategory;
-        }
-
-        const q = search.trim().toLowerCase();
-        const matchSearch =
-          !q ||
-          p.name.toLowerCase().includes(q) ||
-          (p.bengali_name && p.bengali_name.toLowerCase().includes(q)) ||
-          p.id.toLowerCase().includes(q) ||
-          p.collection.toLowerCase().includes(q) ||
-          (p.tags && p.tags.some((t) => t.toLowerCase().includes(q)));
-
-        return matchCat && matchSearch;
-      })
-      .sort((a, b) => {
-        if (sort === 'price-asc') return a.price_bdt - b.price_bdt;
-        if (sort === 'price-desc') return b.price_bdt - a.price_bdt;
-        if (sort === 'name') return a.name.localeCompare(b.name);
-        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-      });
-  }
-
-  function renderGrid() {
-    const g = $('#productsGrid');
-    if (!g) return;
-    const items = filtered();
-    g.innerHTML = items.length
-      ? items.map(productCard).join('')
-      : '<div class="no-results" style="grid-column:1/-1;text-align:center;padding:50px 20px;"><h3>No matching designs</h3><p>Try another filter or search term.</p><button class="btn btn-outline" data-reset-filters style="margin-top:14px;">Show All 46 Designs</button></div>';
-
-    const count = $('#resultsCount');
-    if (count) count.textContent = `${items.length} DESIGNS`;
-
-    $$('[data-category]').forEach((b) => {
-      b.classList.toggle('active', b.dataset.category === activeCategory);
-    });
-
-    reveal();
-  }
-
-  function setupGrid() {
-    renderGrid();
-    $$('[data-category]').forEach((b) =>
-      b.addEventListener('click', () => {
-        activeCategory = b.dataset.category;
-        renderGrid();
-      })
-    );
-    $('#catalogSearch')?.addEventListener('input', (e) => {
-      search = e.target.value.trim().toLowerCase();
-      renderGrid();
-    });
-    $('#catalogSort')?.addEventListener('change', (e) => {
-      sort = e.target.value;
-      renderGrid();
-    });
-  }
-
-  function setupHero() {
-    const picture = $('#heroPicture');
-    if (!picture) return;
-    const featured = ['STK-H007', 'STK-H009', 'STK-H003', 'STK-H001', 'STK-H011']
-      .map(getP)
-      .filter(visible);
-    if (!featured.length) return;
-
-    const show = (idx, dir = 1, initial = false) => {
-      heroIdx = (idx + featured.length) % featured.length;
-      const p = featured[heroIdx];
-      const v = p.variants[0];
-      const img = v.gallery.find((g) => g.view === 'reference_composite') || first(p, v);
-
-      if (initial) {
-        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} product artwork"></a>`;
-        const n = $('#heroName');
-        if (n) n.textContent = p.name;
-        const count = $('#heroSlide');
-        if (count)
-          count.textContent =
-            String(heroIdx + 1).padStart(2, '0') + ' / ' + String(featured.length).padStart(2, '0');
-        heroLocked = false;
-        return;
-      }
-
-      picture.classList.add('is-entering');
-      window.setTimeout(() => {
-        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} product artwork"></a>`;
-        const n = $('#heroName');
-        if (n) n.textContent = p.name;
-        const count = $('#heroSlide');
-        if (count)
-          count.textContent =
-            String(heroIdx + 1).padStart(2, '0') + ' / ' + String(featured.length).padStart(2, '0');
-        picture.classList.remove('is-entering');
-        animateHeroSwap(picture, n, dir);
-        if (spatialHero && typeof spatialHero.pulse === 'function') spatialHero.pulse(dir);
-        heroLocked = false;
-      }, 150);
-    };
-
-    show(0, 1, true);
-
-    $$('[data-slide]').forEach((b) =>
-      b.addEventListener('click', () => {
-        if (heroLocked) return;
-        heroLocked = true;
-        const dir = Number(b.dataset.slide) || 1;
-        show(heroIdx + dir, dir);
-      })
-    );
-
-    let start = 0;
-    picture.addEventListener('touchstart', (e) => (start = e.touches[0].clientX), { passive: true });
-    picture.addEventListener(
-      'touchend',
-      (e) => {
-        if (Math.abs(start - e.changedTouches[0].clientX) > 55) {
-          const dir = start > e.changedTouches[0].clientX ? 1 : -1;
-          show(heroIdx + dir, dir);
-        }
-      },
-      { passive: true }
-    );
-  }
-
-  function setupLookbook() {
-    const track = $('#looksTrack');
-    if (!track) return;
-    const order = [
-      'STK-H007',
-      'FT-HM-001',
-      'STK-H003',
-      'FT-JWL-001',
-      'STK-H009',
-      'FT-BA-001',
-      'STK-H002',
-      'FT-HM-002',
-      'STK-H001',
-      'FT-JWL-005',
-      'STK-H004',
-      'FT-BA-003',
-      'STK-H006',
-      'FT-JWL-010',
-      'STK-H008',
-      'FT-BA-010',
-      'STK-H011'
-    ];
-
-    track.innerHTML = order
-      .map((id, i) => {
-        const p = getP(id);
-        if (!p || !visible(p)) return '';
-        const v = p.variants[0];
-        const im =
-          v.gallery.find((g) => g.view === 'reference_composite') ||
-          v.gallery.find((g) => g.view === 'front') ||
-          v.gallery[0];
-        return `<article class="look-tile"><div class="look-photo"><a href="${ROOT}products/${p.slug}.html"><img loading="lazy" referrerpolicy="no-referrer" src="${asset(im?.url)}" alt="${safe(p.name)}"></a></div><div class="look-meta"><div><small>Look ${String(i + 1).padStart(2, '0')} · ${safe(p.collection)}</small><h3>${safe(p.name)}</h3></div><a href="${ROOT}products/${p.slug}.html">View →</a></div></article>`;
-      })
-      .join('');
-
-    $$('[data-look]').forEach((b) =>
-      b.addEventListener('click', () =>
-        track.scrollBy({
-          left: parseInt(b.dataset.look, 10) * Math.min(460, track.clientWidth * 0.8),
-          behavior: 'smooth'
-        })
-      )
-    );
-  }
-
-  function setupDetail() {
-    const container = $('[data-detail-product]');
-    if (!container) return;
-    const p = getP(container.dataset.detailProduct);
-    if (!p) return;
-
-    let v = p.variants.find((x) => x.status === 'DOCUMENTED') || p.variants[0];
-    trackMeta('ViewContent', {
-      content_name: p.name,
-      content_category: p.collection,
-      content_ids: [v?.sku || p.id],
-      content_type: 'product',
-      value: p.price_bdt,
-      currency: 'BDT'
-    });
-
-    let curr = null;
-    let selectedSize = null;
-    let selectedQty = 1;
-
-    const gallery = $('#detailGallery');
-    const thumbs = $('#detailThumbs');
-    const colors = $('#detailColors');
-    const sizeWrapper = $('#detailSize');
-    const status = $('#purchaseStatus');
-    const purchase = $('#purchaseBtn');
-    const whatsappBtn = $('#whatsappBtn');
-
-    function updateWhatsAppUrl() {
-      if (!whatsappBtn) return;
-      if (v.status === 'PROVISIONAL') {
-        whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
-          `Hello StarkiT! I am interested in the upcoming "${p.name}" in ${v.color} (${v.sku}). Please notify me when pre-orders open!`
-        )}`;
-        whatsappBtn.textContent = `Inquire on WhatsApp · ${v.color}`;
-        whatsappBtn.style.borderColor = '#bfa177';
-        whatsappBtn.style.color = '#645e5b';
-      } else {
-        const sizeText = selectedSize ? ` (Size: ${selectedSize}, Qty: ${selectedQty})` : ` (Qty: ${selectedQty})`;
-        whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
-          `Hello StarkiT! I would like to order "${p.name}" in ${v.color}${sizeText} (SKU: ${v.sku}, Price: ৳${(p.price_bdt * selectedQty).toLocaleString()}) via Cash on Delivery.`
-        )}`;
-        whatsappBtn.textContent = 'Order via WhatsApp (01778307704)';
-        whatsappBtn.style.borderColor = '#15803d';
-        whatsappBtn.style.color = '#15803d';
-      }
-    }
-
-    function updatePurchaseBtn() {
-      if (!purchase) return;
-      if (cfg.mode === 'preview') {
-        purchase.disabled = true;
-        purchase.textContent = 'PREVIEW — ORDERING NOT YET OPEN';
-        status.textContent = 'The product and artwork are shown for internal review.';
-      } else if (v.status === 'PROVISIONAL' || !editable(p, v)) {
-        purchase.disabled = true;
-        purchase.textContent = v.status === 'PROVISIONAL' ? 'COLORWAY IN DEVELOPMENT · NOT FOR SALE' : 'NOT AVAILABLE';
-        purchase.style.opacity = '0.6';
-        purchase.style.cursor = 'not-allowed';
-        status.textContent = v.status === 'PROVISIONAL'
-          ? 'Purchasing is paused until production sample verification.'
-          : 'This variant is not approved or has no verified stock.';
-      } else if (v.available_sizes.length === 1 || selectedSize) {
-        purchase.disabled = false;
-        purchase.style.opacity = '1';
-        purchase.style.cursor = 'pointer';
-        const qtyText = selectedQty > 1 ? ` (${selectedQty})` : '';
-        purchase.textContent = `ADD TO BAG${qtyText} · ${price(p.price_bdt * selectedQty)}`;
-        status.textContent = '100% Cash on Delivery nationwide · Parcel inspection at delivery.';
-      } else {
-        purchase.disabled = false;
-        purchase.style.opacity = '1';
-        purchase.style.cursor = 'pointer';
-        purchase.textContent = 'SELECT SIZE TO ADD TO BAG';
-        status.textContent = 'Select an available size to continue.';
-      }
-      updateWhatsAppUrl();
-    }
-
-    // Insert Quantity Stepper if not already present
-    if (purchase && !$('#detailQtyInput')) {
-      const stepperWrap = document.createElement('div');
-      stepperWrap.style.display = 'flex';
-      stepperWrap.style.gap = '10px';
-      stepperWrap.style.alignItems = 'center';
-      stepperWrap.style.marginTop = '20px';
-
-      const stepper = document.createElement('div');
-      stepper.className = 'qty-stepper';
-      stepper.innerHTML = `
-        <button type="button" id="qtyDecBtn" aria-label="Decrease quantity">−</button>
-        <input type="number" id="detailQtyInput" value="1" min="1" max="10" readonly aria-label="Quantity">
-        <button type="button" id="qtyIncBtn" aria-label="Increase quantity">+</button>
-      `;
-      stepperWrap.appendChild(stepper);
-
-      purchase.parentNode.insertBefore(stepperWrap, purchase);
-      purchase.style.marginTop = '0';
-      purchase.style.flex = '1';
-      stepperWrap.appendChild(purchase);
-
-      $('#qtyDecBtn')?.addEventListener('click', () => {
-        selectedQty = Math.max(1, selectedQty - 1);
-        const qInput = $('#detailQtyInput');
-        if (qInput) {
-          qInput.value = selectedQty;
-          animateSpringPop(qInput);
-        }
-        updatePurchaseBtn();
-      });
-      $('#qtyIncBtn')?.addEventListener('click', () => {
-        selectedQty = Math.min(10, selectedQty + 1);
-        const qInput = $('#detailQtyInput');
-        if (qInput) {
-          qInput.value = selectedQty;
-          animateSpringPop(qInput);
-        }
-        updatePurchaseBtn();
-      });
-    }
-
-    function setGallery(view) {
-      if (!v.gallery || v.gallery.length === 0) {
-        curr = null;
-        gallery.innerHTML = `
-          <div class="dev-concept-stage" style="aspect-ratio:4/5;display:flex;flex-direction:column;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#170000' : '#FFFFFF'};border-radius:6px;padding:36px;text-align:center;box-shadow:inset 0 0 100px rgba(0,0,0,0.5);position:relative;overflow:hidden;">
-            <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 35%, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.45) 100%);pointer-events:none;"></div>
-            <span class="view-tag" style="position:absolute;top:16px;left:16px;background:rgba(23,0,0,0.85);color:#c5a880;border:1px solid rgba(197,168,128,0.35);padding:6px 12px;font-size:0.7rem;letter-spacing:0.14em;border-radius:3px;">PROVISIONAL COLORWAY</span>
-            <div style="font-family:'Afacad Flux',sans-serif;font-weight:900;letter-spacing:0.18em;font-size:1.6rem;text-transform:uppercase;margin-bottom:6px;position:relative;z-index:2;">${safe(p.name)}</div>
-            <div style="font-size:0.85rem;letter-spacing:0.14em;opacity:0.9;margin-bottom:28px;position:relative;z-index:2;">WORKING PALETTE · ${safe(v.color.toUpperCase())} (${v.hex})</div>
-            <div style="border:1px dashed ${v.hex === '#F3EFE6' ? 'rgba(23,0,0,0.4)' : 'rgba(255,255,255,0.4)'};padding:18px 24px;border-radius:6px;max-width:340px;background:rgba(0,0,0,0.35);backdrop-filter:blur(12px);position:relative;z-index:2;">
-              <div style="font-size:0.75rem;font-weight:800;letter-spacing:0.14em;color:#e9b9b6;margin-bottom:6px;text-transform:uppercase;">Colorway In Development</div>
-              <div style="font-size:0.75rem;line-height:1.6;color:#ded3cc;">Physical production sample verification, artwork contrast checks, and sizing specs are in progress. Pre-orders open upon final approval.</div>
-            </div>
-            <div style="position:absolute;bottom:16px;font-size:0.65rem;letter-spacing:0.18em;opacity:0.7;position:relative;z-index:2;margin-top:28px;">STARKIT ARCHIVE · DROP 01</div>
-          </div>`;
-        if (thumbs) {
-          thumbs.innerHTML = `
-            <button class="thumb active" type="button" aria-label="Development swatch ${safe(v.color)}" style="display:flex;align-items:center;justify-content:center;background:${v.hex};color:${v.hex === '#F3EFE6' ? '#170000' : '#FFFFFF'};border:2px solid #c5a880;width:56px;height:70px;border-radius:4px;">
-              <span style="font-size:0.6rem;font-weight:800;letter-spacing:0.1em;text-align:center;">SWATCH<br>${safe(v.sku.slice(-3))}</span>
-            </button>`;
-        }
-        return;
-      }
-
-      curr = v.gallery.find((g) => g.view === view) || v.gallery[0];
-      if (!curr) return;
-      gallery.innerHTML = `<img src="${asset(curr.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} ${safe(curr.view.replace(/_/g, ' '))}"><span class="view-tag">${p.id.startsWith('STK-') ? safe(curr.view.replace(/_/g, ' ')) : 'Handcrafted in Dhaka'}</span>`;
-      animateGallerySwap(gallery);
-      if (thumbs) {
-        thumbs.innerHTML = v.gallery
-          .map(
-            (g) =>
-              `<button class="thumb ${g.view === curr.view ? 'active' : ''}" type="button" data-gallery="${safe(g.view)}" aria-label="Show ${safe(g.view)}" aria-pressed="${g.view === curr.view}"><img loading="lazy" referrerpolicy="no-referrer" alt="" src="${asset(g.url)}"></button>`
-          )
-          .join('');
-      }
-    }
-
-    function chooseVariant(sku) {
-      const newv = p.variants.find((x) => x.sku === sku);
-      if (!newv) return;
-      v = newv;
-      selectedSize = null;
-
-      if (colors) {
-        colors.innerHTML = p.variants
-          .map(
-            (x) =>
-              `<button class="color-chip ${x.sku === sku ? 'selected' : ''}" type="button" data-variant="${x.sku}" aria-pressed="${x.sku === sku}"><span class="color-dot" style="background:${x.hex}"></span>${safe(x.color)}${x.status === 'PROVISIONAL' ? ' (In Dev)' : ''}</button>`
-          )
-          .join('');
-      }
-
-      const skuEl = $('#detailSku');
-      if (skuEl) skuEl.textContent = v.sku;
-
-      if (sizeWrapper) {
-        if (v.status === 'PROVISIONAL') {
-          sizeWrapper.innerHTML = `
-            <div class="notice">
-              <strong style="display:block;font-size:0.84rem;margin-bottom:4px;">Colorway in Development</strong>
-              <p style="margin:0;font-size:0.82rem;line-height:1.5;color:var(--mute);">
-                This planned colorway (${safe(v.color)}) is currently in sample production. Size specs and checkout will open upon final quality verification.
-              </p>
-            </div>
-            <div class="vip-waitlist-box">
-              <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Early Access Notification</div>
-              <p style="font-size:0.8rem;color:var(--mute);margin:4px 0 0;line-height:1.5;">Leave your mobile number to be notified before the ${safe(v.color)} colorway releases.</p>
-              <form class="vip-waitlist-form" id="vipWaitlistForm">
-                <input type="tel" id="vipPhone" placeholder="01XXXXXXXXX" required>
-                <button type="submit">Notify Me</button>
-              </form>
-              <div id="vipSuccessMsg" style="display:none;font-size:0.8rem;color:#15803d;margin-top:8px;font-weight:700;">Added to waitlist. We will contact you via WhatsApp on release.</div>
-            </div>`;
-
-          const vipForm = $('#vipWaitlistForm');
-          vipForm?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const ph = $('#vipPhone')?.value.trim();
-            if (ph) {
-              try {
-                const leads = JSON.parse(localStorage.getItem('starkit_vip_leads') || '[]');
-                leads.push({ phone: ph, sku: v.sku, color: v.color, product: p.name, time: new Date().toISOString() });
-                localStorage.setItem('starkit_vip_leads', JSON.stringify(leads));
-              } catch (err) {}
-              $('#vipSuccessMsg').style.display = 'block';
-              vipForm.style.display = 'none';
-              message(`Added ${ph} to early access list for ${v.color}.`, 'success');
-              trackMeta('Lead', {
-                content_name: p.name,
-                content_category: p.collection,
-                content_ids: [v.sku]
-              });
-            }
-          });
-        } else if (v.available_sizes.length) {
-          const isSingle = v.available_sizes.length === 1;
-          if (isSingle) selectedSize = v.available_sizes[0];
-          const isHoodie = p.id.startsWith('STK-');
-          const fitLinkHtml = isHoodie
-            ? `<button type="button" class="fit-trigger-link" id="openFitModalBtn">Fit Finder &amp; Size Guide</button>`
-            : '';
-          sizeWrapper.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <p class="smallcaps" style="margin:0;">${isSingle ? 'Specification' : 'Select Size'}</p>
-              ${fitLinkHtml}
-            </div>
-            <div class="variant-buttons">
-              ${v.available_sizes.map((s) => `<button type="button" data-size="${safe(s)}" class="color-chip ${isSingle ? 'selected' : ''}">${safe(s)}</button>`).join('')}
-            </div>`;
-        } else {
-          sizeWrapper.innerHTML = '<div class="notice">Size chart and stock availability are awaiting seller verification.</div>';
-        }
-      }
-
-      updatePurchaseBtn();
-      setGallery(v.gallery[0]?.view || 'front');
-    }
-
-    chooseVariant(v.sku);
-
-    // Setup Fit Finder Modal
-    if (p.id.startsWith('STK-')) {
-      let modal = $('#fitModal');
-      if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'fitModal';
-        modal.className = 'fit-modal';
-        modal.innerHTML = `
-          <div class="fit-modal-card">
-            <div class="fit-modal-head">
-              <div style="display:flex;align-items:center;gap:14px;">
-                <img src="${asset('assets/images/starkit-logo-transparent.png')}" alt="StarkiT" style="height:26px;width:auto;">
-                <div>
-                  <h3>Fit Finder &amp; Size Guide</h3>
-                  <span style="font-size:0.72rem;color:#bfa177;">Heavyweight 330–350 GSM Fleece</span>
-                </div>
-              </div>
-              <button type="button" id="closeFitModalBtn" style="background:transparent;border:0;color:#fff;font-size:1.6rem;cursor:pointer;line-height:1;">×</button>
-            </div>
-            <div class="fit-modal-body">
-              <h4 style="font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;color:#8e2934;margin-bottom:6px;">Smart Size Calculator</h4>
-              <p style="font-size:0.84rem;color:#645e5b;margin:0 0 12px;line-height:1.5;">Select your height, build, and preferred drape for a tailored size recommendation:</p>
-              <div class="fit-calc-controls">
-                <div>
-                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Height</label>
-                  <select id="fitHeight" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
-                    <option value="160">Under 5'5" (Under 165 cm)</option>
-                    <option value="168" selected>5'5" – 5'7" (165–172 cm)</option>
-                    <option value="175">5'8" – 5'10" (173–179 cm)</option>
-                    <option value="183">5'11"+ (180+ cm)</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Body Build</label>
-                  <select id="fitBuild" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
-                    <option value="slim">Slim / Lean</option>
-                    <option value="regular" selected>Regular / Athletic</option>
-                    <option value="broad">Broad / Heavy</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Desired Drape</label>
-                  <select id="fitDrape" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
-                    <option value="standard" selected>Standard Streetwear Fit</option>
-                    <option value="oversized">Oversized Silhouette</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="fit-calc-result" id="fitCalcResult">
-                <div>
-                  <div style="font-size:0.72rem;letter-spacing:0.08em;color:#bfa177;text-transform:uppercase;font-weight:700;">Recommended Size</div>
-                  <div id="fitRecSize" style="font-size:1.25rem;font-weight:800;">SIZE L (42" Chest × 28.5" Length)</div>
-                </div>
-                <button type="button" id="applyFitSizeBtn" class="btn btn-light" style="min-height:36px;padding:8px 14px;font-size:0.74rem;">Apply Size L</button>
-              </div>
-
-              <div style="margin-top:22px;">
-                <h4 style="font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;color:#8e2934;margin-bottom:8px;">Garment Measurements (Inches)</h4>
-                <table class="fit-table">
-                  <thead>
-                    <tr>
-                      <th>Size</th>
-                      <th>Chest</th>
-                      <th>Body Length</th>
-                      <th>Sleeve</th>
-                      <th>Shoulder</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td><strong>M</strong></td><td>40 in</td><td>27.5 in</td><td>24.5 in</td><td>19.0 in</td></tr>
-                    <tr><td><strong>L</strong></td><td>42 in</td><td>28.5 in</td><td>25.5 in</td><td>20.0 in</td></tr>
-                    <tr><td><strong>XL</strong></td><td>44 in</td><td>29.5 in</td><td>26.5 in</td><td>21.0 in</td></tr>
-                    <tr><td><strong>XXL</strong></td><td>46 in</td><td>30.5 in</td><td>27.5 in</td><td>22.0 in</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="notice" style="margin-top:16px;margin-bottom:0;">
-                <strong>7-Day Easy Exchange:</strong> Free size exchanges anywhere in Bangladesh within 7 days of delivery. Contact care at <strong>01778307704</strong>.
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-
-        modal.querySelector('#closeFitModalBtn')?.addEventListener('click', () => modal.classList.remove('open'));
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) modal.classList.remove('open');
-        });
-
-        const updateRec = () => {
-          const h = parseInt($('#fitHeight').value, 10);
-          const b = $('#fitBuild').value;
-          const d = $('#fitDrape').value;
-          let idx = 1;
-          if (h <= 163) idx = 0;
-          else if (h <= 170) idx = 1;
-          else if (h <= 178) idx = 2;
-          else idx = 3;
-
-          if (b === 'broad') idx = Math.min(3, idx + 1);
-          if (b === 'slim' && idx > 0) idx -= 1;
-          if (d === 'oversized') idx = Math.min(3, idx + 1);
-
-          const table = [
-            { s: 'M', c: '40"', l: '27.5"' },
-            { s: 'L', c: '42"', l: '28.5"' },
-            { s: 'XL', c: '44"', l: '29.5"' },
-            { s: 'XXL', c: '46"', l: '30.5"' }
-          ];
-          const choice = table[idx];
-          $('#fitRecSize').textContent = `SIZE ${choice.s} (${choice.c} Chest × ${choice.l} Length)`;
-          $('#applyFitSizeBtn').textContent = `APPLY SIZE ${choice.s} ↗`;
-          $('#applyFitSizeBtn').dataset.targetSize = choice.s;
-        };
-
-        $('#fitHeight')?.addEventListener('change', updateRec);
-        $('#fitBuild')?.addEventListener('change', updateRec);
-        $('#fitDrape')?.addEventListener('change', updateRec);
-
-        $('#applyFitSizeBtn')?.addEventListener('click', (e) => {
-          const sz = e.target.dataset.targetSize || 'L';
-          const chip = sizeWrapper?.querySelector(`[data-size="${sz}"]`);
-          if (chip) chip.click();
-          modal.classList.remove('open');
-          message(`Recommended Size ${sz} selected!`, 'success');
-        });
-      }
-
-      document.addEventListener('click', (e) => {
-        if (e.target.closest('#openFitModalBtn') || e.target.closest('[data-open-fit-finder]')) {
-          modal.classList.add('open');
-        }
-      });
-    }
-
-    // Sticky Mobile Add-to-Bag Bar
-    let stickyBar = $('#stickyMobileBar');
-    if (!stickyBar) {
-      stickyBar = document.createElement('div');
-      stickyBar.id = 'stickyMobileBar';
-      stickyBar.className = 'sticky-mobile-bar';
-      stickyBar.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
-          <img id="stickyThumb" src="" referrerpolicy="no-referrer" alt="" style="width:34px;height:40px;object-fit:contain;background:#ece8e1;border-radius:4px;flex-shrink:0;">
-          <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            <div id="stickyTitle" style="font-weight:700;font-size:0.82rem;color:#fff;overflow:hidden;text-overflow:ellipsis;"></div>
-            <div id="stickyPrice" style="color:#bfa177;font-weight:700;font-size:0.8rem;font-variant-numeric:tabular-nums;"></div>
-          </div>
-        </div>
-        <button id="stickyAddBtn" class="btn btn-light" style="min-height:36px;padding:6px 14px;font-size:0.75rem;flex-shrink:0;">
-          Add to Bag
-        </button>
-      `;
-      document.body.appendChild(stickyBar);
-
-      $('#stickyAddBtn')?.addEventListener('click', () => {
-        if (!selectedSize && v.available_sizes.length > 1) {
-          message('Please select a size first.', 'error');
-          window.scrollTo({ top: purchase.offsetTop - 120, behavior: 'smooth' });
-        } else {
-          purchase.click();
-        }
-      });
-    }
-
-    function updateStickyBar() {
-      const thumbImg = first(p, v);
-      const stImg = $('#stickyThumb');
-      if (stImg) stImg.src = asset(thumbImg?.url);
-      const stTitle = $('#stickyTitle');
-      if (stTitle) stTitle.textContent = p.name + (selectedSize ? ` (${selectedSize})` : '');
-      const stPrice = $('#stickyPrice');
-      if (stPrice) stPrice.textContent = price(p.price_bdt * selectedQty);
-    }
-
-    window.addEventListener('scroll', () => {
-      if (!purchase) return;
-      const rect = purchase.getBoundingClientRect();
-      if (rect.bottom < 0) {
-        stickyBar.classList.add('visible');
-        updateStickyBar();
-      } else {
-        stickyBar.classList.remove('visible');
-      }
-    }, { passive: true });
-
-    colors?.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-variant]');
-      if (b) chooseVariant(b.dataset.variant);
-    });
-
-    thumbs?.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-gallery]');
-      if (b) setGallery(b.dataset.gallery);
-    });
-
-    sizeWrapper?.addEventListener('click', (e) => {
-      const b = e.target.closest('[data-size]');
-      if (!b) return;
-      selectedSize = b.dataset.size;
-      $$('[data-size]', sizeWrapper).forEach((x) => x.classList.toggle('selected', x === b));
-      animateSpringPop(b);
-      updatePurchaseBtn();
-      updateStickyBar();
-    });
-
-    purchase?.addEventListener('click', () => pushCart(p, v, selectedSize, selectedQty));
-
-    gallery?.addEventListener('click', () => {
-      if (!curr) return;
-      const zoom = $('#zoom');
-      if (zoom) {
-        $('#zoomImg').src = asset(curr.url);
-        $('#zoomImg').alt = p.name + ' ' + curr.view;
-        zoom.classList.add('open');
-        document.body.classList.add('locked');
-      }
-    });
-  }
-
-  function generateUUID() {
+  });
+}
+
+async function boot() {
+  const base = window.STARKIT_BASE || './';
+  const storeConfig = window.STARKIT_CONFIG || {};
+  const products = window.STARKIT_CATALOG || [];
+
+  setupNavigation();
+  const openZoom = setupLightbox();
+
+  // Optional async load of promotions.json so runtime pricing/offer edits stay synced
+  if (storeConfig.promotions_endpoint) {
     try {
-      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-        return crypto.randomUUID();
-      }
-    } catch (e) {}
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = (Math.random() * 16) | 0,
-        v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  }
-
-  function checkout() {
-    const form = $('#checkoutForm');
-    if (!form) return;
-    sanitizeCart();
-    const summary = $('#checkoutSummary');
-    const total = $('#checkoutTotal');
-    const zoneSelect = $('#zone');
-
-    function renderCheckoutSummary() {
-      const totals = calculateCartTotals();
-      const rows = cart
-        .map((x) => {
-          const o = itemData(x);
-          if (!o) return '';
-          return `<div class="summary-item"><span>${safe(o.p.name)}<br><small>${safe(o.v.color)} / ${safe(x.size)} × ${x.qty}</small></span><strong>${price(o.p.price_bdt * x.qty)}</strong></div>`;
-        })
-        .join('');
-      summary.innerHTML = rows || '<p>There are no items in your bag.</p>';
-
-      const zone = zoneSelect ? zoneSelect.value : 'dhaka';
-      const baseShipping = zone === 'dhaka' ? cfg.delivery_dhaka || 80 : cfg.delivery_outside || 150;
-      const isFree = totals.isFreeShipping || totals.subtotal >= (cfg.free_shipping_threshold || 3000);
-      const shipping = isFree && cart.length > 0 ? 0 : baseShipping;
-      const grandTotal = Math.max(0, totals.netTotal + (cart.length > 0 ? shipping : 0));
-
-      let discountHtml = '';
-      if (totals.bundleDiscount > 0) {
-        discountHtml = `<div style="font-size:0.92rem;color:#15803d;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:700;"><span>Bundle Offer (${totals.hoodieCount} Hoodies):</span><span>-${price(totals.bundleDiscount)}</span></div>`;
-      }
-
-      if (total.parentElement) {
-        total.parentElement.style.display = 'block';
-        const labelSibling = total.previousElementSibling;
-        if (labelSibling) labelSibling.style.display = 'none';
-      }
-      total.innerHTML = `
-        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:600;"><span>Subtotal:</span><span>${price(totals.subtotal)}</span></div>
-        ${discountHtml}
-        <div style="font-size:0.92rem;color:#776d6b;display:flex;justify-content:space-between;margin-bottom:6px;font-weight:600;"><span>Delivery (${zone === 'dhaka' ? 'Dhaka Metro' : 'Outside Dhaka'}):</span><span>${shipping === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(shipping)}</span></div>
-        <div style="display:flex;justify-content:space-between;font-size:1.3rem;font-weight:900;border-top:1px solid #ded9d3;padding-top:12px;margin-top:8px;color:#170000;"><span>TOTAL PAYABLE (COD):</span><span>${price(grandTotal)}</span></div>
-      `;
-    }
-
-    renderCheckoutSummary();
-    zoneSelect?.addEventListener('change', () => {
-      const distInput = $('#district');
-      if (distInput && zoneSelect.value === 'dhaka' && !distInput.value) {
-        distInput.value = 'Dhaka';
-      }
-      renderCheckoutSummary();
-    });
-
-    // Real-time phone validation
-    const phoneInput = $('#custPhone');
-    phoneInput?.addEventListener('input', (e) => {
-      const cleanPhone = e.target.value.replace(/[\s-]/g, '');
-      const isValid = /^(?:\+?880|0)1[3-9]\d{8}$/.test(cleanPhone);
-      phoneInput.style.borderColor = isValid ? '#15803d' : cleanPhone.length > 3 ? '#be555c' : '#cfc5bf';
-    });
-
-    if (cart.length > 0) {
-      trackMeta('InitiateCheckout', {
-        num_items: cart.reduce((s, i) => s + i.qty, 0),
-        value: cart.reduce((sum, x) => {
-          const o = itemData(x);
-          return sum + (o ? o.p.price_bdt * x.qty : 0);
-        }, 0),
-        currency: 'BDT'
-      });
-    }
-
-    const btn = $('#checkoutSubmit');
-    const hasInvalid = cart.some((x) => {
-      const o = itemData(x);
-      return !o || !editable(o.p, o.v) || !o.v.available_sizes.includes(x.size);
-    });
-
-    if (cfg.mode === 'preview' || cfg.cod_enabled === false || !cart.length || hasInvalid) {
-      btn.disabled = true;
-      $('#checkoutNotice').textContent =
-        cfg.mode === 'preview'
-          ? 'This is a visual preview. Commercial ordering opens after approval.'
-          : cfg.cod_enabled === false
-          ? 'Online COD checkout is temporarily paused. Please call or WhatsApp 01778307704.'
-          : hasInvalid
-          ? 'One or more cart items are unavailable. Please review your bag.'
-          : 'Your bag is empty.';
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (btn.disabled) return;
-      const fd = new FormData(form);
-      const itemsSnapshot = cart.map((x) => {
-        const o = itemData(x);
-        return {
-          sku: x.sku,
-          product_name: o ? o.p.name : 'StarkiT Design',
-          color: o ? o.v.color : '',
-          size: x.size,
-          quantity: x.qty,
-          unit_price_bdt: o ? o.p.price_bdt : 1490,
-          line_total_bdt: (o ? o.p.price_bdt : 1490) * x.qty
-        };
-      });
-
-      const body = {
-        customer: {
-          name: fd.get('customer_name'),
-          phone: fd.get('phone'),
-          address: fd.get('address'),
-          district: fd.get('district'),
-          zone: fd.get('zone'),
-          notes: fd.get('notes')
-        },
-        items: itemsSnapshot.map((x) => ({ sku: x.sku, size: x.size, quantity: x.quantity })),
-        idempotency_key: generateUUID()
-      };
-
-      btn.disabled = true;
-      btn.textContent = 'SUBMITTING ORDER…';
-
-      try {
-        const response = await fetch(ROOT + 'api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await response.json().catch(() => ({}));
-        if (response.status !== 201 || !response.ok || !data.reference) {
-          throw new Error(data.error || 'Your order could not be submitted. No purchase was recorded.');
+      const promoUrl = `${base}${String(storeConfig.promotions_endpoint).replace(/^\//, '')}`;
+      const res = await fetch(promoUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (Array.isArray(json?.promotions)) {
+          window.STARKIT_PROMOTIONS = json.promotions;
         }
-
-        const storedOrder = {
-          id: generateUUID(),
-          reference: data.reference,
-          customer_name: body.customer.name,
-          customer_phone: body.customer.phone,
-          shipping_address: body.customer.address,
-          district: body.customer.district,
-          zone: body.customer.zone,
-          notes: body.customer.notes,
-          subtotal_bdt: data.subtotal_bdt,
-          discount_bdt: data.discount_bdt || 0,
-          shipping_bdt: data.shipping_bdt,
-          total_bdt: data.total_bdt,
-          status: data.status || 'pending_confirmation',
-          created_at: new Date().toISOString(),
-          items: itemsSnapshot
-        };
-
-        try {
-          const prevOrders = JSON.parse(localStorage.getItem('starkit_orders') || '[]');
-          prevOrders.unshift(storedOrder);
-          localStorage.setItem('starkit_orders', JSON.stringify(prevOrders));
-        } catch (e) {}
-
-        cart = [];
-        persist();
-        updateBadge();
-
-        // Track Meta Pixel Purchase with deduplication EventID
-        trackMeta(
-          'Purchase',
-          {
-            content_type: 'product',
-            content_ids: itemsSnapshot.map((x) => x.sku),
-            contents: itemsSnapshot.map((x) => ({
-              id: x.sku,
-              quantity: x.quantity,
-              item_price: x.unit_price_bdt
-            })),
-            num_items: itemsSnapshot.reduce((s, x) => s + x.quantity, 0),
-            value: data.total_bdt,
-            currency: 'BDT',
-            order_id: data.reference
-          },
-          { eventID: data.reference }
-        );
-
-        // Redirect to dedicated luxury Order Confirmation Receipt Page
-        window.location.href = `${ROOT}order-confirmation.html?ref=${encodeURIComponent(data.reference)}`;
-      } catch (err) {
-        message(err.message, 'error');
-        btn.disabled = false;
-        btn.textContent = 'CONFIRM CASH ON DELIVERY ORDER';
       }
-    });
-  }
-
-  function renderConfirmation() {
-    const container = $('#confirmationContainer');
-    if (!container) return;
-    const urlParams = new URLSearchParams(window.location.search);
-    const refParam = urlParams.get('ref');
-
-    let order = null;
-    try {
-      const orders = JSON.parse(localStorage.getItem('starkit_orders') || '[]');
-      if (refParam) {
-        order = orders.find((o) => o.reference === refParam);
-      }
-      if (!order && orders.length > 0) {
-        order = orders[0];
-      }
-    } catch (e) {}
-
-    if (!order) {
-      container.innerHTML = `
-        <div style="text-align:center;padding:50px 20px;background:#fff;border:1px solid #ded9d3;border-radius:8px;">
-          <h2 style="font-size:2rem;font-weight:900;margin-bottom:12px;">ORDER NOT FOUND IN CURRENT BROWSER</h2>
-          <p style="color:#776d6b;line-height:1.6;max-width:480px;margin:auto;">If you placed an order recently, our support team has received it and will contact you via phone or WhatsApp for confirmation.</p>
-          <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-            <a href="${ROOT}shop.html" class="btn">Explore Collection ↗</a>
-            <a href="https://wa.me/8801778307704" target="_blank" class="btn btn-outline" style="border-color:#25d366;color:#128c7e;">💬 Contact Concierge</a>
-          </div>
-        </div>
-      `;
-      return;
-    }
-
-    const itemsHtml = (order.items || [])
-      .map((i) => {
-        return `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;">
-          <div>
-            <div style="font-weight:800;font-size:0.95rem;">${safe(i.product_name)}</div>
-            <div style="font-size:0.75rem;color:#776d6b;">${safe(i.color)} · Size ${safe(i.size)} × ${i.quantity}</div>
-          </div>
-          <div style="font-weight:800;font-size:1rem;color:#170000;">${price(i.line_total_bdt || i.unit_price_bdt * i.quantity)}</div>
-        </div>
-      `;
-      })
-      .join('');
-
-    const waText = encodeURIComponent(
-      `Hello StarkiT! I would like to confirm my Cash on Delivery order: Ref ${order.reference} for ${order.customer_name} (${order.customer_phone}). Total Payable: ৳${Number(order.total_bdt).toLocaleString()}.`
-    );
-
-    let discountRow = '';
-    if (order.discount_bdt > 0) {
-      discountRow = `
-        <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#15803d;margin-bottom:6px;font-weight:700;">
-          <span>Bundle Offer Savings:</span><span>-${price(order.discount_bdt)}</span>
-        </div>
-      `;
-    }
-
-    container.innerHTML = `
-      <div class="summary-panel" style="padding:clamp(24px, 4vw, 44px);">
-        <div style="text-align:center;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px;">
-          <img src="${asset('assets/images/starkit-logo-dark.png')}" alt="StarkiT" style="height:36px;width:auto;margin:0 auto 18px;">
-          <div class="eyebrow" style="justify-content:center;color:#15803d;margin-bottom:8px;">Order Confirmed · Cash on Delivery</div>
-          <h1 style="font-size:clamp(1.85rem, 3.6vw, 2.5rem);font-weight:800;letter-spacing:-0.025em;margin:4px 0 8px;">Thank you, ${safe(order.customer_name)}.</h1>
-          <p style="color:var(--mute);font-size:0.95rem;max-width:460px;margin:auto;line-height:1.6;">Your order is registered with StarkiT Dhaka. Our delivery team will contact you prior to dispatch.</p>
-        </div>
-
-        <div class="notice" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:0;">
-          <div>
-            <div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);font-weight:700;">Order Reference</div>
-            <div style="font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:var(--ink);" id="orderRefText">${safe(order.reference)}</div>
-          </div>
-          <button type="button" class="btn btn-outline" id="copyRefBtn" style="min-height:38px;padding:8px 16px;font-size:0.76rem;">Copy Reference</button>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:24px;">
-          <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;">
-            <h4 style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;">Delivery Destination</h4>
-            <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">${safe(order.customer_name)}</div>
-            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;">Phone: <strong>${safe(order.customer_phone)}</strong></div>
-            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;line-height:1.45;">${safe(order.shipping_address)}, ${safe(order.district)}</div>
-          </div>
-          <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;">
-            <h4 style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;">Timeline &amp; Payment</h4>
-            <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">${order.zone === 'dhaka' ? 'Dhaka Metro (24–48 Hours)' : 'Nationwide Courier (3–5 Days)'}</div>
-            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;">Method: <strong>Cash on Delivery</strong></div>
-            <div style="font-size:0.84rem;color:#15803d;font-weight:600;margin-top:4px;">Parcel inspection permitted at delivery</div>
-          </div>
-        </div>
-
-        <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:8px;">Ordered Items</h3>
-        <div style="margin-bottom:20px;">
-          ${itemsHtml}
-        </div>
-
-        <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:24px;">
-          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--mute);margin-bottom:6px;font-variant-numeric:tabular-nums;">
-            <span>Subtotal</span><span>${price(order.subtotal_bdt)}</span>
-          </div>
-          ${discountRow}
-          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--mute);margin-bottom:6px;font-variant-numeric:tabular-nums;">
-            <span>Delivery Fee</span><span>${order.shipping_bdt === 0 ? '<strong style="color:#15803d">Free</strong>' : price(order.shipping_bdt)}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:1.25rem;font-weight:800;color:var(--ink);border-top:1px solid var(--line);padding-top:10px;margin-top:8px;font-variant-numeric:tabular-nums;">
-            <span>Total Due (COD)</span><span>${price(order.total_bdt)}</span>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <a href="https://wa.me/8801778307704?text=${waText}" target="_blank" rel="noopener noreferrer" class="btn" style="background:#15803d;border-color:#15803d;color:#fff;flex:1;">
-            Confirm via WhatsApp
-          </a>
-          <button type="button" class="btn btn-outline" id="printReceiptBtn" style="flex:1;">
-            Print Receipt
-          </button>
-          <a href="${ROOT}shop.html" class="btn btn-outline" style="flex:1;">
-            Continue Shopping
-          </a>
-        </div>
-      </div>
-    `;
-
-    $('#copyRefBtn')?.addEventListener('click', () => {
-      navigator.clipboard.writeText(order.reference).then(() => {
-        message('Order reference copied to clipboard.', 'success');
-      });
-    });
-
-    $('#printReceiptBtn')?.addEventListener('click', () => {
-      window.print();
-    });
-  }
-
-  function init() {
-    updateBadge();
-
-    // Check URL parameters for active category
-    const urlParams = new URLSearchParams(window.location.search);
-    const catParam = urlParams.get('category');
-    if (catParam) {
-      activeCategory = catParam;
-    }
-
-    const el = $('#menuToggle');
-    const nav = $('#mainNav');
-    el?.addEventListener('click', () => {
-      nav?.classList.toggle('open');
-      el.setAttribute('aria-expanded', String(nav?.classList.contains('open')));
-    });
-    nav?.addEventListener('click', (e) => {
-      if (e.target.closest('a')) {
-        nav.classList.remove('open');
-        el?.setAttribute('aria-expanded', 'false');
-      }
-    });
-
-    $$('[data-open-cart]').forEach((b) => b.addEventListener('click', () => toggleCart(true)));
-    $$('[data-close-cart]').forEach((b) => b.addEventListener('click', () => toggleCart(false)));
-    $('#overlay')?.addEventListener('click', closePopups);
-
-    $('#cartItems')?.addEventListener('click', (e) => {
-      const r = e.target.closest('[data-remove]');
-      const q = e.target.closest('[data-qty]');
-      if (r) removeItem(Number(r.dataset.remove));
-      if (q) {
-        const [index, n] = q.dataset.qty.split(',').map(Number);
-        changeQty(index, n);
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      const wa = e.target.closest('a[href*="wa.me"], a[href*="whatsapp"]');
-      if (wa) {
-        trackMeta('Contact', {
-          content_name: 'WhatsApp Customer Care / Order Confirmation',
-          content_category: 'Lead'
-        });
-      }
-      const f = e.target.closest('[data-fav]');
-      if (f) addFav(f.dataset.fav);
-      const r = e.target.closest('[data-reset-filters]');
-      if (r) {
-        activeCategory = 'All';
-        search = '';
-        if ($('#catalogSearch')) $('#catalogSearch').value = '';
-        renderGrid();
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closePopups();
-        $('#zoom')?.classList.remove('open');
-      }
-      if (
-        (e.key === 'ArrowRight' || e.key === 'ArrowLeft') &&
-        $('#heroPicture') &&
-        document.activeElement?.tagName !== 'INPUT'
-      ) {
-        $('#heroPicture')
-          ?.closest('.hero-visual')
-          ?.querySelector(`[data-slide="${e.key === 'ArrowRight' ? '1' : '-1'}"]`)
-          ?.click();
-      }
-    });
-
-    $('#zoom')?.addEventListener('click', () => {
-      $('#zoom').classList.remove('open');
-      document.body.classList.remove('locked');
-    });
-
-    setupHero();
-    setupLookbook();
-    setupGrid();
-    setupDetail();
-    checkout();
-    renderConfirmation();
-    reveal();
-    sanitizeCart();
-
-    // Initialize Three.js 3D WebGL Canvas
-    try {
-      spatialHero = initSpatialHero('spatialHeroContainer');
-    } catch (e) {
-      console.warn('Three.js spatial initialization error:', e);
-    }
-
-    // Initialize Anime.js Luxury Micro-Interactions
-    try {
-      initInteractiveUI();
-    } catch (e) {
-      console.warn('Anime.js interactive UI error:', e);
+    } catch {
+      // Fall back silently to DEFAULT_PROMOTIONS bundled in pricing-engine
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  // Admin portal initializes only when loginGate exists
+  if (document.getElementById('loginGate')) {
+    initAdminManager();
+    return;
   }
-})();
+
+  const cartApi = initCartDrawer({ products, base, storeConfig });
+
+  let spatialScene = null;
+  if (document.getElementById('spatialHeroContainer')) {
+    spatialScene = initSpatialHero('spatialHeroContainer');
+  }
+
+  if (document.getElementById('showroomStage')) {
+    initShowroomHero({
+      products,
+      base,
+      spatialScene,
+      storeConfig,
+      onAddToCart: (p, v, sz, qty) => cartApi.addItem(p, v, sz, qty),
+      onOpenZoom: openZoom
+    });
+  }
+
+  const gridApi = initProductGrid({
+    products,
+    base,
+    storeConfig,
+    onAddToCart: (p, v, sz, qty) => cartApi.addItem(p, v, sz, qty)
+  });
+
+  if (document.getElementById('priceTiersMount') || document.getElementById('offerDisplayMount')) {
+    initOfferDisplay({
+      products,
+      onSelectTier: (tierCode) => gridApi?.setTierFilter(tierCode)
+    });
+  }
+
+  setupLookbook({ products, base });
+  initProductViewer({
+    products,
+    base,
+    storeConfig,
+    onAddToCart: (p, v, sz, qty) => cartApi.addItem(p, v, sz, qty),
+    onOpenZoom: openZoom
+  });
+  initCheckoutForm({ base, storeConfig, cartApi });
+  initOrderConfirmation({ base });
+  setupFitGuideModal({ base });
+  setupVipEarlyAccess();
+  initMotionEngine();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}

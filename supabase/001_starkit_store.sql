@@ -1,39 +1,41 @@
 -- ==============================================================================
--- StarkiT DROP 01 — Production Database Schema & Transaction Engine
+-- StarkiT DROP 01 — Production Database Schema & Transaction Engine (Hardened)
 -- Target Database: Supabase PostgreSQL
 -- ==============================================================================
 
 create extension if not exists pgcrypto;
 
--- 1. Store Global Settings
+-- 1. Store Global Settings (safe fail-closed defaults until commercial activation)
 create table if not exists public.store_settings (
   key text primary key,
   value jsonb not null default 'null'::jsonb,
   updated_at timestamptz not null default now()
 );
 
--- Active live defaults: COD enabled, standard BD rates, 3000 BDT free shipping threshold
 insert into public.store_settings (key, value) values
-  ('cod_enabled', 'true'::jsonb),
+  ('cod_enabled', 'false'::jsonb),
+  ('store_mode', '"preview"'::jsonb),
   ('delivery_dhaka_bdt', '80'::jsonb),
   ('delivery_outside_bdt', '150'::jsonb),
   ('free_shipping_threshold', '3000'::jsonb)
-on conflict (key) do update set value = excluded.value, updated_at = now();
+on conflict (key) do nothing;
 
--- 2. Store Products & SKU Variants Inventory
+-- 2. Store Products & SKU Variants Inventory (safe unapproved defaults)
 create table if not exists public.store_variants (
   sku text primary key check(sku ~ '^(STK-H[0-9]{3}-(BLK|MRN|BRN|CRM)|FT-(HM|JWL|BA)-[0-9]{3})$'),
+  slot_id text,
   product_id text not null,
   product_name text not null,
   color text not null,
+  status text not null default 'PROVISIONAL' check(status in ('DOCUMENTED', 'PROVISIONAL')),
   price_bdt integer not null check(price_bdt > 0),
-  sizes jsonb not null default '["M", "L", "XL", "XXL"]'::jsonb check(jsonb_typeof(sizes) = 'array'),
-  stock_quantity integer not null default 50 check(stock_quantity >= 0),
-  rights_verified boolean not null default true,
-  specifications_verified boolean not null default true,
-  stock_verified boolean not null default true,
-  commercial_terms_verified boolean not null default true,
-  approved_for_publication boolean not null default true,
+  sizes jsonb not null default '[]'::jsonb check(jsonb_typeof(sizes) = 'array'),
+  stock_quantity integer not null default 0 check(stock_quantity >= 0),
+  rights_verified boolean not null default false,
+  specifications_verified boolean not null default false,
+  stock_verified boolean not null default false,
+  commercial_terms_verified boolean not null default false,
+  approved_for_publication boolean not null default false,
   updated_at timestamptz not null default now()
 );
 
@@ -51,8 +53,10 @@ create table if not exists public.store_orders (
   zone text not null check(zone in ('dhaka', 'outside')),
   notes text,
   subtotal_bdt integer not null default 0 check(subtotal_bdt >= 0),
+  discount_bdt integer not null default 0 check(discount_bdt >= 0),
   shipping_bdt integer not null default 0 check(shipping_bdt >= 0),
   total_bdt integer not null default 0 check(total_bdt >= 0),
+  applied_promotions jsonb not null default '[]'::jsonb,
   status text not null default 'pending_confirmation' check(
     status in ('pending_confirmation', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled')
   ),
@@ -84,7 +88,7 @@ alter table public.store_variants enable row level security;
 alter table public.store_orders enable row level security;
 alter table public.store_order_items enable row level security;
 
--- 5. Atomic Transactional Order Function
+-- 5. Atomic Transactional Order Function (with verified-flag & promotion gating)
 create or replace function public.submit_starkit_order(
   p_idempotency uuid,
   p_customer_name text,
@@ -105,14 +109,21 @@ declare
   v_size text;
   v_qty int;
   v_subtotal int := 0;
+  v_hoodie_subtotal int := 0;
+  v_hoodie_qty int := 0;
+  v_total_qty int := 0;
+  v_discount int := 0;
+  v_promo_free_ship boolean := false;
+  v_applied_promos jsonb := '[]'::jsonb;
   v_shipping int := 0;
   v_cod jsonb;
   v_zone_fee jsonb;
   v_free_threshold jsonb;
   v_existing_ref text;
   v_existing_total int;
+  v_promo record;
+  v_promo_discount int;
 begin
-  -- Validate Customer Info
   if p_customer_name is null or length(trim(p_customer_name)) < 2 or length(p_customer_name) > 120
      or p_customer_phone is null or p_customer_phone !~ '^([+]?880|0)1[3-9][0-9]{8}$'
      or p_address is null or length(trim(p_address)) < 10 or length(p_address) > 600
@@ -124,26 +135,23 @@ begin
     raise exception 'Invalid customer order parameters' using errcode = 'P0001';
   end if;
 
-  -- Check COD status
   select value into v_cod from public.store_settings where key = 'cod_enabled';
   if coalesce(v_cod, 'false'::jsonb) <> 'true'::jsonb then
     raise exception 'Cash on Delivery is temporarily disabled' using errcode = 'P0001';
   end if;
 
-  -- Read Zone Delivery Fee
   select value into v_zone_fee from public.store_settings
   where key = case when p_zone = 'dhaka' then 'delivery_dhaka_bdt' else 'delivery_outside_bdt' end;
-  
+
   if v_zone_fee is null or jsonb_typeof(v_zone_fee) <> 'number' or (v_zone_fee::text)::int < 0 then
     v_shipping := case when p_zone = 'dhaka' then 80 else 150 end;
   else
     v_shipping := (v_zone_fee::text)::int;
   end if;
 
-  -- Check Idempotency
   select reference, total_bdt into v_existing_ref, v_existing_total
   from public.store_orders where idempotency_key = p_idempotency;
-  
+
   if found then
     return jsonb_build_object(
       'reference', v_existing_ref,
@@ -152,10 +160,8 @@ begin
     );
   end if;
 
-  -- Generate Unique Human-Readable Reference Code: STK-XXXXXXXXXXXX
   v_ref := 'STK-' || upper(substring(replace(gen_random_uuid()::text, '-', '') from 1 for 10));
 
-  -- Insert Order Shell
   insert into public.store_orders (
     reference, idempotency_key, customer_name, customer_phone,
     shipping_address, district, zone, notes
@@ -164,11 +170,10 @@ begin
     trim(p_address), trim(p_district), p_zone, trim(coalesce(p_notes, ''))
   ) returning id into v_order_id;
 
-  -- Process and Validate Line Items
   for v_item in select value from jsonb_array_elements(p_items) loop
     v_sku := v_item->>'sku';
     v_size := v_item->>'size';
-    
+
     if coalesce(v_item->>'quantity', '') !~ '^[0-9]+$' then
       raise exception 'Invalid quantity format' using errcode = 'P0001';
     end if;
@@ -178,11 +183,17 @@ begin
       raise exception 'Invalid item specification' using errcode = 'P0001';
     end if;
 
-    -- Lock and verify variant row
     select * into v_variant from public.store_variants where sku = v_sku for update;
-    
-    if not found or not v_variant.approved_for_publication then
-      raise exception 'SKU % is not active for sale', v_sku using errcode = 'P0001';
+
+    if not found
+       or not v_variant.approved_for_publication
+       or not v_variant.rights_verified
+       or not v_variant.stock_verified
+       or not v_variant.specifications_verified
+       or not v_variant.commercial_terms_verified
+       or v_variant.status <> 'DOCUMENTED'
+    then
+      raise exception 'SKU % is not verified or approved for sale', v_sku using errcode = 'P0001';
     end if;
 
     if v_variant.stock_quantity < v_qty then
@@ -197,12 +208,10 @@ begin
       raise exception 'Size % is not available for SKU %', v_size, v_sku using errcode = 'P0001';
     end if;
 
-    -- Decrement Inventory Atomic
     update public.store_variants
     set stock_quantity = stock_quantity - v_qty, updated_at = now()
     where sku = v_sku;
 
-    -- Insert Order Line Item
     insert into public.store_order_items (
       order_id, sku, product_name, color, size, quantity, unit_price_bdt, line_total_bdt
     ) values (
@@ -211,29 +220,74 @@ begin
     );
 
     v_subtotal := v_subtotal + (v_qty * v_variant.price_bdt);
+    v_total_qty := v_total_qty + v_qty;
+    if v_sku like 'STK-%' then
+      v_hoodie_qty := v_hoodie_qty + v_qty;
+      v_hoodie_subtotal := v_hoodie_subtotal + (v_qty * v_variant.price_bdt);
+    end if;
   end loop;
 
-  -- Apply Free Shipping if subtotal >= free_shipping_threshold (default 3000 BDT)
+  -- Evaluate approved, active promotions if store_promotions table exists
+  if to_regclass('public.store_promotions') is not null then
+    for v_promo in
+      select * from public.store_promotions
+      where active = true and requires_approval = false
+      order by min_qty desc, discount_value desc
+    loop
+      if (v_promo.applies_to = 'hoodies' and v_hoodie_qty >= v_promo.min_qty and v_hoodie_subtotal > 0)
+         or (v_promo.applies_to <> 'hoodies' and v_total_qty >= v_promo.min_qty and v_subtotal > 0)
+      then
+        v_promo_discount := 0;
+        if v_promo.discount_type = 'FIXED_BDT' and v_promo.discount_value > 0 then
+          v_promo_discount := least(
+            case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end,
+            v_promo.discount_value
+          );
+        elsif v_promo.discount_type = 'PERCENT' and v_promo.discount_value > 0 and v_promo.discount_value <= 80 then
+          v_promo_discount := least(
+            case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end,
+            round((case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end) * v_promo.discount_value / 100.0)::int
+          );
+        end if;
+        if v_promo_discount > v_discount or (v_promo_discount = v_discount and v_promo.free_shipping and not v_promo_free_ship) then
+          v_discount := v_promo_discount;
+          v_promo_free_ship := v_promo.free_shipping;
+          v_applied_promos := jsonb_build_array(jsonb_build_object(
+            'code', v_promo.code,
+            'title', v_promo.title,
+            'discount_bdt', v_promo_discount,
+            'free_shipping', v_promo.free_shipping
+          ));
+        end if;
+      end if;
+    end loop;
+  end if;
+
   select value into v_free_threshold from public.store_settings where key = 'free_shipping_threshold';
-  if v_free_threshold is not null and (v_free_threshold::text)::int > 0 and v_subtotal >= (v_free_threshold::text)::int then
+  if v_promo_free_ship or (v_free_threshold is not null and (v_free_threshold::text)::int > 0 and (v_subtotal - v_discount) >= (v_free_threshold::text)::int) then
     v_shipping := 0;
   end if;
 
-  -- Update Final Order Totals
   update public.store_orders
-  set subtotal_bdt = v_subtotal, shipping_bdt = v_shipping, total_bdt = v_subtotal + v_shipping
+  set
+    subtotal_bdt = v_subtotal,
+    discount_bdt = v_discount,
+    shipping_bdt = v_shipping,
+    total_bdt = greatest(0, v_subtotal - v_discount) + v_shipping,
+    applied_promotions = v_applied_promos
   where id = v_order_id;
 
   return jsonb_build_object(
     'reference', v_ref,
     'subtotal_bdt', v_subtotal,
+    'discount_bdt', v_discount,
     'shipping_bdt', v_shipping,
-    'total_bdt', v_subtotal + v_shipping,
+    'total_bdt', greatest(0, v_subtotal - v_discount) + v_shipping,
+    'applied_promotions', v_applied_promos,
     'status', 'pending_confirmation',
     'created_at', now()
   );
 end $$;
 
--- Permissions: Only service_role may execute submit_starkit_order
 revoke all on function public.submit_starkit_order(uuid, text, text, text, text, text, text, jsonb) from public, anon, authenticated;
 grant execute on function public.submit_starkit_order(uuid, text, text, text, text, text, text, jsonb) to service_role;

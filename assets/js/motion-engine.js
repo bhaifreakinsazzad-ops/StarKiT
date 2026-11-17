@@ -92,7 +92,7 @@ export function animateHeroSwap(pictureEl, nameEl, direction = 1) {
 
 export function animateGallerySwap(galleryEl) {
   if (!galleryEl || prefersReduced()) return;
-  const target = galleryEl.querySelector('img') || galleryEl.querySelector('.dev-concept-stage');
+  const target = galleryEl.querySelector('img') || galleryEl.querySelector('.stage-provisional-slate');
   if (!target) return;
   utils.remove(target);
   animate(target, {
@@ -171,7 +171,7 @@ export function initMotionEngine() {
   paintScrollProgress();
 
   // 2. ORCHESTRATED KINETIC HERO ENTRANCE TIMELINE (Anime.js v4)
-  const heroCopy = document.querySelector('.hero-copy');
+  const heroCopy = document.querySelector('.showroom-intro, .hero-copy');
   if (heroCopy && !reduced) {
     const logoStamp = heroCopy.querySelector('.hero-logo-stamp');
     const eyebrow = heroCopy.querySelector('.eyebrow');

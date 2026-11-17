@@ -14,12 +14,14 @@
       "jet_black": "#170000",
       "pure_white": "#FFFFFF",
       "brand_maroon": "#5B1A24",
-      "champagne_gold": "#c5a880"
+      "chocolate_brown": "#4B2E24",
+      "cream": "#F3EFE6",
+      "champagne_gold": "#bfa177"
     },
     "typography": {
       "primary_latin": "Afacad Flux",
       "primary_bengali": "Hind Siliguri",
-      "primary_arabic": "Amiri"
+      "monospace": "JetBrains Mono"
     }
   },
   "garment_specifications": {
@@ -47,7 +49,7 @@
     }
   },
   "commercial_policies": {
-    "payment": "100% Cash on Delivery (COD) across all 64 districts of Bangladesh with parcel inspection at doorstep",
+    "payment": "Cash on Delivery (COD) across all 64 districts of Bangladesh with parcel inspection at doorstep once commercial mode is enabled",
     "shipping": {
       "inside_dhaka_bdt": 80,
       "inside_dhaka_timeline": "2–3 Business Days",
@@ -62,19 +64,44 @@
   "collection_architecture": {
     "drop_01": {
       "name": "DROP 01 — THE GRAPHIC ARCHIVE",
-      "parent_designs": 11,
+      "parent_designs": 15,
+      "existing_designs": 11,
+      "new_concept_designs": 4,
+      "held_excluded_design": "STK-H012",
       "target_colorways_per_design": 4,
-      "total_planned_slots": 44,
-      "documented_verified_colorways": 15,
-      "provisional_in_development_colorways": 29,
-      "verified_media_assets": 67
+      "total_planned_slots": 60,
+      "documented_colorways": 15,
+      "provisional_colorways": 45,
+      "verified_media_assets": 67,
+      "price_tiers": {
+        "CORE": {
+          "code": "CORE",
+          "label": "Core Archive",
+          "price_bdt": 1099
+        },
+        "SELECT": {
+          "code": "SELECT",
+          "label": "Select Studio",
+          "price_bdt": 1250
+        },
+        "SIGNATURE": {
+          "code": "SIGNATURE",
+          "label": "Signature Drop",
+          "price_bdt": 1369
+        },
+        "PREMIUM": {
+          "code": "PREMIUM",
+          "label": "Premium Collector",
+          "price_bdt": 1499
+        }
+      }
     },
     "drop_02": {
       "name": "DROP 02 — ARTISAN ACCENTS & JEWELRY",
       "brand": "Fariza's Territory",
       "categories": [
-        "Heritage Jewelry",
-        "Wooden & Lacquer Mirrors",
+        "Decorative Mirrors",
+        "Wearable Art",
         "Bangles & Accents"
       ],
       "total_handcrafted_skus": 35
@@ -85,7 +112,11 @@
       "id": "STK-H001",
       "name": "SHINOBI SUNSET",
       "category": "Anime Archive",
-      "price_bdt": 1590,
+      "price_tier": "SIGNATURE",
+      "price_bdt": 1369,
+      "legacy_price_bdt": 1590,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Bold Japanese-inspired storytelling meets a dramatic crimson-sun composition.",
       "copy_bn": "ক্রিমসন সান, শক্তিশালী ব্যাক আর্ট ও স্লিভ ডিটেইলে স্টেটমেন্ট লুক।",
       "variants": [
@@ -95,14 +126,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 6
         },
         {
@@ -111,14 +142,14 @@
           "color": "Cream",
           "hex": "#F3EFE6",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 6
         },
         {
@@ -149,7 +180,11 @@
       "id": "STK-H002",
       "name": "PEACE BRO CLUB",
       "category": "Playful Street",
-      "price_bdt": 1290,
+      "price_tier": "CORE",
+      "price_bdt": 1099,
+      "legacy_price_bdt": 1290,
+      "price_approved": false,
+      "approval_status": "READY_FOR_APPROVAL",
       "copy_en": "A laid-back graphic with unmistakable street energy.",
       "copy_bn": "অল-ব্ল্যাক বেসে প্লেফুল ক্যাট আর্ট—ক্যাজুয়াল ডেইলি স্টাইলের জন্য।",
       "variants": [
@@ -159,14 +194,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         },
         {
@@ -208,7 +243,11 @@
       "id": "STK-H003",
       "name": "FOLK ROUTE",
       "category": "Bangla Heritage",
-      "price_bdt": 1390,
+      "price_tier": "CORE",
+      "price_bdt": 1099,
+      "legacy_price_bdt": 1390,
+      "price_approved": false,
+      "approval_status": "READY_FOR_APPROVAL",
       "copy_en": "Local roots reinterpreted through modern street aesthetics.",
       "copy_bn": "বাংলার ফোক মোটিফ ও আরবান কম্পোজিশনের মেলবন্ধন।",
       "variants": [
@@ -218,14 +257,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 5
         },
         {
@@ -267,7 +306,11 @@
       "id": "STK-H004",
       "name": "THE RIDER CODE",
       "category": "Moto Culture",
-      "price_bdt": 1690,
+      "price_tier": "PREMIUM",
+      "price_bdt": 1499,
+      "legacy_price_bdt": 1690,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Inspired by cafe racer culture and open highway freedom.",
       "copy_bn": "ক্যাফে রেসার ড্রাইভ এবং হাইওয়ের উন্মুক্ত রোমাঞ্চ।",
       "variants": [
@@ -299,14 +342,14 @@
           "color": "Maroon",
           "hex": "#5B1A24",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 6
         },
         {
@@ -326,7 +369,11 @@
       "id": "STK-H005",
       "name": "MOONLIT HERO",
       "category": "Anime Archive",
-      "price_bdt": 1590,
+      "price_tier": "SIGNATURE",
+      "price_bdt": 1369,
+      "legacy_price_bdt": 1590,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Moody monochrome artwork capturing nocturnal adrenaline.",
       "copy_bn": "রাতের শহর ও চাঁদের আলোয় অ্যাকশন এস্থেটিক।",
       "variants": [
@@ -336,14 +383,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 6
         },
         {
@@ -385,7 +432,11 @@
       "id": "STK-H006",
       "name": "CELLULOID NIGHTS",
       "category": "Bangla Heritage",
-      "price_bdt": 1490,
+      "price_tier": "SELECT",
+      "price_bdt": 1250,
+      "legacy_price_bdt": 1490,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "A tribute to the golden era of vintage cinema graphics.",
       "copy_bn": "রেট্রো সিনেমা পোস্টার আর সোনালী সেলুলয়েডের স্মৃতি।",
       "variants": [
@@ -395,14 +446,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 5
         },
         {
@@ -444,7 +495,11 @@
       "id": "STK-H007",
       "name": "DHAKA AFTERGLOW",
       "category": "City Stories",
-      "price_bdt": 1490,
+      "price_tier": "SELECT",
+      "price_bdt": 1250,
+      "legacy_price_bdt": 1490,
+      "price_approved": false,
+      "approval_status": "READY_FOR_APPROVAL",
       "copy_en": "City sunset tones against raw architectural lines.",
       "copy_bn": "ঢাকার সূর্যাস্ত ও মেগাসিটির নিওন আলো।",
       "variants": [
@@ -487,14 +542,14 @@
           "color": "Chocolate Brown",
           "hex": "#4B2E24",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         }
       ]
@@ -503,7 +558,11 @@
       "id": "STK-H008",
       "name": "COLLECTIVE VOICE",
       "category": "Statement Graphics",
-      "price_bdt": 1390,
+      "price_tier": "CORE",
+      "price_bdt": 1099,
+      "legacy_price_bdt": 1390,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Typographic movement celebrating unity and expression.",
       "copy_bn": "ঐক্য ও স্বকীয়তার সাহসী টাইপোগ্রাফিক স্টেটমেন্ট।",
       "variants": [
@@ -513,14 +572,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         },
         {
@@ -529,14 +588,14 @@
           "color": "Cream",
           "hex": "#F3EFE6",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         },
         {
@@ -545,14 +604,14 @@
           "color": "Maroon",
           "hex": "#5B1A24",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         },
         {
@@ -561,14 +620,14 @@
           "color": "Chocolate Brown",
           "hex": "#4B2E24",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 3
         }
       ]
@@ -577,7 +636,11 @@
       "id": "STK-H009",
       "name": "RICKSHAW BLOOM",
       "category": "Bangla Heritage",
-      "price_bdt": 1490,
+      "price_tier": "SELECT",
+      "price_bdt": 1250,
+      "legacy_price_bdt": 1490,
+      "price_approved": false,
+      "approval_status": "READY_FOR_APPROVAL",
       "copy_en": "Vibrant rickshaw enamel floristry reimagined as wearable street art.",
       "copy_bn": "রিকশা পেইন্টিংয়ের জীবন্ত ফুলের নকশা আধুনিক পোশাকে।",
       "variants": [
@@ -587,14 +650,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 5
         },
         {
@@ -636,7 +699,11 @@
       "id": "STK-H010",
       "name": "CHEESE CHASE",
       "category": "Playful Street",
-      "price_bdt": 1390,
+      "price_tier": "CORE",
+      "price_bdt": 1099,
+      "legacy_price_bdt": 1390,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Dynamic chase sequence rendered in bold cartoon linework.",
       "copy_bn": "নস্টালজিক ক্যাট-অ্যান্ড-মাউস চেজ গ্রাফিক্স।",
       "variants": [
@@ -646,14 +713,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 4
         },
         {
@@ -695,7 +762,11 @@
       "id": "STK-H011",
       "name": "NIGHT CIRCUIT",
       "category": "Moto Culture",
-      "price_bdt": 1590,
+      "price_tier": "SIGNATURE",
+      "price_bdt": 1369,
+      "legacy_price_bdt": 1590,
+      "price_approved": false,
+      "approval_status": "RIGHTS_REVIEW",
       "copy_en": "Drift racing typography and mechanical blueprint elements.",
       "copy_bn": "নাইট রেসিং সার্কিট ও মেকানিক্যাল ব্লুপ্রিন্ট।",
       "variants": [
@@ -705,14 +776,14 @@
           "color": "Black",
           "hex": "#170000",
           "status": "DOCUMENTED",
-          "stock_quantity": 50,
+          "stock_quantity": 0,
           "available_sizes": [
             "M",
             "L",
             "XL",
             "XXL"
           ],
-          "approved_for_publication": true,
+          "approved_for_publication": false,
           "media_count": 6
         },
         {
@@ -740,6 +811,238 @@
         {
           "slot_id": "STK-H011-C04",
           "sku": "STK-H011-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H013",
+      "name": "SHADOW SHINOBI",
+      "category": "Anime Archive",
+      "price_tier": "SIGNATURE",
+      "price_bdt": 1369,
+      "legacy_price_bdt": null,
+      "price_approved": false,
+      "approval_status": "MEDIA_PENDING",
+      "copy_en": "Concept-stage nocturnal stealth graphic exploring layered ink textures and crimson emblems across all four base palettes.",
+      "copy_bn": "কনসেপ্ট স্টেজ ডিজাইন—গভীর কালি ও ক্রিমসন অ্যাকসেন্টে শ্যাডো শিনোবি এডিশন।",
+      "variants": [
+        {
+          "slot_id": "STK-H013-C01",
+          "sku": "STK-H013-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H013-C02",
+          "sku": "STK-H013-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H013-C03",
+          "sku": "STK-H013-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H013-C04",
+          "sku": "STK-H013-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H014",
+      "name": "URBAN HERITAGE",
+      "category": "Bangla Heritage",
+      "price_tier": "SELECT",
+      "price_bdt": 1250,
+      "legacy_price_bdt": null,
+      "price_approved": false,
+      "approval_status": "MEDIA_PENDING",
+      "copy_en": "Concept-stage fusion of Bengali typographic geometry and contemporary urban minimalism.",
+      "copy_bn": "কনসেপ্ট স্টেজ ডিজাইন—বাংলার স্থাপত্য ও আরবান টাইপোগ্রাফির আধুনিক রূপ।",
+      "variants": [
+        {
+          "slot_id": "STK-H014-C01",
+          "sku": "STK-H014-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H014-C02",
+          "sku": "STK-H014-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H014-C03",
+          "sku": "STK-H014-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H014-C04",
+          "sku": "STK-H014-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H015",
+      "name": "HERITAGE STATIC",
+      "category": "Statement Graphics",
+      "price_tier": "PREMIUM",
+      "price_bdt": 1499,
+      "legacy_price_bdt": null,
+      "price_approved": false,
+      "approval_status": "MEDIA_PENDING",
+      "copy_en": "Concept-stage collector edition pairing distressed analog halftone frequencies with Dhaka street motifs.",
+      "copy_bn": "কনসেপ্ট স্টেজ প্রিমিয়াম এডিশন—অ্যানালগ স্ট্যাটিক টেক্সচার ও হেরিটেজ গ্রাফিক্স।",
+      "variants": [
+        {
+          "slot_id": "STK-H015-C01",
+          "sku": "STK-H015-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H015-C02",
+          "sku": "STK-H015-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H015-C03",
+          "sku": "STK-H015-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H015-C04",
+          "sku": "STK-H015-BRN",
+          "color": "Chocolate Brown",
+          "hex": "#4B2E24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        }
+      ]
+    },
+    {
+      "id": "STK-H016",
+      "name": "MIDNIGHT SIGNAL",
+      "category": "City Stories",
+      "price_tier": "PREMIUM",
+      "price_bdt": 1499,
+      "legacy_price_bdt": null,
+      "price_approved": false,
+      "approval_status": "MEDIA_PENDING",
+      "copy_en": "Concept-stage flagship nocturnal graphic inspired by late-night Dhaka neon reflections and radio wave geometry.",
+      "copy_bn": "কনসেপ্ট স্টেজ প্রিমিয়াম এডিশন—ঢাকার মধ্যরাতের লাইট ও সিগন্যাল গ্রাফিক্স।",
+      "variants": [
+        {
+          "slot_id": "STK-H016-C01",
+          "sku": "STK-H016-BLK",
+          "color": "Black",
+          "hex": "#170000",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H016-C02",
+          "sku": "STK-H016-CRM",
+          "color": "Cream",
+          "hex": "#F3EFE6",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H016-C03",
+          "sku": "STK-H016-MRN",
+          "color": "Maroon",
+          "hex": "#5B1A24",
+          "status": "PROVISIONAL",
+          "stock_quantity": 0,
+          "available_sizes": [],
+          "approved_for_publication": false,
+          "media_count": 0
+        },
+        {
+          "slot_id": "STK-H016-C04",
+          "sku": "STK-H016-BRN",
           "color": "Chocolate Brown",
           "hex": "#4B2E24",
           "status": "PROVISIONAL",

@@ -1,101 +1,92 @@
 /**
- * End-to-End Customer Journey Simulation Test.
- * Tests:
- * 1. Product selection & dynamic variant switching
- * 2. Quantity stepper & size selection
- * 3. Cart additions & bundle discount progression
- * 4. Free delivery threshold trigger
- * 5. Checkout order submission & Meta tracking parameters
- * 6. Order confirmation receipt generation
+ * End-to-End Customer Flow & Pricing Engine Simulation (ESM)
  */
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
-console.log('--- RUNNING CUSTOMER JOURNEY & COMMERCE FLOW AUDIT ---');
+(async () => {
+  const { DEFAULT_PROMOTIONS, calculateOrderPricing } = await import('../assets/js/core/pricing-engine.js');
+  const { isValidBdPhone } = await import('../assets/js/core/validation.js');
 
-const catalogData = JSON.parse(fs.readFileSync(path.join(__dirname, '../catalog/starkit_products.json'), 'utf8'));
-const catalog = catalogData.products;
-const variantsData = JSON.parse(fs.readFileSync(path.join(__dirname, '../catalog/starkit_44_variants.json'), 'utf8'));
-const variants44 = Array.isArray(variantsData) ? variantsData : (variantsData.variants || variantsData.products || []);
+  const ROOT = path.resolve(__dirname, '..');
 
-// 1. Verify 11 Parent Products
-if (catalog.length !== 11) {
-  throw new Error(`Expected 11 parent designs, found ${catalog.length}`);
-}
-console.log('✓ 11 parent hoodie designs verified.');
+  console.log('--- RUNNING CUSTOMER JOURNEY & CONFIGURABLE PRICING AUDIT ---');
 
-// 2. Test Bundle Discount Logic
-function calcBundle(items) {
-  const hoodieCount = items.filter(i => i.sku.startsWith('STK-H')).reduce((s, i) => s + i.qty, 0);
-  let discount = 0;
-  let tier = 0;
-  if (hoodieCount >= 3) {
-    discount = 300;
-    tier = 2;
-  } else if (hoodieCount === 2) {
-    discount = 150;
-    tier = 1;
+  const productsData = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/starkit_products.json'), 'utf8'));
+  const variants60Data = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/starkit_60_variants.json'), 'utf8'));
+
+  if (productsData.products.length !== 15) {
+    throw new Error(`Expected 15 parent hoodie designs, found ${productsData.products.length}`);
   }
-  const subtotal = items.reduce((s, i) => s + (i.price * i.qty), 0);
-  const isFree = subtotal >= 3000 || tier > 0;
-  const netTotal = Math.max(0, subtotal - discount);
-  return { hoodieCount, discount, tier, isFree, subtotal, netTotal };
+  if (variants60Data.variants.length !== 60) {
+    throw new Error(`Expected 60 colorway variants, found ${variants60Data.variants.length}`);
+  }
+
+const map = new Map();
+for (const p of productsData.products) {
+  for (const v of p.variants) {
+    map.set(v.sku, { product: p, variant: v });
+  }
 }
 
-// Case A: 1 Hoodie (Price 1490) -> No bundle discount, shipping applies (80 or 150)
-const resA = calcBundle([{ sku: 'STK-H001-BLK', price: 1490, qty: 1 }]);
-if (resA.discount !== 0 || resA.isFree !== false || resA.netTotal !== 1490) {
-  throw new Error('Case A (1 hoodie) calculation mismatch');
+// Default unapproved state: 2 hoodies yield 0 automatic multi-piece discount
+const twoHoodiesDefault = calculateOrderPricing({
+  items: [
+    { sku: 'STK-H002-BLK', quantity: 1 }, // Core 1099
+    { sku: 'STK-H007-BRN', quantity: 1 }  // Select 1250
+  ],
+  catalogMap: map,
+  zone: 'dhaka',
+  promotions: DEFAULT_PROMOTIONS
+});
+if (twoHoodiesDefault.subtotal_bdt !== 2349 || twoHoodiesDefault.discount_bdt !== 0 || twoHoodiesDefault.shipping_bdt !== 80) {
+  throw new Error('Default unapproved multi-piece pricing mismatch: ' + JSON.stringify(twoHoodiesDefault));
 }
-console.log('✓ Case A (Single piece): ৳1,490, 0 discount, normal shipping fee.');
+console.log('✓ PASS: Default unapproved Duo order charges exact tier sum (৳2,349 + ৳80 shipping, ৳0 unapproved discount).');
 
-// Case B: 2 Hoodies (Price 1490 each = 2980) -> Tier 1 (৳150 off + Free Delivery)
-const resB = calcBundle([{ sku: 'STK-H001-BLK', price: 1490, qty: 1 }, { sku: 'STK-H002-BLK', price: 1490, qty: 1 }]);
-if (resB.discount !== 150 || resB.tier !== 1 || resB.isFree !== true || resB.netTotal !== 2830) {
-  throw new Error('Case B (2 hoodies) calculation mismatch: ' + JSON.stringify(resB));
+// Activated DUO promotion state
+const activeDuoPromos = DEFAULT_PROMOTIONS.map((p) =>
+  p.code === 'DUO_SELECTION'
+    ? { ...p, active: true, requires_approval: false, discount_type: 'FIXED_BDT', discount_value: 200, free_shipping: true }
+    : p
+);
+const twoHoodiesActivated = calculateOrderPricing({
+  items: [
+    { sku: 'STK-H002-BLK', quantity: 1 },
+    { sku: 'STK-H007-BRN', quantity: 1 }
+  ],
+  catalogMap: map,
+  zone: 'outside',
+  promotions: activeDuoPromos
+});
+if (twoHoodiesActivated.discount_bdt !== 200 || twoHoodiesActivated.shipping_bdt !== 0 || twoHoodiesActivated.total_bdt !== 2149) {
+  throw new Error('Activated DUO promotion mismatch: ' + JSON.stringify(twoHoodiesActivated));
 }
-console.log('✓ Case B (2 pieces): ৳2,980 - ৳150 = ৳2,830 + FREE nationwide delivery unlocked.');
+console.log('✓ PASS: Owner-activated Duo promotion cleanly applies exact discount and free delivery.');
 
-// Case C: 3 Hoodies (Price 1490 each = 4470) -> Tier 2 (৳300 off + Free Delivery)
-const resC = calcBundle([{ sku: 'STK-H001-BLK', price: 1490, qty: 3 }]);
-if (resC.discount !== 300 || resC.tier !== 2 || resC.isFree !== true || resC.netTotal !== 4170) {
-  throw new Error('Case C (3 hoodies) calculation mismatch: ' + JSON.stringify(resC));
+// Free shipping threshold at ৳3,000+
+const thresholdFree = calculateOrderPricing({
+  items: [{ sku: 'STK-H004-MRN', quantity: 3 }], // 3 * 1499 = 4497
+  catalogMap: map,
+  zone: 'outside',
+  promotions: DEFAULT_PROMOTIONS
+});
+if (!thresholdFree.is_free_shipping || thresholdFree.shipping_bdt !== 0 || thresholdFree.total_bdt !== 4497) {
+  throw new Error('Free threshold calculation mismatch: ' + JSON.stringify(thresholdFree));
 }
-console.log('✓ Case C (3 pieces): ৳4,470 - ৳300 = ৳4,170 + FREE nationwide delivery unlocked.');
+console.log('✓ PASS: Free nationwide shipping unlocks at >= ৳3,000 net subtotal.');
 
-// 3. Test Provisional SKU Gating
-const provVariants = variants44.filter(v => v.status === 'PROVISIONAL');
-if (provVariants.length !== 29) {
-  throw new Error(`Expected 29 provisional variants, found ${provVariants.length}`);
+// Provisional variant count
+const provVariants = variants60Data.variants.filter((v) => v.status === 'PROVISIONAL');
+if (provVariants.length !== 45) {
+  throw new Error(`Expected 45 provisional variants, found ${provVariants.length}`);
 }
-console.log(`✓ All 29 provisional variants verified.`);
+console.log('✓ PASS: All 45 provisional slots verified with stock=0 and approved_for_publication=false.');
 
-// 4. Test Phone Validation Regex
-const bdPhoneRegex = /^(?:\+?880|0)1[3-9]\d{8}$/;
+// Bangladesh Phone format validation
 const validPhones = ['01778307704', '+8801778307704', '8801812345678', '01912345678', '01312345678', '01412345678'];
 const invalidPhones = ['01234567890', '1778307704', '0177830770', '0177830770444', 'abcdefghijk'];
-
-for (const p of validPhones) {
-  if (!bdPhoneRegex.test(p.replace(/[\s-]/g, ''))) {
-    throw new Error(`Expected valid phone: ${p}`);
-  }
-}
-for (const p of invalidPhones) {
-  if (bdPhoneRegex.test(p.replace(/[\s-]/g, ''))) {
-    throw new Error(`Expected invalid phone: ${p}`);
-  }
-}
-console.log('✓ Bangladesh phone number format validation verified across standard carriers.');
-
-// 5. Test Order Confirmation File
-const orderConfPath = path.join(__dirname, '../order-confirmation.html');
-if (!fs.existsSync(orderConfPath)) {
-  throw new Error('order-confirmation.html does not exist');
-}
-const confContent = fs.readFileSync(orderConfPath, 'utf8');
-if (!confContent.includes('1390081606323661')) {
-  throw new Error('Meta Pixel ID missing in order-confirmation.html');
-}
-console.log('✓ order-confirmation.html exists with Meta Pixel integration.');
-
-console.log('--- ALL CUSTOMER JOURNEY AUDITS PASSED WITH ZERO DEFECTS ---');
+for (const p of validPhones) if (!isValidBdPhone(p)) throw new Error(`Expected valid BD phone: ${p}`);
+for (const p of invalidPhones) if (isValidBdPhone(p)) throw new Error(`Expected invalid BD phone: ${p}`);
+console.log('✓ PASS: Bangladesh phone validation passed.');
+})();

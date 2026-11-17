@@ -23,18 +23,21 @@ Create `.env` (or set in Vercel Project Settings > Environment Variables):
 
 # Supabase Credentials (from Supabase Project Settings > API)
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+SUPABASE_ANON_KEY=<set-in-vercel-env>
+SUPABASE_SERVICE_ROLE_KEY=<set-in-vercel-env-server-only>
 
 # Meta Pixel & Conversions API (CAPI)
 META_PIXEL_ID=1390081606323661
-META_ACCESS_TOKEN=EAAMeeTDHXlcBTNf2tyMplwmR5qLvKB5ZAtoihPXBa4Maq2mY375fpZCL2AjJ7LlZBJ2WqIDAfmmp9Hi5jZC8pB0sghkcrqZBZA3X7J6Am9xfAsUcO29XhZA2UEUMvKmMz66q7gIoi3mddfEf30wnpJGZBuNFVtswE47XBxiPRzeQdSIysnRBI1Ibo5XcZA51jWQZDZD
-META_TEST_EVENT_CODE=TEST30949
+META_DATASET_ID=1390081606323661
+META_ACCESS_TOKEN=<set-rotated-meta-system-user-token-in-vercel-env>
+META_TEST_EVENT_CODE=<optional-test-code>
 
 # Store Commercial Operation Controls
-STARKIT_STORE_MODE=commercial # 'preview' or 'commercial'
-STARKIT_ORDERS_ENABLED=true   # master killswitch for online orders
-ADMIN_SECRET_KEY=starkit-secure-admin-pass-2026
+STARKIT_STORE_MODE=preview        # 'preview' or 'public' (keep preview until owner sign-off)
+STARKIT_ORDERS_ENABLED=false      # 'true' only after legal, stock, and pricing approval
+STARKIT_ADMIN_API_KEY=<generate-32plus-char-cryptographic-secret>
+STARKIT_MEDIA_BUCKET=starkit-media
+STARKIT_PUBLIC_URL=https://your-domain.vercel.app
 ```
 
 ---

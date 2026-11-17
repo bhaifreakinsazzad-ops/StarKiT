@@ -403,45 +403,49 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   }
   document.addEventListener('visibilitychange', onVisibilityChange);
 
-  // WebGL2 Sync-Fence Pacer for Software Rasterizers
+  // WebGL2 Sync-Fence Pacer for Software Rasterizers (prevents SwiftShader CPU starvation)
   const glCtx = isSoftwareGl ? renderer.getContext() : null;
-  function scheduleNextFrame(cb) {
+  let timerId = 0;
+  let rafId = 0;
+  let disposed = false;
+
+  function afterDraw(cb) {
+    if (disposed) return;
     if (glCtx && typeof glCtx.fenceSync === 'function') {
-      const fence = glCtx.fenceSync(glCtx.SYNC_GPU_COMMANDS_COMPLETE, 0);
+      const sync = glCtx.fenceSync(glCtx.SYNC_GPU_COMMANDS_COMPLETE, 0);
       glCtx.flush();
       const poll = () => {
-        if (disposed) return;
-        const status = glCtx.clientWaitSync(fence, 0, 0);
-        if (status === glCtx.WAIT_FAILED) {
-          glCtx.deleteSync(fence);
-          rafId = requestAnimationFrame(cb);
+        if (disposed) {
+          if (sync) glCtx.deleteSync(sync);
           return;
         }
-        if (status === glCtx.TIMEOUT_EXPIRED) {
-          rafId = requestAnimationFrame(poll);
-          return;
+        const status = sync ? glCtx.getSyncParameter(sync, glCtx.SYNC_STATUS) : glCtx.SIGNALED;
+        if (status === glCtx.UNSIGNALED) {
+          timerId = window.setTimeout(poll, 5);
+        } else {
+          if (sync) glCtx.deleteSync(sync);
+          timerId = window.setTimeout(cb, 80);
         }
-        glCtx.deleteSync(fence);
-        rafId = requestAnimationFrame(cb);
       };
-      rafId = requestAnimationFrame(poll);
+      timerId = window.setTimeout(poll, 5);
     } else {
-      rafId = requestAnimationFrame(cb);
+      timerId = window.setTimeout(cb, 80);
     }
   }
 
   // 7. Zero-Allocation Damped Kinematic Loop
-  let disposed = false;
-  let rafId = 0;
   let lastTime = performance.now();
   let elapsed = 0;
   let dampedRotX = 0;
   let dampedRotY = 0;
   let dampedScroll = 0;
   let spinBoost = 0;
+  const _targetAccent = new THREE.Color(0x5b1a24);
+  const _currentAccent = new THREE.Color(0x5b1a24);
 
-  function tick(now) {
+  function tick() {
     if (disposed) return;
+    const now = performance.now();
     const rawDelta = (now - lastTime) * 0.001;
     lastTime = now;
     const delta = Math.min(Math.max(rawDelta, 0.001), 0.05);
@@ -454,6 +458,10 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
         dampedScroll = THREE.MathUtils.damp(dampedScroll, _dampTarget.scrollY, 5.0, delta);
         spinBoost = THREE.MathUtils.damp(spinBoost, _dampTarget.impulse, 3.8, delta);
         _dampTarget.impulse = THREE.MathUtils.damp(_dampTarget.impulse, 0, 3.8, delta);
+
+        _currentAccent.lerp(_targetAccent, 1 - Math.exp(-4.0 * delta));
+        rimWine.color.copy(_currentAccent);
+        ringMat2.color.copy(_currentAccent);
 
         assemblage.rotation.y = elapsed * 0.24 + dampedRotY + spinBoost;
         assemblage.rotation.x = Math.sin(elapsed * 0.26) * 0.14 + dampedRotX - dampedScroll * 0.35;
@@ -477,7 +485,11 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
     }
 
     if (reducedMotion) return;
-    scheduleNextFrame(tick);
+    if (isSoftwareGl) {
+      afterDraw(tick);
+    } else {
+      rafId = requestAnimationFrame(tick);
+    }
   }
 
   if (reducedMotion) {
@@ -490,9 +502,21 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
     pulse(direction = 1) {
       _dampTarget.impulse += (Number(direction) >= 0 ? 1 : -1) * 0.55;
     },
+    setAccentColor(hex) {
+      if (!hex) return;
+      try {
+        _targetAccent.set(hex);
+        if (reducedMotion) {
+          rimWine.color.copy(_targetAccent);
+          ringMat2.color.copy(_targetAccent);
+          renderer.render(scene, camera);
+        }
+      } catch {}
+    },
     destroy() {
       disposed = true;
       cancelAnimationFrame(rafId);
+      clearTimeout(timerId);
       if (observer) observer.disconnect();
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('touchmove', onPointerMove);
