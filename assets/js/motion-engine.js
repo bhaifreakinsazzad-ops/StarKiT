@@ -6,15 +6,211 @@
  */
 import { animate, createTimeline, stagger, createSpring, utils } from './vendor/anime.esm.js';
 
-const prefersReduced = () =>
-  typeof window !== 'undefined' &&
-  typeof window.matchMedia === 'function' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export function shouldReduceMotion(win = typeof window !== 'undefined' ? window : null) {
+  return Boolean(
+    win &&
+      typeof win.matchMedia === 'function' &&
+      win.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
+const prefersReduced = () => shouldReduceMotion();
 
 const isFinePointer = () =>
   typeof window !== 'undefined' &&
   typeof window.matchMedia === 'function' &&
   window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+export function collectShowroomEntranceTargets(root = typeof document !== 'undefined' ? document : null) {
+  if (!root || typeof root.querySelector !== 'function') {
+    return {
+      showroom: null,
+      introItems: [],
+      stage: null,
+      stageTabs: [],
+      panel: null,
+      wardrobeHead: null,
+      wardrobeItems: [],
+      statCells: []
+    };
+  }
+  const showroom = root.querySelector('.showroom');
+  const introContainer = root.querySelector('.showroom-intro, .hero-copy');
+  const introItems = introContainer ? Array.from(introContainer.children || []) : [];
+  const stage = root.querySelector('#showroomStage') || root.querySelector('#heroPicture');
+  const stageTabs = Array.from(root.querySelectorAll('.stage-view-tabs .stage-view-tab'));
+  const panel = root.querySelector('#floatingPurchasePanel');
+  const wardrobeHead = root.querySelector('.wardrobe-head');
+  const wardrobeItems = Array.from(root.querySelectorAll('#wardrobeRail .wardrobe-item'));
+  const statCells = Array.from(root.querySelectorAll('.stats-strip .stat-cell'));
+  return {
+    showroom,
+    introItems,
+    stage,
+    stageTabs,
+    panel,
+    wardrobeHead,
+    wardrobeItems,
+    statCells
+  };
+}
+
+let activeShowroomTimeline = null;
+
+function clearInlineMotionStyles(nodes) {
+  nodes.forEach((el) => {
+    if (!el || !el.style) return;
+    el.style.opacity = '';
+    el.style.transform = '';
+    el.style.willChange = '';
+  });
+}
+
+export function animateShowroomHeroEntrance(options = {}) {
+  const root = options.root || (typeof document !== 'undefined' ? document : null);
+  const win = options.win || (typeof window !== 'undefined' ? window : null);
+  const targets = collectShowroomEntranceTargets(root);
+  const allNodes = [
+    ...targets.introItems,
+    targets.stage,
+    ...targets.stageTabs,
+    targets.panel,
+    targets.wardrobeHead,
+    ...targets.wardrobeItems,
+    ...targets.statCells
+  ].filter(Boolean);
+
+  if (!allNodes.length) {
+    return { mode: 'empty', timeline: null };
+  }
+
+  const reduced = shouldReduceMotion(win);
+  if (reduced) {
+    if (activeShowroomTimeline && typeof activeShowroomTimeline.pause === 'function') {
+      activeShowroomTimeline.pause();
+      activeShowroomTimeline = null;
+    }
+    utils.remove(allNodes);
+    clearInlineMotionStyles(allNodes);
+    if (targets.showroom && typeof targets.showroom.setAttribute === 'function') {
+      targets.showroom.setAttribute('data-entrance', 'reduced');
+    }
+    return { mode: 'reduced', timeline: null };
+  }
+
+  if (targets.showroom && typeof targets.showroom.setAttribute === 'function') {
+    targets.showroom.setAttribute('data-entrance', 'animating');
+  }
+
+  utils.remove(allNodes);
+  allNodes.forEach((el) => {
+    if (el?.style) el.style.willChange = 'transform, opacity';
+  });
+
+  const tl = createTimeline({
+    defaults: { ease: 'outExpo', duration: 640 },
+    onComplete: () => {
+      clearInlineMotionStyles(allNodes);
+      if (targets.showroom && typeof targets.showroom.setAttribute === 'function') {
+        targets.showroom.setAttribute('data-entrance', 'complete');
+      }
+      activeShowroomTimeline = null;
+    }
+  });
+
+  if (targets.introItems.length) {
+    tl.add(
+      targets.introItems,
+      {
+        opacity: [0, 1],
+        y: [18, 0],
+        delay: stagger(55, { start: 30 }),
+        duration: 620
+      },
+      0
+    );
+  }
+
+  if (targets.stage) {
+    tl.add(
+      targets.stage,
+      {
+        opacity: [0, 1],
+        y: [20, 0],
+        scale: [0.975, 1],
+        duration: 720
+      },
+      100
+    );
+  }
+
+  if (targets.stageTabs.length) {
+    tl.add(
+      targets.stageTabs,
+      {
+        opacity: [0, 1],
+        y: [10, 0],
+        delay: stagger(40),
+        duration: 460
+      },
+      260
+    );
+  }
+
+  if (targets.panel) {
+    tl.add(
+      targets.panel,
+      {
+        opacity: [0, 1],
+        x: [22, 0],
+        y: [12, 0],
+        duration: 680
+      },
+      180
+    );
+  }
+
+  if (targets.wardrobeHead) {
+    tl.add(
+      targets.wardrobeHead,
+      {
+        opacity: [0, 1],
+        y: [12, 0],
+        duration: 480
+      },
+      240
+    );
+  }
+
+  if (targets.wardrobeItems.length) {
+    tl.add(
+      targets.wardrobeItems,
+      {
+        opacity: [0, 1],
+        y: [16, 0],
+        delay: stagger(32),
+        duration: 520
+      },
+      280
+    );
+  }
+
+  if (targets.statCells.length) {
+    tl.add(
+      targets.statCells,
+      {
+        opacity: [0, 1],
+        y: [14, 0],
+        delay: stagger(50),
+        duration: 500
+      },
+      340
+    );
+  }
+
+  activeShowroomTimeline = tl;
+  return { mode: 'animated', timeline: tl };
+}
 
 let toastHideTimer = null;
 
@@ -170,39 +366,18 @@ export function initMotionEngine() {
   window.addEventListener('scroll', scheduleScrollProgress, { passive: true });
   paintScrollProgress();
 
-  // 2. ORCHESTRATED KINETIC HERO ENTRANCE TIMELINE (Anime.js v4)
-  const heroCopy = document.querySelector('.showroom-intro, .hero-copy');
-  if (heroCopy && !reduced) {
-    const logoStamp = heroCopy.querySelector('.hero-logo-stamp');
-    const eyebrow = heroCopy.querySelector('.eyebrow');
-    const h1 = heroCopy.querySelector('h1');
-    const copyP = heroCopy.querySelector('p');
-    const actions = heroCopy.querySelector('.hero-bottom');
-    const heroPic = document.querySelector('#heroPicture');
-    const statCells = document.querySelectorAll('.stats-strip .stat-cell');
+  // 2. ORCHESTRATED STAGGERED SHOWROOM HERO ENTRANCE TIMELINE (Anime.js v4)
+  animateShowroomHeroEntrance({ root: document, win: window });
 
-    const tl = createTimeline({
-      defaults: { ease: 'outExpo', duration: 680 }
-    });
-
-    if (logoStamp) tl.add(logoStamp, { opacity: [0, 1], y: [14, 0] }, 20);
-    if (eyebrow) tl.add(eyebrow, { opacity: [0, 1], y: [14, 0] }, 60);
-    if (h1) tl.add(h1, { opacity: [0, 1], y: [24, 0], duration: 760 }, 110);
-    if (copyP) tl.add(copyP, { opacity: [0, 1], y: [16, 0] }, 210);
-    if (actions) tl.add(actions, { opacity: [0, 1], y: [14, 0] }, 280);
-    if (heroPic) tl.add(heroPic, { opacity: [0, 1], scale: [0.97, 1], duration: 720 }, 150);
-    if (statCells.length) {
-      tl.add(
-        statCells,
-        {
-          opacity: [0, 1],
-          y: [12, 0],
-          delay: stagger(55),
-          duration: 540,
-          onComplete: () => statCells.forEach((el) => (el.style.transform = ''))
-        },
-        320
-      );
+  if (typeof window.matchMedia === 'function') {
+    const rmQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (typeof rmQuery.addEventListener === 'function' && !window.__starkitReducedListenerBound) {
+      window.__starkitReducedListenerBound = true;
+      rmQuery.addEventListener('change', (ev) => {
+        if (ev.matches) {
+          animateShowroomHeroEntrance({ root: document, win: window });
+        }
+      });
     }
   }
 
