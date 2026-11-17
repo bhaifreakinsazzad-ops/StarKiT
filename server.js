@@ -40,7 +40,7 @@ const BLOCKED_EXACT = new Set([
   '/build_catalog.py',
   '/generate_site.py'
 ]);
-const BLOCKED_EXT = /\.(py|sql|cjs|md|csv|pdf|env|lock)$/i;
+const BLOCKED_EXT = /\.(py|sql|cjs|md|csv|pdf|env|lock|bak)$/i;
 
 app.use((req, res, next) => {
   const reqPath = (req.path || '/').toLowerCase();
@@ -53,6 +53,14 @@ app.use((req, res, next) => {
     return res.status(404).type('html').send(NOT_FOUND_HTML);
   }
   next();
+});
+
+// Serve vendored Firebase ESM bundles safely without exposing node_modules
+app.get('/vendor/firebase/firebase-app.js', (req, res) => {
+  res.type('application/javascript').sendFile(path.join(__dirname, 'node_modules/firebase/firebase-app.js'));
+});
+app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
+  res.type('application/javascript').sendFile(path.join(__dirname, 'node_modules/firebase/firebase-auth.js'));
 });
 
 // Serve static files (HTML, CSS, JS, assets)
@@ -80,19 +88,22 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#170000">
+  <meta name="theme-color" content="#0b090a">
   <title>404 — Page Not Found | StarkiT</title>
-  <link rel="icon" type="image/png" href="/assets/images/starkit-logo-transparent.png">
+  <link rel="icon" type="image/png" href="/assets/images/starkit-favicon.png">
   <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
-<body style="background:#fbf9f5;color:#170000;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;">
-  <main style="max-width:520px;">
-    <p class="eyebrow" style="color:#be555c;margin-bottom:10px;">STARKIT · ARCHIVE</p>
-    <h1 style="font-size:clamp(3rem,10vw,5rem);font-weight:900;line-height:0.95;margin:0 0 14px;">404</h1>
-    <p style="font-size:1.05rem;color:#554;line-height:1.6;margin:0 0 28px;">This page could not be found in the StarkiT archive. Explore our live Drop 01 hoodies and Fariza's Territory artisan pieces.</p>
+<body style="background:#f6f4f0;color:#0b090a;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;">
+  <main style="max-width:480px;">
+    <a href="/index.html" style="display:inline-block;margin-bottom:28px;">
+      <img src="/assets/images/starkit-logo-dark.png" alt="StarkiT" style="height:44px;width:auto;margin:0 auto;">
+    </a>
+    <p class="eyebrow" style="justify-content:center;color:#942b35;margin-bottom:10px;">StarkiT Archive</p>
+    <h1 style="font-size:clamp(3.2rem,9vw,4.8rem);font-weight:800;line-height:0.95;margin:0 0 14px;font-variant-numeric:tabular-nums;">404</h1>
+    <p style="font-size:1rem;color:#5c5654;line-height:1.65;margin:0 0 28px;">This page could not be found in the StarkiT archive. Return to the collection to explore Drop 01 hoodies and Fariza's Territory artisan pieces.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/shop.html" class="btn">EXPLORE COLLECTION ↗</a>
-      <a href="/index.html" class="btn btn-outline">BACK TO HOME</a>
+      <a href="/shop.html" class="btn">Explore Collection</a>
+      <a href="/index.html" class="btn btn-outline">Back to Home</a>
     </div>
   </main>
 </body>

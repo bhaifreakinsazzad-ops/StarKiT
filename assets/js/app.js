@@ -252,24 +252,24 @@ import {
       isUnlocked = true;
       progressPct = 100;
       if (bundleTier === 2) {
-        meterText = '🔥 SUPER BUNDLE UNLOCKED · ৳300 OFF + FREE DELIVERY!';
-        badgeText = 'TIER 2 ACTIVE';
+        meterText = 'Super Bundle unlocked · ৳300 off + Free delivery';
+        badgeText = 'TIER 2';
       } else if (bundleTier === 1) {
-        meterText = '🎉 BUNDLE DISCOUNT UNLOCKED · ৳150 OFF + FREE DELIVERY!';
-        badgeText = 'TIER 1 ACTIVE';
+        meterText = 'Bundle discount unlocked · ৳150 off + Free delivery';
+        badgeText = 'TIER 1';
       } else {
-        meterText = '🎉 FREE NATIONWIDE DELIVERY UNLOCKED!';
-        badgeText = 'FREE SHIPPING';
+        meterText = 'Free nationwide delivery unlocked';
+        badgeText = 'FREE DELIVERY';
       }
     } else {
       progressPct = Math.min(100, Math.round((subtotal / freeThreshold) * 100));
       const needed = freeThreshold - subtotal;
       if (hoodieCount === 1) {
-        meterText = `Add 1 more hoodie for ৳150 OFF + Free Delivery! (or ৳${needed.toLocaleString()} more)`;
-        badgeText = '1/2 TO BUNDLE';
+        meterText = `Add 1 more hoodie for ৳150 off + free delivery (or ৳${needed.toLocaleString()} more)`;
+        badgeText = '1/2 BUNDLE';
       } else {
-        meterText = `Add ৳${needed.toLocaleString()} more for FREE Delivery nationwide!`;
-        badgeText = `${progressPct}% UNLOCKED`;
+        meterText = `Add ৳${needed.toLocaleString()} more for free nationwide delivery`;
+        badgeText = `${progressPct}%`;
       }
     }
 
@@ -307,7 +307,7 @@ import {
         if (!o) return '';
         const { p, v } = o;
         const im = first(p, v);
-        return `<div class="cart-line"><img src="${asset(im?.url)}" alt="${safe(p.name)}"><div><h4>${safe(p.name)}</h4><div class="small">${safe(v.color)} · ${safe(x.size)} · ${safe(v.sku)}</div><b>${price(p.price_bdt * x.qty)}</b><div class="qty"><button type="button" data-qty="${i},-1" aria-label="Decrease quantity">−</button><span>${x.qty}</span><button type="button" data-qty="${i},1" aria-label="Increase quantity">+</button><button type="button" class="remove" data-remove="${i}">Remove</button></div></div></div>`;
+        return `<div class="cart-line"><img src="${asset(im?.url)}" alt="${safe(p.name)}" referrerpolicy="no-referrer"><div><h4>${safe(p.name)}</h4><div class="small">${safe(v.color)} · ${safe(x.size)} · ${safe(v.sku)}</div><b>${price(p.price_bdt * x.qty)}</b><div class="qty"><button type="button" data-qty="${i},-1" aria-label="Decrease quantity">−</button><span>${x.qty}</span><button type="button" data-qty="${i},1" aria-label="Increase quantity">+</button><button type="button" class="remove" data-remove="${i}">Remove</button></div></div></div>`;
       })
       .join('');
 
@@ -357,17 +357,17 @@ import {
     const f = first(p, v);
     const b = back(p, v);
     const isHoodie = p.id.startsWith('STK-');
-    const badgeLabel = isHoodie ? safe(p.collection) : `FARIZA'S TERRITORY · ${safe(p.collection)}`;
+    const kickerText = isHoodie ? safe(p.collection) : `Fariza's Territory · ${safe(p.collection)}`;
 
     const mediaHtml = isHoodie
-      ? `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)} front"><img class="back" src="${asset(b?.url)}" loading="lazy" alt="${safe(p.name)} back artwork"></a>`
-      : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front single-view" src="${asset(f?.url)}" loading="lazy" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
+      ? `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front" src="${asset(f?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)} front"><img class="back" src="${asset(b?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)} back artwork"></a>`
+      : `<a href="${ROOT}products/${p.slug}.html" aria-label="View ${safe(p.name)}"><img class="front single-view" src="${asset(f?.url)}" loading="lazy" referrerpolicy="no-referrer" alt="${safe(p.name)}" style="object-fit:cover;object-position:center;"></a>`;
 
     const swatchesHtml = isHoodie
       ? `<div class="swatches">${p.variants.map((vr) => `<span class="swatch" title="${safe(vr.color)}${vr.status === 'PROVISIONAL' ? ' (In Development)' : ''}" style="background:${vr.hex}"></span>`).join('')}</div>`
-      : `<div class="swatches"><span class="badge-tag">HANDCRAFTED · DHAKA</span></div>`;
+      : `<div class="swatches"><span class="craft-note">Handcrafted in Dhaka</span></div>`;
 
-    return `<article class="card reveal" data-product="${p.id}" data-tilt><div class="card-media">${mediaHtml}<span class="toplabel">${badgeLabel}</span><button type="button" class="fav ${favs.includes(p.id) ? 'active' : ''}" data-fav="${p.id}" aria-label="Save ${safe(p.name)} to favorites" aria-pressed="${String(favs.includes(p.id))}">${favs.includes(p.id) ? '♥' : '♡'}</button><div class="card-overlay"><a href="${ROOT}products/${p.slug}.html">${isHoodie ? 'EXPLORE DESIGN ↗' : 'VIEW ARTISAN PIECE ↗'}</a></div></div><div class="card-meta"><div><a href="${ROOT}products/${p.slug}.html">${safe(p.name)}</a>${p.bengali_name ? `<span class="card-bn" style="display:block;font-size:0.8rem;color:#8f7f7d;font-family:'Hind Siliguri',sans-serif;">${safe(p.bengali_name)}</span>` : ''}<span class="card-collection">${safe(p.collection)}</span></div><div class="price">${price(p.price_bdt)}</div></div>${swatchesHtml}<a class="card-cta-mobile" href="${ROOT}products/${p.slug}.html">VIEW PRODUCT ↗</a></article>`;
+    return `<article class="card reveal" data-product="${p.id}"><div class="card-media">${mediaHtml}<button type="button" class="fav ${favs.includes(p.id) ? 'active' : ''}" data-fav="${p.id}" aria-label="Save ${safe(p.name)} to favorites" aria-pressed="${String(favs.includes(p.id))}">${favs.includes(p.id) ? '♥' : '♡'}</button><div class="card-overlay"><a href="${ROOT}products/${p.slug}.html">${isHoodie ? 'Explore Design →' : 'View Piece →'}</a></div></div><div class="card-meta"><div><span class="card-kicker">${kickerText}</span><a href="${ROOT}products/${p.slug}.html">${safe(p.name)}</a>${p.bengali_name ? `<span class="card-bn">${safe(p.bengali_name)}</span>` : ''}</div><div class="price">${price(p.price_bdt)}</div></div>${swatchesHtml}<a class="card-cta-mobile" href="${ROOT}products/${p.slug}.html">View Piece →</a></article>`;
   }
 
   function reveal() {
@@ -478,7 +478,7 @@ import {
       const img = v.gallery.find((g) => g.view === 'reference_composite') || first(p, v);
 
       if (initial) {
-        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" alt="${safe(p.name)} product artwork"></a>`;
+        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} product artwork"></a>`;
         const n = $('#heroName');
         if (n) n.textContent = p.name;
         const count = $('#heroSlide');
@@ -491,7 +491,7 @@ import {
 
       picture.classList.add('is-entering');
       window.setTimeout(() => {
-        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" alt="${safe(p.name)} product artwork"></a>`;
+        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} product artwork"></a>`;
         const n = $('#heroName');
         if (n) n.textContent = p.name;
         const count = $('#heroSlide');
@@ -562,7 +562,7 @@ import {
           v.gallery.find((g) => g.view === 'reference_composite') ||
           v.gallery.find((g) => g.view === 'front') ||
           v.gallery[0];
-        return `<article class="look-tile"><span class="look-index">LOOK ${String(i + 1).padStart(2, '0')}</span><div class="look-photo"><a href="${ROOT}products/${p.slug}.html"><img loading="lazy" src="${asset(im?.url)}" alt="${safe(p.name)}"></a></div><div class="look-meta"><div><small>${safe(p.collection)}</small><h3>${safe(p.name)}</h3></div><a href="${ROOT}products/${p.slug}.html">VIEW ↗</a></div></article>`;
+        return `<article class="look-tile"><div class="look-photo"><a href="${ROOT}products/${p.slug}.html"><img loading="lazy" referrerpolicy="no-referrer" src="${asset(im?.url)}" alt="${safe(p.name)}"></a></div><div class="look-meta"><div><small>Look ${String(i + 1).padStart(2, '0')} · ${safe(p.collection)}</small><h3>${safe(p.name)}</h3></div><a href="${ROOT}products/${p.slug}.html">View →</a></div></article>`;
       })
       .join('');
 
@@ -610,17 +610,17 @@ import {
         whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
           `Hello StarkiT! I am interested in the upcoming "${p.name}" in ${v.color} (${v.sku}). Please notify me when pre-orders open!`
         )}`;
-        whatsappBtn.textContent = `💬 INQUIRE ABOUT ${v.color.toUpperCase()} PRE-RELEASE`;
-        whatsappBtn.style.borderColor = '#c5a880';
-        whatsappBtn.style.color = '#c5a880';
+        whatsappBtn.textContent = `Inquire on WhatsApp · ${v.color}`;
+        whatsappBtn.style.borderColor = '#bfa177';
+        whatsappBtn.style.color = '#645e5b';
       } else {
         const sizeText = selectedSize ? ` (Size: ${selectedSize}, Qty: ${selectedQty})` : ` (Qty: ${selectedQty})`;
         whatsappBtn.href = `https://wa.me/8801778307704?text=${encodeURIComponent(
           `Hello StarkiT! I would like to order "${p.name}" in ${v.color}${sizeText} (SKU: ${v.sku}, Price: ৳${(p.price_bdt * selectedQty).toLocaleString()}) via Cash on Delivery.`
         )}`;
-        whatsappBtn.textContent = '💬 ORDER VIA WHATSAPP (01778307704)';
-        whatsappBtn.style.borderColor = '#25D366';
-        whatsappBtn.style.color = '#128C7E';
+        whatsappBtn.textContent = 'Order via WhatsApp (01778307704)';
+        whatsappBtn.style.borderColor = '#15803d';
+        whatsappBtn.style.color = '#15803d';
       }
     }
 
@@ -723,13 +723,13 @@ import {
 
       curr = v.gallery.find((g) => g.view === view) || v.gallery[0];
       if (!curr) return;
-      gallery.innerHTML = `<img src="${asset(curr.url)}" alt="${safe(p.name)} ${safe(curr.view.replace(/_/g, ' '))}"><span class="view-tag">${p.id.startsWith('STK-') ? safe(curr.view.replace(/_/g, ' ')) : 'HANDCRAFTED IN DHAKA'}</span>`;
+      gallery.innerHTML = `<img src="${asset(curr.url)}" referrerpolicy="no-referrer" alt="${safe(p.name)} ${safe(curr.view.replace(/_/g, ' '))}"><span class="view-tag">${p.id.startsWith('STK-') ? safe(curr.view.replace(/_/g, ' ')) : 'Handcrafted in Dhaka'}</span>`;
       animateGallerySwap(gallery);
       if (thumbs) {
         thumbs.innerHTML = v.gallery
           .map(
             (g) =>
-              `<button class="thumb ${g.view === curr.view ? 'active' : ''}" type="button" data-gallery="${safe(g.view)}" aria-label="Show ${safe(g.view)}" aria-pressed="${g.view === curr.view}"><img loading="lazy" alt="" src="${asset(g.url)}"></button>`
+              `<button class="thumb ${g.view === curr.view ? 'active' : ''}" type="button" data-gallery="${safe(g.view)}" aria-label="Show ${safe(g.view)}" aria-pressed="${g.view === curr.view}"><img loading="lazy" referrerpolicy="no-referrer" alt="" src="${asset(g.url)}"></button>`
           )
           .join('');
       }
@@ -745,7 +745,7 @@ import {
         colors.innerHTML = p.variants
           .map(
             (x) =>
-              `<button class="color-chip ${x.sku === sku ? 'selected' : ''}" type="button" data-variant="${x.sku}" aria-pressed="${x.sku === sku}"><span class="color-dot" style="background:${x.hex}"></span>${safe(x.color)}${x.status === 'PROVISIONAL' ? ' <span style="font-size:0.68rem;opacity:0.75;font-style:italic;">(Dev)</span>' : ''}</button>`
+              `<button class="color-chip ${x.sku === sku ? 'selected' : ''}" type="button" data-variant="${x.sku}" aria-pressed="${x.sku === sku}"><span class="color-dot" style="background:${x.hex}"></span>${safe(x.color)}${x.status === 'PROVISIONAL' ? ' (In Dev)' : ''}</button>`
           )
           .join('');
       }
@@ -756,20 +756,20 @@ import {
       if (sizeWrapper) {
         if (v.status === 'PROVISIONAL') {
           sizeWrapper.innerHTML = `
-            <div class="notice" style="border-left:3px solid #be555c;background:rgba(68,22,27,0.3);padding:14px;border-radius:4px;">
-              <strong style="color:#e9b9b6;letter-spacing:0.08em;font-size:0.8rem;text-transform:uppercase;">Colorway In Development / Awaiting Approval</strong>
-              <p style="margin:6px 0 0;font-size:0.78rem;line-height:1.5;color:#ded3cc;">
-                This planned colorway slot (${safe(v.color)}) has not yet completed physical garment sample production. Measurement size charts and inventory remain paused until seller authorization.
+            <div class="notice">
+              <strong style="display:block;font-size:0.84rem;margin-bottom:4px;">Colorway in Development</strong>
+              <p style="margin:0;font-size:0.82rem;line-height:1.5;color:var(--mute);">
+                This planned colorway (${safe(v.color)}) is currently in sample production. Size specs and checkout will open upon final quality verification.
               </p>
             </div>
             <div class="vip-waitlist-box">
-              <div style="font-size:0.75rem;font-weight:800;color:#c5a880;letter-spacing:0.12em;text-transform:uppercase;">VIP EARLY ACCESS WAITLIST</div>
-              <p style="font-size:0.75rem;color:#ded3cc;margin:6px 0 0;line-height:1.5;">Enter your WhatsApp/Mobile number to get notified 24 hours before the ${safe(v.color)} colorway drops.</p>
+              <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Early Access Notification</div>
+              <p style="font-size:0.8rem;color:var(--mute);margin:4px 0 0;line-height:1.5;">Leave your mobile number to be notified before the ${safe(v.color)} colorway releases.</p>
               <form class="vip-waitlist-form" id="vipWaitlistForm">
                 <input type="tel" id="vipPhone" placeholder="01XXXXXXXXX" required>
-                <button type="submit">JOIN WAITLIST ↗</button>
+                <button type="submit">Notify Me</button>
               </form>
-              <div id="vipSuccessMsg" style="display:none;font-size:0.75rem;color:#22c55e;margin-top:8px;font-weight:700;">✓ You are on the VIP waitlist! We will notify you via WhatsApp on drop day.</div>
+              <div id="vipSuccessMsg" style="display:none;font-size:0.8rem;color:#15803d;margin-top:8px;font-weight:700;">Added to waitlist. We will contact you via WhatsApp on release.</div>
             </div>`;
 
           const vipForm = $('#vipWaitlistForm');
@@ -784,7 +784,7 @@ import {
               } catch (err) {}
               $('#vipSuccessMsg').style.display = 'block';
               vipForm.style.display = 'none';
-              message(`Added ${ph} to VIP drop list for ${v.color}!`, 'success');
+              message(`Added ${ph} to early access list for ${v.color}.`, 'success');
               trackMeta('Lead', {
                 content_name: p.name,
                 content_category: p.collection,
@@ -797,11 +797,11 @@ import {
           if (isSingle) selectedSize = v.available_sizes[0];
           const isHoodie = p.id.startsWith('STK-');
           const fitLinkHtml = isHoodie
-            ? `<button type="button" class="fit-trigger-link" id="openFitModalBtn">📏 FIT FINDER &amp; SIZE CHART</button>`
+            ? `<button type="button" class="fit-trigger-link" id="openFitModalBtn">Fit Finder &amp; Size Guide</button>`
             : '';
           sizeWrapper.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <p class="smallcaps" style="margin:0;">${isSingle ? 'SIZE / SPECIFICATION' : 'AVAILABLE SIZES'}</p>
+              <p class="smallcaps" style="margin:0;">${isSingle ? 'Specification' : 'Select Size'}</p>
               ${fitLinkHtml}
             </div>
             <div class="variant-buttons">
@@ -828,19 +828,22 @@ import {
         modal.innerHTML = `
           <div class="fit-modal-card">
             <div class="fit-modal-head">
-              <div>
-                <h3 style="font-family:'Afacad Flux',sans-serif;font-weight:900;">STARKIT · FIT FINDER &amp; SIZE SPECIFICATIONS</h3>
-                <span style="font-size:0.7rem;letter-spacing:0.12em;color:#c5a880;text-transform:uppercase;">DHAKA STREETWEAR SIZING CALCULATOR</span>
+              <div style="display:flex;align-items:center;gap:14px;">
+                <img src="${asset('assets/images/starkit-logo-transparent.png')}" alt="StarkiT" style="height:26px;width:auto;">
+                <div>
+                  <h3>Fit Finder &amp; Size Guide</h3>
+                  <span style="font-size:0.72rem;color:#bfa177;">Heavyweight 330–350 GSM Fleece</span>
+                </div>
               </div>
-              <button type="button" id="closeFitModalBtn" style="background:transparent;border:0;color:#fff;font-size:1.8rem;cursor:pointer;line-height:1;">×</button>
+              <button type="button" id="closeFitModalBtn" style="background:transparent;border:0;color:#fff;font-size:1.6rem;cursor:pointer;line-height:1;">×</button>
             </div>
             <div class="fit-modal-body">
-              <h4 style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#5b1a24;margin-bottom:8px;">1. SMART SIZE CALCULATOR</h4>
-              <p style="font-size:0.82rem;color:#665;margin:0 0 12px;line-height:1.5;">Choose your height, body build, and desired styling drape to see your recommended size in our 330–350 GSM combed cotton fleece silhouette:</p>
+              <h4 style="font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;color:#8e2934;margin-bottom:6px;">Smart Size Calculator</h4>
+              <p style="font-size:0.84rem;color:#645e5b;margin:0 0 12px;line-height:1.5;">Select your height, build, and preferred drape for a tailored size recommendation:</p>
               <div class="fit-calc-controls">
                 <div>
-                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Height</label>
-                  <select id="fitHeight" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Height</label>
+                  <select id="fitHeight" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
                     <option value="160">Under 5'5" (Under 165 cm)</option>
                     <option value="168" selected>5'5" – 5'7" (165–172 cm)</option>
                     <option value="175">5'8" – 5'10" (173–179 cm)</option>
@@ -848,16 +851,16 @@ import {
                   </select>
                 </div>
                 <div>
-                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Body Build</label>
-                  <select id="fitBuild" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Body Build</label>
+                  <select id="fitBuild" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
                     <option value="slim">Slim / Lean</option>
                     <option value="regular" selected>Regular / Athletic</option>
                     <option value="broad">Broad / Heavy</option>
                   </select>
                 </div>
                 <div>
-                  <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;display:block;margin-bottom:4px;">Desired Drape</label>
-                  <select id="fitDrape" style="width:100%;padding:8px 10px;border:1px solid #d3c8c0;font-size:0.82rem;">
+                  <label style="font-size:0.72rem;font-weight:700;display:block;margin-bottom:4px;">Desired Drape</label>
+                  <select id="fitDrape" style="width:100%;padding:8px 10px;border:1px solid rgba(11,9,10,0.2);border-radius:4px;font-size:0.84rem;">
                     <option value="standard" selected>Standard Streetwear Fit</option>
                     <option value="oversized">Oversized Silhouette</option>
                   </select>
@@ -866,36 +869,35 @@ import {
 
               <div class="fit-calc-result" id="fitCalcResult">
                 <div>
-                  <div style="font-size:0.7rem;letter-spacing:0.14em;color:#c5a880;text-transform:uppercase;font-weight:800;">Recommended Size</div>
-                  <div id="fitRecSize" style="font-size:1.45rem;font-weight:900;letter-spacing:0.04em;">SIZE L (42" Chest × 28.5" Length)</div>
-                  <div style="font-size:0.75rem;color:#c8b6b7;">Heavyweight 330–350 GSM Combed Cotton Fleece</div>
+                  <div style="font-size:0.72rem;letter-spacing:0.08em;color:#bfa177;text-transform:uppercase;font-weight:700;">Recommended Size</div>
+                  <div id="fitRecSize" style="font-size:1.25rem;font-weight:800;">SIZE L (42" Chest × 28.5" Length)</div>
                 </div>
-                <button type="button" id="applyFitSizeBtn" class="btn btn-light" style="min-height:38px;padding:8px 16px;font-size:0.72rem;letter-spacing:0.1em;border-radius:3px;">APPLY SIZE L ↗</button>
+                <button type="button" id="applyFitSizeBtn" class="btn btn-light" style="min-height:36px;padding:8px 14px;font-size:0.74rem;">Apply Size L</button>
               </div>
 
-              <div style="margin-top:24px;">
-                <h4 style="font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:#5b1a24;margin-bottom:8px;">2. PHYSICAL MEASUREMENT SPECIFICATIONS (INCHES)</h4>
+              <div style="margin-top:22px;">
+                <h4 style="font-size:0.82rem;letter-spacing:0.06em;text-transform:uppercase;color:#8e2934;margin-bottom:8px;">Garment Measurements (Inches)</h4>
                 <table class="fit-table">
                   <thead>
                     <tr>
                       <th>Size</th>
-                      <th>Chest (Circumference)</th>
+                      <th>Chest</th>
                       <th>Body Length</th>
-                      <th>Sleeve Length</th>
-                      <th>Shoulder Width</th>
+                      <th>Sleeve</th>
+                      <th>Shoulder</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr><td><strong>M</strong></td><td>40 inches</td><td>27.5 inches</td><td>24.5 inches</td><td>19.0 inches</td></tr>
-                    <tr><td><strong>L</strong></td><td>42 inches</td><td>28.5 inches</td><td>25.5 inches</td><td>20.0 inches</td></tr>
-                    <tr><td><strong>XL</strong></td><td>44 inches</td><td>29.5 inches</td><td>26.5 inches</td><td>21.0 inches</td></tr>
-                    <tr><td><strong>XXL</strong></td><td>46 inches</td><td>30.5 inches</td><td>27.5 inches</td><td>22.0 inches</td></tr>
+                    <tr><td><strong>M</strong></td><td>40 in</td><td>27.5 in</td><td>24.5 in</td><td>19.0 in</td></tr>
+                    <tr><td><strong>L</strong></td><td>42 in</td><td>28.5 in</td><td>25.5 in</td><td>20.0 in</td></tr>
+                    <tr><td><strong>XL</strong></td><td>44 in</td><td>29.5 in</td><td>26.5 in</td><td>21.0 in</td></tr>
+                    <tr><td><strong>XXL</strong></td><td>46 in</td><td>30.5 in</td><td>27.5 in</td><td>22.0 in</td></tr>
                   </tbody>
                 </table>
               </div>
 
-              <div style="background:#f4eee9;border-left:4px solid #170000;padding:12px 16px;margin-top:16px;font-size:0.8rem;line-height:1.5;">
-                <strong>✓ 7-Day Easy Size Exchange:</strong> If your hoodie doesn't fit exactly the way you like, exchange it within 7 days anywhere in Bangladesh. Contact concierge via call or WhatsApp at <strong>01778307704</strong>.
+              <div class="notice" style="margin-top:16px;margin-bottom:0;">
+                <strong>7-Day Easy Exchange:</strong> Free size exchanges anywhere in Bangladesh within 7 days of delivery. Contact care at <strong>01778307704</strong>.
               </div>
             </div>
           </div>
@@ -961,14 +963,14 @@ import {
       stickyBar.className = 'sticky-mobile-bar';
       stickyBar.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
-          <img id="stickyThumb" src="" alt="" style="width:38px;height:46px;object-fit:contain;background:#2a0b10;border-radius:3px;flex-shrink:0;">
+          <img id="stickyThumb" src="" referrerpolicy="no-referrer" alt="" style="width:34px;height:40px;object-fit:contain;background:#ece8e1;border-radius:4px;flex-shrink:0;">
           <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            <div id="stickyTitle" style="font-weight:800;font-size:0.8rem;color:#fff;overflow:hidden;text-overflow:ellipsis;"></div>
-            <div id="stickyPrice" style="color:#c5a880;font-weight:800;font-size:0.82rem;"></div>
+            <div id="stickyTitle" style="font-weight:700;font-size:0.82rem;color:#fff;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div id="stickyPrice" style="color:#bfa177;font-weight:700;font-size:0.8rem;font-variant-numeric:tabular-nums;"></div>
           </div>
         </div>
-        <button id="stickyAddBtn" class="btn" style="min-height:38px;padding:6px 16px;font-size:0.72rem;letter-spacing:0.08em;background:#c5a880;color:#170000;border:0;font-weight:800;border-radius:3px;flex-shrink:0;">
-          ADD TO BAG
+        <button id="stickyAddBtn" class="btn btn-light" style="min-height:36px;padding:6px 14px;font-size:0.75rem;flex-shrink:0;">
+          Add to Bag
         </button>
       `;
       document.body.appendChild(stickyBar);
@@ -1300,64 +1302,64 @@ import {
     }
 
     container.innerHTML = `
-      <div style="background:#fff;border:1px solid #ded9d3;border-radius:8px;padding:clamp(24px, 4vw, 42px);box-shadow:0 12px 35px rgba(0,0,0,0.06);">
-        <div style="text-align:center;border-bottom:1px solid #eee;padding-bottom:24px;margin-bottom:24px;">
-          <div style="font-size:2.8rem;margin-bottom:8px;">🎉</div>
-          <span class="pill pill-dark" style="background:#15803d;margin-bottom:10px;">ORDER CONFIRMED · CASH ON DELIVERY</span>
-          <h1 style="font-size:clamp(2rem, 3.8vw, 2.8rem);font-weight:900;letter-spacing:-0.04em;margin:10px 0 6px;">THANK YOU, ${safe(order.customer_name).toUpperCase()}!</h1>
-          <p style="color:#776d6b;font-size:0.95rem;max-width:500px;margin:auto;line-height:1.5;">Your order is registered with StarkiT Dhaka HQ. Our delivery concierge will call or message to confirm dispatch.</p>
+      <div class="summary-panel" style="padding:clamp(24px, 4vw, 44px);">
+        <div style="text-align:center;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px;">
+          <img src="${asset('assets/images/starkit-logo-dark.png')}" alt="StarkiT" style="height:36px;width:auto;margin:0 auto 18px;">
+          <div class="eyebrow" style="justify-content:center;color:#15803d;margin-bottom:8px;">Order Confirmed · Cash on Delivery</div>
+          <h1 style="font-size:clamp(1.85rem, 3.6vw, 2.5rem);font-weight:800;letter-spacing:-0.025em;margin:4px 0 8px;">Thank you, ${safe(order.customer_name)}.</h1>
+          <p style="color:var(--mute);font-size:0.95rem;max-width:460px;margin:auto;line-height:1.6;">Your order is registered with StarkiT Dhaka. Our delivery team will contact you prior to dispatch.</p>
         </div>
 
-        <div style="background:#f4eee9;border:1px solid #e0d6cf;border-left:4px solid #170000;border-radius:4px;padding:18px;margin-bottom:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+        <div class="notice" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:0;">
           <div>
-            <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#887;font-weight:800;">Official Order Reference</div>
-            <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.06em;color:#170000;" id="orderRefText">${safe(order.reference)}</div>
+            <div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);font-weight:700;">Order Reference</div>
+            <div style="font-family:var(--font-mono);font-size:1.3rem;font-weight:700;color:var(--ink);" id="orderRefText">${safe(order.reference)}</div>
           </div>
-          <button type="button" class="btn btn-outline" id="copyRefBtn" style="min-height:38px;padding:8px 16px;font-size:0.72rem;letter-spacing:0.1em;border-radius:3px;">📋 COPY REFERENCE</button>
+          <button type="button" class="btn btn-outline" id="copyRefBtn" style="min-height:38px;padding:8px 16px;font-size:0.76rem;">Copy Reference</button>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:20px;margin-bottom:26px;">
-          <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;">
-            <h4 style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:#887;margin-bottom:8px;">DELIVERY DESTINATION</h4>
-            <div style="font-weight:800;font-size:0.95rem;color:#170000;">${safe(order.customer_name)}</div>
-            <div style="font-size:0.85rem;color:#554;margin-top:2px;">Phone: <strong>${safe(order.customer_phone)}</strong></div>
-            <div style="font-size:0.85rem;color:#554;margin-top:2px;line-height:1.4;">${safe(order.shipping_address)}, ${safe(order.district)}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:24px;">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;">
+            <h4 style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;">Delivery Destination</h4>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">${safe(order.customer_name)}</div>
+            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;">Phone: <strong>${safe(order.customer_phone)}</strong></div>
+            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;line-height:1.45;">${safe(order.shipping_address)}, ${safe(order.district)}</div>
           </div>
-          <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;">
-            <h4 style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:#887;margin-bottom:8px;">DELIVERY TIMELINE &amp; PAYMENT</h4>
-            <div style="font-weight:800;font-size:0.95rem;color:#170000;">${order.zone === 'dhaka' ? 'Dhaka Metro (24–48 Hours)' : 'Nationwide Courier (3–5 Days)'}</div>
-            <div style="font-size:0.85rem;color:#554;margin-top:2px;">Method: <strong>Cash on Delivery (Pay at Doorstep)</strong></div>
-            <div style="font-size:0.85rem;color:#15803d;font-weight:700;margin-top:4px;">✓ Parcel inspection permitted upon delivery</div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;">
+            <h4 style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px;">Timeline &amp; Payment</h4>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">${order.zone === 'dhaka' ? 'Dhaka Metro (24–48 Hours)' : 'Nationwide Courier (3–5 Days)'}</div>
+            <div style="font-size:0.86rem;color:#4b4543;margin-top:2px;">Method: <strong>Cash on Delivery</strong></div>
+            <div style="font-size:0.84rem;color:#15803d;font-weight:600;margin-top:4px;">Parcel inspection permitted at delivery</div>
           </div>
         </div>
 
-        <h3 style="font-size:1.15rem;font-weight:900;letter-spacing:0.02em;margin-bottom:12px;border-bottom:2px solid #170000;padding-bottom:8px;">ORDERED ITEMS</h3>
-        <div style="margin-bottom:24px;">
+        <h3 style="font-size:1.05rem;font-weight:800;margin-bottom:10px;border-bottom:1px solid var(--line);padding-bottom:8px;">Ordered Items</h3>
+        <div style="margin-bottom:20px;">
           ${itemsHtml}
         </div>
 
-        <div style="background:#faf8f5;border:1px solid #ede7e1;border-radius:6px;padding:16px;margin-bottom:28px;">
-          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#665;margin-bottom:6px;">
-            <span>Subtotal:</span><span>${price(order.subtotal_bdt)}</span>
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:24px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--mute);margin-bottom:6px;font-variant-numeric:tabular-nums;">
+            <span>Subtotal</span><span>${price(order.subtotal_bdt)}</span>
           </div>
           ${discountRow}
-          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:#665;margin-bottom:6px;">
-            <span>Delivery Fee:</span><span>${order.shipping_bdt === 0 ? '<strong style="color:#15803d">FREE</strong>' : price(order.shipping_bdt)}</span>
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--mute);margin-bottom:6px;font-variant-numeric:tabular-nums;">
+            <span>Delivery Fee</span><span>${order.shipping_bdt === 0 ? '<strong style="color:#15803d">Free</strong>' : price(order.shipping_bdt)}</span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:1.4rem;font-weight:900;color:#170000;border-top:1px solid #ded9d3;padding-top:10px;margin-top:6px;">
-            <span>TOTAL PAYABLE UPON DELIVERY:</span><span style="color:#170000;">${price(order.total_bdt)}</span>
+          <div style="display:flex;justify-content:space-between;font-size:1.25rem;font-weight:800;color:var(--ink);border-top:1px solid var(--line);padding-top:10px;margin-top:8px;font-variant-numeric:tabular-nums;">
+            <span>Total Due (COD)</span><span>${price(order.total_bdt)}</span>
           </div>
         </div>
 
         <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <a href="https://wa.me/8801778307704?text=${waText}" target="_blank" class="btn" style="background:#25d366;border-color:#25d366;color:#fff;flex:1;text-align:center;min-height:48px;">
-            💬 CONFIRM VIA WHATSAPP (01778307704) ↗
+          <a href="https://wa.me/8801778307704?text=${waText}" target="_blank" rel="noopener noreferrer" class="btn" style="background:#15803d;border-color:#15803d;color:#fff;flex:1;">
+            Confirm via WhatsApp
           </a>
-          <button type="button" class="btn btn-outline" id="printReceiptBtn" style="flex:1;min-height:48px;">
-            🖨️ PRINT RECEIPT
+          <button type="button" class="btn btn-outline" id="printReceiptBtn" style="flex:1;">
+            Print Receipt
           </button>
-          <a href="${ROOT}shop.html" class="btn btn-outline" style="flex:1;text-align:center;min-height:48px;">
-            CONTINUE SHOPPING ↗
+          <a href="${ROOT}shop.html" class="btn btn-outline" style="flex:1;">
+            Continue Shopping
           </a>
         </div>
       </div>
@@ -1365,28 +1367,13 @@ import {
 
     $('#copyRefBtn')?.addEventListener('click', () => {
       navigator.clipboard.writeText(order.reference).then(() => {
-        message('Order reference copied to clipboard!', 'success');
+        message('Order reference copied to clipboard.', 'success');
       });
     });
 
     $('#printReceiptBtn')?.addEventListener('click', () => {
       window.print();
     });
-  }
-
-  function setupWhatsAppConcierge() {
-    if ($('#floatingWhatsAppPill')) return;
-    const pill = document.createElement('a');
-    pill.id = 'floatingWhatsAppPill';
-    pill.className = 'floating-whatsapp-pill';
-    pill.href =
-      'https://wa.me/8801778307704?text=' +
-      encodeURIComponent('Hello StarkiT Concierge! I have a question about Drop 01 designs and nationwide delivery.');
-    pill.target = '_blank';
-    pill.rel = 'noopener noreferrer';
-    pill.setAttribute('aria-label', 'Chat with StarkiT Customer Concierge on WhatsApp');
-    pill.innerHTML = `<span>💬</span><span>WhatsApp (01778307704)</span>`;
-    document.body.appendChild(pill);
   }
 
   function init() {
@@ -1473,7 +1460,6 @@ import {
     setupDetail();
     checkout();
     renderConfirmation();
-    setupWhatsAppConcierge();
     reveal();
     sanitizeCart();
 

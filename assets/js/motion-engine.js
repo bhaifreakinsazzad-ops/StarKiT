@@ -170,50 +170,10 @@ export function initMotionEngine() {
   window.addEventListener('scroll', scheduleScrollProgress, { passive: true });
   paintScrollProgress();
 
-  // 2. LUXURY AMBIENT CURSOR GLOW (Desktop fine pointer only; idles cleanly when settled)
-  if (finePointer && !reduced && !document.getElementById('cursorGlow')) {
-    const glow = document.createElement('div');
-    glow.id = 'cursorGlow';
-    glow.style.opacity = '0';
-    document.body.appendChild(glow);
-
-    let mouseX = -500;
-    let mouseY = -500;
-    let glowX = -500;
-    let glowY = -500;
-    let glowRaf = 0;
-
-    function tickGlow() {
-      glowX += (mouseX - glowX) * 0.14;
-      glowY += (mouseY - glowY) * 0.14;
-      glow.style.left = `${glowX.toFixed(1)}px`;
-      glow.style.top = `${glowY.toFixed(1)}px`;
-      if (Math.abs(mouseX - glowX) > 0.4 || Math.abs(mouseY - glowY) > 0.4) {
-        glowRaf = requestAnimationFrame(tickGlow);
-      } else {
-        glowRaf = 0;
-      }
-    }
-
-    window.addEventListener(
-      'mousemove',
-      (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        glow.style.opacity = '1';
-        if (!glowRaf) glowRaf = requestAnimationFrame(tickGlow);
-      },
-      { passive: true }
-    );
-
-    document.addEventListener('mouseleave', () => {
-      glow.style.opacity = '0';
-    });
-  }
-
-  // 3. ORCHESTRATED KINETIC HERO ENTRANCE TIMELINE (Anime.js v4)
+  // 2. ORCHESTRATED KINETIC HERO ENTRANCE TIMELINE (Anime.js v4)
   const heroCopy = document.querySelector('.hero-copy');
   if (heroCopy && !reduced) {
+    const logoStamp = heroCopy.querySelector('.hero-logo-stamp');
     const eyebrow = heroCopy.querySelector('.eyebrow');
     const h1 = heroCopy.querySelector('h1');
     const copyP = heroCopy.querySelector('p');
@@ -222,30 +182,31 @@ export function initMotionEngine() {
     const statCells = document.querySelectorAll('.stats-strip .stat-cell');
 
     const tl = createTimeline({
-      defaults: { ease: 'outExpo', duration: 920 }
+      defaults: { ease: 'outExpo', duration: 680 }
     });
 
-    if (eyebrow) tl.add(eyebrow, { opacity: [0, 1], y: [22, 0] }, 40);
-    if (h1) tl.add(h1, { opacity: [0, 1], y: [44, 0], duration: 1080 }, 140);
-    if (copyP) tl.add(copyP, { opacity: [0, 1], y: [26, 0] }, 300);
-    if (actions) tl.add(actions, { opacity: [0, 1], y: [22, 0] }, 420);
-    if (heroPic) tl.add(heroPic, { opacity: [0, 1], scale: [0.96, 1], duration: 980 }, 200);
+    if (logoStamp) tl.add(logoStamp, { opacity: [0, 1], y: [14, 0] }, 20);
+    if (eyebrow) tl.add(eyebrow, { opacity: [0, 1], y: [14, 0] }, 60);
+    if (h1) tl.add(h1, { opacity: [0, 1], y: [24, 0], duration: 760 }, 110);
+    if (copyP) tl.add(copyP, { opacity: [0, 1], y: [16, 0] }, 210);
+    if (actions) tl.add(actions, { opacity: [0, 1], y: [14, 0] }, 280);
+    if (heroPic) tl.add(heroPic, { opacity: [0, 1], scale: [0.97, 1], duration: 720 }, 150);
     if (statCells.length) {
       tl.add(
         statCells,
         {
           opacity: [0, 1],
-          y: [18, 0],
-          delay: stagger(70),
-          duration: 720,
+          y: [12, 0],
+          delay: stagger(55),
+          duration: 540,
           onComplete: () => statCells.forEach((el) => (el.style.transform = ''))
         },
-        480
+        320
       );
     }
   }
 
-  // 4. LOOKBOOK & STORY & DETAIL SCROLL CHOREOGRAPHY
+  // 3. LOOKBOOK & STORY & DETAIL SCROLL CHOREOGRAPHY
   if (!reduced && 'IntersectionObserver' in window) {
     const scrollItems = document.querySelectorAll('.story-copy > *, .specs .spec, .section-head');
     if (scrollItems.length) {
@@ -261,10 +222,10 @@ export function initMotionEngine() {
           if (visibleTargets.length) {
             animate(visibleTargets, {
               opacity: [0, 1],
-              y: [26, 0],
-              delay: stagger(65),
+              y: [18, 0],
+              delay: stagger(45),
               ease: 'outExpo',
-              duration: 760,
+              duration: 580,
               onComplete: () => {
                 visibleTargets.forEach((el) => {
                   el.style.transform = '';
@@ -274,7 +235,7 @@ export function initMotionEngine() {
             });
           }
         },
-        { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+        { threshold: 0.1, rootMargin: '0px 0px -24px 0px' }
       );
       scrollItems.forEach((el) => revealIO.observe(el));
     }
@@ -287,10 +248,10 @@ export function initMotionEngine() {
         tiles.forEach((t) => (t.dataset.animated = '1'));
         animate(tiles, {
           opacity: [0, 1],
-          y: [28, 0],
-          delay: stagger(55, { start: 40 }),
+          y: [18, 0],
+          delay: stagger(45, { start: 30 }),
           ease: 'outExpo',
-          duration: 760,
+          duration: 580,
           onComplete: () => {
             tiles.forEach((el) => {
               el.style.transform = '';
@@ -313,44 +274,7 @@ export function initMotionEngine() {
     }
   }
 
-  // 5. DESKTOP 3D CARD PERSPECTIVE TILT & SPECULAR CURSOR GLOW
-  function setupCardTilt() {
-    if (!finePointer || reduced) return;
-    const cards = document.querySelectorAll('.card, .look-tile');
-    cards.forEach((card) => {
-      if (card.__tiltBound) return;
-      card.__tiltBound = true;
-
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotX = ((y - centerY) / centerY) * -7.5;
-        const rotY = ((x - centerX) / centerX) * 7.5;
-
-        card.style.transform = `perspective(950px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
-        card.style.setProperty('--mouse-x', `${x.toFixed(0)}px`);
-        card.style.setProperty('--mouse-y', `${y.toFixed(0)}px`);
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transition = 'transform 0.42s cubic-bezier(0.23, 1, 0.32, 1)';
-        card.style.transform = 'perspective(950px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-        setTimeout(() => {
-          card.style.transition = '';
-          card.style.transform = '';
-        }, 420);
-      });
-    });
-  }
-
-  setupCardTilt();
-
-  // Watch for dynamic card grid updates (category filters / search / sort)
+  // 4. GRID STAGGER ON FILTER/SEARCH UPDATES
   function animateGridStagger() {
     const cards = document.querySelectorAll('#productsGrid .card');
     if (!cards.length) return;
@@ -361,11 +285,10 @@ export function initMotionEngine() {
     utils.remove(cards);
     animate(cards, {
       opacity: [0, 1],
-      y: [28, 0],
-      scale: [0.97, 1],
-      delay: stagger(38, { start: 30 }),
+      y: [16, 0],
+      delay: stagger(28, { start: 20 }),
       ease: 'outExpo',
-      duration: 680,
+      duration: 520,
       onComplete: () => {
         cards.forEach((c) => {
           c.style.transform = '';
@@ -379,13 +302,12 @@ export function initMotionEngine() {
   if (grid) {
     animateGridStagger();
     const observer = new MutationObserver(() => {
-      setupCardTilt();
       animateGridStagger();
     });
     observer.observe(grid, { childList: true });
   }
 
-  // 6. MAGNETIC BUTTON MICRO-INTERACTION (Desktop fine pointer only)
+  // 5. SUBTLE TACTILE MAGNETIC INTERACTION FOR PRIMARY CTAs
   if (finePointer && !reduced) {
     const magneticButtons = document.querySelectorAll('.btn, .btn-light, .icon-btn, [data-open-cart]');
     magneticButtons.forEach((btn) => {
@@ -395,16 +317,16 @@ export function initMotionEngine() {
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        btn.style.transform = `translate(${(x * 0.2).toFixed(1)}px, ${(y * 0.2).toFixed(1)}px)`;
+        btn.style.transform = `translate(${(x * 0.1).toFixed(1)}px, ${(y * 0.1).toFixed(1)}px)`;
       });
 
       btn.addEventListener('mouseleave', () => {
-        btn.style.transition = 'transform 0.35s cubic-bezier(0.23, 1, 0.32, 1)';
+        btn.style.transition = 'transform 220ms cubic-bezier(0.16, 1, 0.3, 1)';
         btn.style.transform = 'translate(0, 0)';
         setTimeout(() => {
           btn.style.transition = '';
           btn.style.transform = '';
-        }, 350);
+        }, 220);
       });
     });
   }

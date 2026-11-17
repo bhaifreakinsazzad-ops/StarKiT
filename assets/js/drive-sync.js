@@ -285,6 +285,7 @@ export async function initDriveSyncUI() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Admin-Key': window.__STARKIT_ADMIN_KEY || '',
           Authorization: `Bearer ${cachedAccessToken}`
         },
         body: JSON.stringify({ fileId: file.id, fileName: file.name })
@@ -339,12 +340,12 @@ export async function initDriveSyncUI() {
 
     const authCardHtml = state.needsAuth
       ? `
-        <div style="background:#f7f5f1;border:1px solid #dcd4cc;border-left:4px solid #170000;padding:26px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
+        <div style="background:#f6f4f0;border:1px solid rgba(11,9,10,0.12);border-radius:6px;padding:24px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;">
           <div style="max-width:600px;">
-            <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#be555c;font-weight:800;margin-bottom:6px;">GOOGLE DRIVE CONNECTION REQUIRED</div>
-            <h3 style="margin:0 0 6px;font-size:1.3rem;font-weight:900;">CONNECT GOOGLE DRIVE TO BROWSE SHARED ASSETS</h3>
-            <p style="margin:0;color:#665;font-size:0.86rem;line-height:1.5;">
-              Sign in with your Google account to securely list subfolders, preview product imagery, inspect catalog sheets, and import approved assets from folder <code>${esc(activeFolder.id)}</code>.
+            <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#8e2934;font-weight:700;margin-bottom:6px;">Google Drive Connection</div>
+            <h3 style="margin:0 0 6px;font-size:1.2rem;font-weight:700;color:#0b090a;">Connect Google Drive to browse studio assets</h3>
+            <p style="margin:0;color:#645e5b;font-size:0.86rem;line-height:1.55;">
+              Sign in with your Google account to list subfolders, preview photography, inspect catalog sheets, and browse folder <code>${esc(activeFolder.id)}</code>.
             </p>
           </div>
           <button type="button" id="driveGoogleSignInBtn" class="gsi-material-button">

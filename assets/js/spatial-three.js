@@ -31,37 +31,37 @@ function createStudioEnvMap(renderer) {
   pmrem.compileEquirectangularShader();
 
   const envScene = new THREE.Scene();
-  envScene.background = new THREE.Color(0x140103);
+  envScene.background = new THREE.Color(0x0b090a);
 
   const panelGeo = new THREE.PlaneGeometry(1, 1);
-  const warmMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff1d6).multiplyScalar(2.4), side: THREE.DoubleSide });
-  const goldMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xd2b386).multiplyScalar(2.0), side: THREE.DoubleSide });
-  const wineMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x8c2732).multiplyScalar(1.6), side: THREE.DoubleSide });
+  const crispWhiteMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xf6f4f0).multiplyScalar(2.4), side: THREE.DoubleSide });
+  const champagneMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xbfa177).multiplyScalar(1.9), side: THREE.DoubleSide });
+  const crimsonMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0x8e2934).multiplyScalar(1.5), side: THREE.DoubleSide });
 
-  const keyPanel = new THREE.Mesh(panelGeo, warmMat);
+  const keyPanel = new THREE.Mesh(panelGeo, crispWhiteMat);
   keyPanel.position.set(5, 6, 5);
   keyPanel.scale.set(7, 5, 1);
   keyPanel.lookAt(0, 0, 0);
   envScene.add(keyPanel);
 
-  const rimGoldPanel = new THREE.Mesh(panelGeo, goldMat);
-  rimGoldPanel.position.set(-6, 3, -4);
-  rimGoldPanel.scale.set(6, 4, 1);
-  rimGoldPanel.lookAt(0, 0, 0);
-  envScene.add(rimGoldPanel);
+  const rimPanel = new THREE.Mesh(panelGeo, champagneMat);
+  rimPanel.position.set(-6, 3, -4);
+  rimPanel.scale.set(6, 4, 1);
+  rimPanel.lookAt(0, 0, 0);
+  envScene.add(rimPanel);
 
-  const bounceWinePanel = new THREE.Mesh(panelGeo, wineMat);
-  bounceWinePanel.position.set(0, -6, 3);
-  bounceWinePanel.scale.set(8, 5, 1);
-  bounceWinePanel.lookAt(0, 0, 0);
-  envScene.add(bounceWinePanel);
+  const bounceCrimsonPanel = new THREE.Mesh(panelGeo, crimsonMat);
+  bounceCrimsonPanel.position.set(0, -6, 3);
+  bounceCrimsonPanel.scale.set(8, 5, 1);
+  bounceCrimsonPanel.lookAt(0, 0, 0);
+  envScene.add(bounceCrimsonPanel);
 
   const envRT = pmrem.fromScene(envScene, 0.04);
 
   panelGeo.dispose();
-  warmMat.dispose();
-  goldMat.dispose();
-  wineMat.dispose();
+  crispWhiteMat.dispose();
+  champagneMat.dispose();
+  crimsonMat.dispose();
   pmrem.dispose();
 
   return envRT;
@@ -73,18 +73,18 @@ function createEngravedGoldTexture(maxAnisotropy) {
   canvas.height = 128;
   const ctx = canvas.getContext('2d');
 
-  // Rich brushed champagne-gold base
+  // Sleek brushed titanium-champagne metallic finish
   const grad = ctx.createLinearGradient(0, 0, 512, 0);
-  grad.addColorStop(0, '#a8875b');
-  grad.addColorStop(0.28, '#e3ca9e');
-  grad.addColorStop(0.55, '#c5a880');
-  grad.addColorStop(0.82, '#ebd4ad');
-  grad.addColorStop(1, '#a8875b');
+  grad.addColorStop(0, '#a88c66');
+  grad.addColorStop(0.28, '#eae5dc');
+  grad.addColorStop(0.55, '#bfa177');
+  grad.addColorStop(0.82, '#f2eee6');
+  grad.addColorStop(1, '#a88c66');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 512, 128);
 
-  // Subtle geometric heritage fretwork & brushed lines
-  ctx.strokeStyle = 'rgba(23, 0, 0, 0.28)';
+  // Subtle geometric heritage chevrons echoing the STΛRKIT wordmark
+  ctx.strokeStyle = 'rgba(11, 9, 10, 0.25)';
   ctx.lineWidth = 2;
   for (let x = 0; x < 512; x += 32) {
     ctx.beginPath();
@@ -96,8 +96,7 @@ function createEngravedGoldTexture(maxAnisotropy) {
     ctx.stroke();
   }
 
-  // Fine horizontal hairline border grooves
-  ctx.fillStyle = 'rgba(23, 0, 0, 0.35)';
+  ctx.fillStyle = 'rgba(11, 9, 10, 0.35)';
   ctx.fillRect(0, 10, 512, 3);
   ctx.fillRect(0, 115, 512, 3);
 
@@ -116,9 +115,9 @@ function createGlowSpriteTexture() {
   canvas.height = 64;
   const ctx = canvas.getContext('2d');
   const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grad.addColorStop(0, 'rgba(255, 250, 240, 1)');
-  grad.addColorStop(0.28, 'rgba(236, 206, 162, 0.85)');
-  grad.addColorStop(0.65, 'rgba(196, 90, 96, 0.22)');
+  grad.addColorStop(0, 'rgba(246, 244, 240, 0.95)');
+  grad.addColorStop(0.32, 'rgba(191, 161, 119, 0.65)');
+  grad.addColorStop(0.68, 'rgba(142, 41, 52, 0.18)');
   grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 64, 64);
@@ -139,7 +138,7 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
 
   // 1. Scene, Camera & ACES Filmic Renderer
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x170000, 0.036);
+  scene.fog = new THREE.FogExp2(0x0b090a, 0.036);
 
   const width = container.clientWidth || window.innerWidth;
   const height = container.clientHeight || window.innerHeight;
@@ -154,7 +153,7 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
+  renderer.toneMappingExposure = 1.15;
   renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(width, height, false);
 
@@ -174,7 +173,7 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
 
   // 2. Composite StarkiT Atelier Crest Assemblage
   const assemblage = new THREE.Group();
-  assemblage.position.set(0.55, 0.1, -0.35);
+  assemblage.position.set(0.6, 0.05, -0.35);
   scene.add(assemblage);
 
   const maxAniso = renderer.capabilities.getMaxAnisotropy();
@@ -182,44 +181,44 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   const spriteTexture = createGlowSpriteTexture();
   disposables.push(goldTexture, spriteTexture);
 
-  // Part A: Faceted Deep Obsidian-Burgundy Lacquer Jewel Core
+  // Part A: Faceted Deep Obsidian Lacquer Core
   const coreGeo = new THREE.IcosahedronGeometry(1.42, 0);
   const coreMat = new THREE.MeshPhysicalMaterial({
-    color: 0x160103,
-    emissive: 0x3b0d14,
-    emissiveIntensity: 0.42,
-    roughness: 0.16,
-    metalness: 0.84,
+    color: 0x0f0c0e,
+    emissive: 0x220a0e,
+    emissiveIntensity: 0.35,
+    roughness: 0.14,
+    metalness: 0.88,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.08,
-    envMapIntensity: 1.35,
+    clearcoatRoughness: 0.06,
+    envMapIntensity: 1.4,
     flatShading: true
   });
   const coreMesh = new THREE.Mesh(coreGeo, coreMat);
   assemblage.add(coreMesh);
   disposables.push(coreGeo, coreMat);
 
-  // Part B: Outer Brushed Champagne-Gold Geodesic Filigree Cage
+  // Part B: Outer Platinum-White Geodesic Filigree Cage
   const wireGeo = new THREE.IcosahedronGeometry(1.74, 1);
   const wireMat = new THREE.MeshStandardMaterial({
-    color: 0xc5a880,
-    metalness: 0.94,
-    roughness: 0.24,
+    color: 0xe6e1d9,
+    metalness: 0.92,
+    roughness: 0.22,
     wireframe: true,
     transparent: true,
-    opacity: 0.56
+    opacity: 0.42
   });
   const wireMesh = new THREE.Mesh(wireGeo, wireMat);
   assemblage.add(wireMesh);
   disposables.push(wireGeo, wireMat);
 
-  // Part C: Engraved Equatorial Heritage Crown Ring
-  const crownGeo = new THREE.TorusGeometry(2.05, 0.052, 20, 96);
+  // Part C: Engraved Equatorial Ring
+  const crownGeo = new THREE.TorusGeometry(2.05, 0.048, 20, 96);
   const crownMat = new THREE.MeshStandardMaterial({
     map: goldTexture,
-    color: 0xf5e2c4,
+    color: 0xf4efe7,
     metalness: 0.92,
-    roughness: 0.24,
+    roughness: 0.22,
     envMapIntensity: 1.4
   });
   const crownMesh = new THREE.Mesh(crownGeo, crownMat);
@@ -228,12 +227,12 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   assemblage.add(crownMesh);
   disposables.push(crownGeo, crownMat);
 
-  // Part D: Dual Celestial Gimbal Orbits (Gold + Crimson Bronze)
-  const ringGeo1 = new THREE.TorusGeometry(2.42, 0.028, 16, 120);
+  // Part D: Dual Celestial Gimbal Orbits (Platinum-Champagne + Restrained Crimson)
+  const ringGeo1 = new THREE.TorusGeometry(2.42, 0.024, 16, 120);
   const ringMat1 = new THREE.MeshStandardMaterial({
-    color: 0xe6caa3,
+    color: 0xdfd8ce,
     metalness: 0.94,
-    roughness: 0.22,
+    roughness: 0.2,
     envMapIntensity: 1.4
   });
   const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
@@ -241,11 +240,11 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   assemblage.add(ring1);
   disposables.push(ringGeo1, ringMat1);
 
-  const ringGeo2 = new THREE.TorusGeometry(2.74, 0.022, 16, 120);
+  const ringGeo2 = new THREE.TorusGeometry(2.74, 0.02, 16, 120);
   const ringMat2 = new THREE.MeshStandardMaterial({
-    color: 0xbe555c,
+    color: 0x8e2934,
     metalness: 0.86,
-    roughness: 0.28,
+    roughness: 0.26,
     envMapIntensity: 1.25
   });
   const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
@@ -254,13 +253,13 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   assemblage.add(ring2);
   disposables.push(ringGeo2, ringMat2);
 
-  // Part E: Instanced Diamond Facet Beads Orbiting on Outer Gold Gimbal
+  // Part E: Instanced Diamond Facet Beads Orbiting on Outer Gimbal
   const beadCount = 14;
-  const beadGeo = new THREE.OctahedronGeometry(0.058, 0);
+  const beadGeo = new THREE.OctahedronGeometry(0.055, 0);
   const beadMat = new THREE.MeshPhysicalMaterial({
-    color: 0xf7e4c6,
+    color: 0xf6f4f0,
     metalness: 0.95,
-    roughness: 0.12,
+    roughness: 0.1,
     clearcoat: 1.0,
     envMapIntensity: 1.6
   });
@@ -278,24 +277,24 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   ring1.add(beadMesh);
   disposables.push(beadGeo, beadMat);
 
-  // Part F: Soft Luminous Starlight Particle Nebula
-  const particleCount = isSoftwareGl ? 140 : 320;
+  // Part F: Restrained Fine Particle Dust
+  const particleCount = isSoftwareGl ? 110 : 220;
   const particleGeo = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
   const colors = new Float32Array(particleCount * 3);
-  const cGold = new THREE.Color(0xf4deb8);
-  const cWine = new THREE.Color(0xd16a70);
-  const cCream = new THREE.Color(0xfff5e8);
+  const cGold = new THREE.Color(0xbfa177);
+  const cWine = new THREE.Color(0x8e2934);
+  const cWhite = new THREE.Color(0xf6f4f0);
 
   for (let i = 0; i < particleCount; i++) {
-    const r = 2.9 + Math.random() * 6.8;
+    const r = 3.0 + Math.random() * 6.5;
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
     positions[i * 3 + 2] = r * Math.cos(phi);
 
-    const tone = i % 5 === 0 ? cWine : i % 3 === 0 ? cCream : cGold;
+    const tone = i % 6 === 0 ? cWine : i % 3 === 0 ? cGold : cWhite;
     colors[i * 3] = tone.r;
     colors[i * 3 + 1] = tone.g;
     colors[i * 3 + 2] = tone.b;
@@ -305,11 +304,11 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
   const particleMat = new THREE.PointsMaterial({
-    size: 0.14,
+    size: 0.11,
     map: spriteTexture,
     vertexColors: true,
     transparent: true,
-    opacity: 0.78,
+    opacity: 0.65,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
     sizeAttenuation: true
@@ -318,19 +317,19 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   scene.add(particles);
   disposables.push(particleGeo, particleMat);
 
-  // 3. Three-Point Warm/Cool Architectural Studio Lighting Rig
-  const hemiLight = new THREE.HemisphereLight(0xf6e6d0, 0x330b10, 0.85);
+  // 3. Three-Point Architectural Lighting Rig
+  const hemiLight = new THREE.HemisphereLight(0xf6f4f0, 0x1a090c, 0.85);
   scene.add(hemiLight);
 
-  const keyLight = new THREE.DirectionalLight(0xffefd4, 2.4);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 2.3);
   keyLight.position.set(5.5, 7.5, 6.0);
   scene.add(keyLight);
 
-  const rimWine = new THREE.PointLight(0xc45a60, 5.2, 20, 1.5);
+  const rimWine = new THREE.PointLight(0x8e2934, 4.8, 20, 1.5);
   rimWine.position.set(-5.0, -3.8, 2.8);
   scene.add(rimWine);
 
-  const rimGold = new THREE.PointLight(0xd9be96, 4.6, 20, 1.5);
+  const rimGold = new THREE.PointLight(0xbfa177, 4.0, 20, 1.5);
   rimGold.position.set(4.5, 2.5, -3.5);
   scene.add(rimGold);
 
