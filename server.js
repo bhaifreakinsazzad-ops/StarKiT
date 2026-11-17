@@ -77,6 +77,17 @@ app.use('/api', (req, res) => {
   res.status(404).setHeader('Cache-Control', 'no-store').json({ error: 'API endpoint not found' });
 });
 
+// Serve pinned Firebase browser SDK modules locally for Workspace OAuth
+app.get('/vendor/firebase/firebase-app.js', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(__dirname, 'node_modules/firebase/firebase-app.js'));
+});
+
+app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.sendFile(path.join(__dirname, 'node_modules/firebase/firebase-auth.js'));
+});
+
 // Block internal repository, database, and build artifacts from direct HTTP exposure
 app.use((req, res, next) => {
   const reqPath = (req.path || '/').toLowerCase();

@@ -172,7 +172,73 @@
     .stock-input { width: 70px; padding: 6px 8px; border: 1px solid #ccc; font-weight: 800; text-align: center; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+    .drive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .drive-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .drive-thumb {
+      height: 170px;
+      background: #f7f5f1;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .drive-meta { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .gsi-material-button {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      -webkit-appearance: none;
+      background-color: #ffffff;
+      background-image: none;
+      border: 1px solid #747775;
+      border-radius: 4px;
+      box-sizing: border-box;
+      color: #1f1f1f;
+      cursor: pointer;
+      font-family: 'Roboto', 'Afacad Flux', arial, sans-serif;
+      font-size: 14px;
+      height: 40px;
+      letter-spacing: 0.25px;
+      outline: none;
+      overflow: hidden;
+      padding: 0 14px;
+      position: relative;
+      text-align: center;
+      transition: background-color .218s, border-color .218s, box-shadow .218s;
+      vertical-align: middle;
+      white-space: nowrap;
+      width: auto;
+      max-width: 400px;
+      min-width: min-content;
+    }
+    .gsi-material-button:hover { box-shadow: 0 1px 2px 0 rgba(60,64,67,.30), 0 1px 3px 1px rgba(60,64,67,.15); background-color: #f8fafd; }
+    .gsi-material-button .gsi-material-button-content-wrapper { display: flex; align-items: center; flex-direction: row; height: 100%; justify-content: center; position: relative; width: 100%; }
+    .gsi-material-button .gsi-material-button-icon { height: 20px; margin-right: 12px; min-width: 20px; width: 20px; }
+    .gsi-material-button .gsi-material-button-contents { flex-grow: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
+    .gsi-material-button .gsi-material-button-state { transition: opacity .218s; bottom: 0; left: 0; opacity: 0; position: absolute; right: 0; top: 0; }
   </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "/vendor/firebase/firebase-app.js",
+      "firebase/auth": "/vendor/firebase/firebase-auth.js",
+      "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js": "/vendor/firebase/firebase-app.js"
+    }
+  }
+  </script>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -218,6 +284,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
       <button class="admin-tab-btn active" data-tab="tab-overview">Overview</button>
       <button class="admin-tab-btn" data-tab="tab-orders">Orders (<span id="ordersCountBadge">0</span>)</button>
       <button class="admin-tab-btn" data-tab="tab-inventory">Inventory &amp; SKUs</button>
+      <button class="admin-tab-btn" data-tab="tab-drive">Google Drive Sync</button>
       <button class="admin-tab-btn" data-tab="tab-settings">Settings</button>
       <a href="index.html" target="_blank" class="admin-tab-btn" style="background:#44161b;">Storefront ↗</a>
       <button id="logoutBtn" class="action-btn" style="background:transparent;color:#fff;border-color:#555;">Logout</button>
@@ -347,6 +414,7 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
             <p style="margin:4px 0 0;font-size:0.85rem;color:var(--mute);">Update stock quantities, available sizes, and BDT prices in real time.</p>
           </div>
           <div>
+            <button class="action-btn" onclick="switchTab('tab-drive')" style="margin-right:8px;">Browse Google Drive Assets ↗</button>
             <button class="action-btn" id="saveInventoryBtn" style="background:#170000;color:#fff;">💾 Save All Inventory Changes</button>
           </div>
         </div>
@@ -370,6 +438,11 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
           </table>
         </div>
       </div>
+    </section>
+
+    <!-- Tab 4: GOOGLE DRIVE SYNC -->
+    <section id="tab-drive" class="tab-content">
+      <div id="driveSyncMount"></div>
     </section>
 
     <!-- Tab 4: STORE SETTINGS -->
@@ -503,10 +576,34 @@ src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1"
     </div>
   </div>
 
+  <!-- Google Drive File Preview Modal -->
+  <div id="drivePreviewModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:760px;text-align:left;background:#fff;padding:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dcd4cc;padding-bottom:10px;margin-bottom:16px;">
+        <h3 id="drivePreviewTitle" style="margin:0;font-size:1.1rem;font-weight:900;word-break:break-all;">Drive File Preview</h3>
+        <button type="button" onclick="document.getElementById('drivePreviewModal').style.display='none'" style="background:transparent;border:0;font-size:1.5rem;cursor:pointer;">×</button>
+      </div>
+      <div id="drivePreviewBody"></div>
+    </div>
+  </div>
+
+  <!-- Confirm Import From Google Drive Modal -->
+  <div id="driveImportConfirmModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:460px;text-align:left;background:#fff;padding:26px;">
+      <h3 style="margin:0 0 10px;font-size:1.2rem;font-weight:900;">IMPORT GOOGLE DRIVE ASSET</h3>
+      <p id="driveImportDesc" style="font-size:0.86rem;color:#554;line-height:1.55;margin:0 0 20px;"></p>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="btn btn-outline" style="flex:1;" onclick="document.getElementById('driveImportConfirmModal').style.display='none'">CANCEL</button>
+        <button type="button" id="confirmDriveImportBtn" class="btn" style="flex:1;">CONFIRM IMPORT ↗</button>
+      </div>
+    </div>
+  </div>
+
   <div id="adminToast" role="status" aria-live="polite" style="display:none;position:fixed;bottom:24px;right:24px;z-index:200;background:#170000;color:#fff;padding:14px 20px;font-weight:800;font-size:0.85rem;border:1px solid #c5a880;box-shadow:0 12px 32px rgba(0,0,0,0.3);"></div>
 
   <script src="assets/js/store-config.js"></script>
   <script src="assets/js/catalog-data.js"></script>
+  <script type="module" src="assets/js/drive-sync.js"></script>
   <script>
     (function(){
       const PASSKEY = 'starkit2026';

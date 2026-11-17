@@ -9,13 +9,14 @@
     "start": "node server.js",
     "build": "npm run check",
     "lint": "npm run check",
-    "check": "node --check server.js && node --check assets/js/app.js && node --check api/orders.js && node --check api/admin.js",
+    "check": "node --check server.js && node --check assets/js/app.js && node --check assets/js/drive-sync.js && node --check api/orders.js && node --check api/admin.js",
     "test": "npm run check && node verify_package.js && node scripts/test_storefront_dom.cjs && node scripts/test_customer_flow.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
     "animejs": "^4.5.0",
     "express": "^5.3.0",
+    "firebase": "^13.4.0",
     "motion": "^14.14.0",
     "three": "^0.187.0"
   },
