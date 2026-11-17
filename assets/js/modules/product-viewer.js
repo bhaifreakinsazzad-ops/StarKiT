@@ -107,7 +107,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
     if (!colorsEl) return;
     colorsEl.innerHTML = (product.variants || [])
       .map((v) => {
-        const isProv = v.status !== 'DOCUMENTED';
+        const isProv = isHoodieProduct && v.status !== 'DOCUMENTED';
         const selected = activeVariant && v.sku === activeVariant.sku;
         return `
           <button
@@ -221,7 +221,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       if (purchaseStatus) {
         purchaseStatus.textContent = `${Number(activeVariant.stock_quantity)} units in stock · Cash on Delivery nationwide.`;
       }
-    } else if (activeVariant.status !== 'DOCUMENTED') {
+    } else if (isHoodieProduct && activeVariant.status !== 'DOCUMENTED') {
       purchaseBtn.disabled = true;
       purchaseBtn.textContent = 'Media Pending · Unavailable for Order';
       if (mobileStickyBtn) {

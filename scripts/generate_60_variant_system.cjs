@@ -577,29 +577,31 @@ try {
       });
     }
 
-    const enrichedVariants = (item.variants && item.variants.length ? item.variants : [{}]).map((v) => ({
-      ...v,
-      sku: v.sku || id,
-      color: v.color || 'Artisan Multi',
-      color_bn: v.color_bn || 'আর্টিসান মাল্টি',
-      hex: v.hex || '#bfa177',
-      status: 'DOCUMENTED',
-      sku_status: 'LIVE IN DROP 02 FARIZA’S TERRITORY',
-      color_status: 'HANDCRAFTED ARTISAN EDITION',
-      asset_status: 'LIFESTYLE_GALLERY_VERIFIED',
-      media_count: gallery.length,
-      price_bdt: Number(item.price_bdt) || 490,
-      draft_price_bdt: Number(item.price_bdt) || 490,
-      price_approved: true,
-      stock_quantity: Number(v.stock_quantity) > 0 ? Number(v.stock_quantity) : 15,
-      available_sizes: Array.isArray(v.available_sizes) && v.available_sizes.length ? v.available_sizes : ['One Size'],
-      approved_for_publication: true,
-      publication_status: 'PUBLISHED',
-      front_image: `/${baseImgPath}`,
-      back_image: `/${lifestylePrimary}`,
-      lifestyle_image: `/${lifestylePrimary}`,
-      gallery
-    }));
+    const enrichedVariants = (item.variants && item.variants.length ? item.variants : [{}]).map((v) => {
+      const { status: _omitStatus, ...restV } = v;
+      return {
+        ...restV,
+        sku: v.sku || id,
+        color: v.color || 'Artisan Multi',
+        color_bn: v.color_bn || 'আর্টিসান মাল্টি',
+        hex: v.hex || '#bfa177',
+        sku_status: 'LIVE IN DROP 02 FARIZA’S TERRITORY',
+        color_status: 'HANDCRAFTED ARTISAN EDITION',
+        asset_status: 'LIFESTYLE_GALLERY_VERIFIED',
+        media_count: gallery.length,
+        price_bdt: Number(item.price_bdt) || 490,
+        draft_price_bdt: Number(item.price_bdt) || 490,
+        price_approved: true,
+        stock_quantity: Number(v.stock_quantity) > 0 ? Number(v.stock_quantity) : 15,
+        available_sizes: Array.isArray(v.available_sizes) && v.available_sizes.length ? v.available_sizes : ['One Size'],
+        approved_for_publication: true,
+        publication_status: 'PUBLISHED',
+        front_image: `/${baseImgPath}`,
+        back_image: `/${lifestylePrimary}`,
+        lifestyle_image: `/${lifestylePrimary}`,
+        gallery
+      };
+    });
 
     return {
       ...item,
