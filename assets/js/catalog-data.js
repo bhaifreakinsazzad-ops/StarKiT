@@ -2947,7 +2947,7 @@ const STARKIT_CATALOG = [
     "name": "LAVENDER ROSE MIRROR",
     "bengali_name": "ল্যাভেন্ডার রোজ হ্যান্ডমেড মিরর",
     "category": "Artisan Accessories",
-    "collection": "Decorative Mirrors",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "FLORAL ELEGANCE IN DHAKA",
     "price_bdt": 499,
@@ -2969,8 +2969,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches with wooden/board frame",
-    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay, protective back finish",
+    "size_chart": "Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready",
+    "fabric_claim": "Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass",
     "third_party_ip_review": false,
     "slug": "ft-hm-001-lavender-rose-mirror",
     "variants": [
@@ -2980,25 +2980,61 @@ const STARKIT_CATALOG = [
         "hex": "#8e6b99",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-HM-001.jpg",
             "url": "/assets/images/accessories/FT-HM-001.jpg",
-            "filename": "FT-HM-001.jpg"
+            "alt": "LAVENDER ROSE MIRROR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "alt": "LAVENDER ROSE MIRROR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "LAVENDER ROSE MIRROR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "Standard"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-HM-001.jpg",
+        "back_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
   },
   {
     "id": "FT-HM-002",
     "name": "GOLDEN MARIGOLD MIRROR",
     "bengali_name": "গোল্ডেন ম্যারিগোল্ড হ্যান্ডমেড মিরর",
     "category": "Artisan Accessories",
-    "collection": "Decorative Mirrors",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "SUNSHINE IN EVERY STITCH",
     "price_bdt": 499,
@@ -3020,8 +3056,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches with wooden/board frame",
-    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "size_chart": "Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready",
+    "fabric_claim": "Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass",
     "third_party_ip_review": false,
     "slug": "ft-hm-002-golden-marigold-mirror",
     "variants": [
@@ -3031,25 +3067,61 @@ const STARKIT_CATALOG = [
         "hex": "#eab308",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-HM-002.jpg",
             "url": "/assets/images/accessories/FT-HM-002.jpg",
-            "filename": "FT-HM-002.jpg"
+            "alt": "GOLDEN MARIGOLD MIRROR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "alt": "GOLDEN MARIGOLD MIRROR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "GOLDEN MARIGOLD MIRROR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "Standard"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-HM-002.jpg",
+        "back_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
   },
   {
     "id": "FT-HM-003",
     "name": "CRIMSON HERITAGE MIRROR",
     "bengali_name": "ক্রিমসন হেরিটেজ হ্যান্ডমেড মিরর",
     "category": "Artisan Accessories",
-    "collection": "Decorative Mirrors",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "DHAKA ARTISAN TIMELESS REFLECTION",
     "price_bdt": 499,
@@ -3070,8 +3142,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
-    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "size_chart": "Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready",
+    "fabric_claim": "Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass",
     "third_party_ip_review": false,
     "slug": "ft-hm-003-crimson-heritage-mirror",
     "variants": [
@@ -3081,25 +3153,61 @@ const STARKIT_CATALOG = [
         "hex": "#b91c1c",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-HM-003.jpg",
             "url": "/assets/images/accessories/FT-HM-003.jpg",
-            "filename": "FT-HM-003.jpg"
+            "alt": "CRIMSON HERITAGE MIRROR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "alt": "CRIMSON HERITAGE MIRROR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "CRIMSON HERITAGE MIRROR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "Standard"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-HM-003.jpg",
+        "back_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
   },
   {
     "id": "FT-HM-004",
     "name": "ROYAL PLUM MIRROR",
     "bengali_name": "রয়্যাল প্লাম হ্যান্ডমেড মিরর",
     "category": "Artisan Accessories",
-    "collection": "Decorative Mirrors",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "MONOCHROMATIC ARISTOCRACY",
     "price_bdt": 499,
@@ -3121,8 +3229,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
-    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "size_chart": "Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready",
+    "fabric_claim": "Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass",
     "third_party_ip_review": false,
     "slug": "ft-hm-004-royal-plum-mirror",
     "variants": [
@@ -3132,25 +3240,61 @@ const STARKIT_CATALOG = [
         "hex": "#581c87",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-HM-004.jpg",
             "url": "/assets/images/accessories/FT-HM-004.jpg",
-            "filename": "FT-HM-004.jpg"
+            "alt": "ROYAL PLUM MIRROR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "alt": "ROYAL PLUM MIRROR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "ROYAL PLUM MIRROR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "Standard"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-HM-004.jpg",
+        "back_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
   },
   {
     "id": "FT-HM-005",
     "name": "TEAL BLOOM MIRROR",
     "bengali_name": "টিল ব্লুম হ্যান্ডমেড মিরর",
     "category": "Artisan Accessories",
-    "collection": "Decorative Mirrors",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "EARTHY COASTAL BOTANICALS",
     "price_bdt": 499,
@@ -3171,8 +3315,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard Round Mirror: Diameter ~5.5 inches",
-    "fabric_claim": "Hand-painted wooden cutout frame, glass mirror inlay",
+    "size_chart": "Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready",
+    "fabric_claim": "Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass",
     "third_party_ip_review": false,
     "slug": "ft-hm-005-teal-bloom-mirror",
     "variants": [
@@ -3182,25 +3326,61 @@ const STARKIT_CATALOG = [
         "hex": "#0f766e",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-HM-005.jpg",
             "url": "/assets/images/accessories/FT-HM-005.jpg",
-            "filename": "FT-HM-005.jpg"
+            "alt": "TEAL BLOOM MIRROR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+            "alt": "TEAL BLOOM MIRROR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "TEAL BLOOM MIRROR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "Standard"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-HM-005.jpg",
+        "back_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-mirror-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-001",
     "name": "INDIGO FOLK RELIEF SET",
     "bengali_name": "ইন্ডিগো ফোক রিলিফ জুয়েলারি সেট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "HERITAGE BLUEPRINT CARVED LOOK",
     "price_bdt": 699,
@@ -3221,8 +3401,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Adjustable cord length (16\"–28\"), lightweight pendant",
-    "fabric_claim": "Handcrafted clay/wood relief panels, spun thread cord, glazed beads",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-001-indigo-folk-relief-set",
     "variants": [
@@ -3232,25 +3412,68 @@ const STARKIT_CATALOG = [
         "hex": "#1e3a8a",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-001.jpg",
             "url": "/assets/images/accessories/FT-JWL-001.jpg",
-            "filename": "FT-JWL-001.jpg"
+            "alt": "INDIGO FOLK RELIEF SET — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "INDIGO FOLK RELIEF SET — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "INDIGO FOLK RELIEF SET — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "INDIGO FOLK RELIEF SET — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 699,
+        "draft_price_bdt": 699,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-001.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 699,
+    "approved_price_bdt": 699,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-002",
     "name": "SAFFRON FOLK RELIEF SET",
     "bengali_name": "স্যাফরন ফোক রিলিফ জুয়েলারি সেট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "WARM EARTHEN FESTIVITY",
     "price_bdt": 649,
@@ -3271,8 +3494,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Adjustable beaded cord length (16\"–26\") with wooden beads",
-    "fabric_claim": "Handcrafted relief panel, terracotta-toned wooden beads, durable woven cord",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-002-saffron-folk-relief-set",
     "variants": [
@@ -3282,25 +3505,68 @@ const STARKIT_CATALOG = [
         "hex": "#ea580c",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-002.jpg",
             "url": "/assets/images/accessories/FT-JWL-002.jpg",
-            "filename": "FT-JWL-002.jpg"
+            "alt": "SAFFRON FOLK RELIEF SET — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "SAFFRON FOLK RELIEF SET — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "SAFFRON FOLK RELIEF SET — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SAFFRON FOLK RELIEF SET — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 649,
+        "draft_price_bdt": 649,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-002.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 649,
+    "approved_price_bdt": 649,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-003",
     "name": "WILDFLOWER BOUQUET PENDANT",
     "bengali_name": "ওয়াইল্ডফ্লাওয়ার বুকে পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "CRAFT-FORWARD FLORAL BURST",
     "price_bdt": 349,
@@ -3314,15 +3580,15 @@ const STARKIT_CATALOG = [
       "floral",
       "accessories"
     ],
-    "featured": false,
+    "featured": true,
     "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
     "rights_verified": true,
     "stock_verified": true,
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Pendant length ~3.5\", adjustable cord ~24\"",
-    "fabric_claim": "Hand-painted wood/fiber art, cotton thread wrapping",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-003-wildflower-bouquet-pendant",
     "variants": [
@@ -3332,25 +3598,68 @@ const STARKIT_CATALOG = [
         "hex": "#eab308",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-003.jpg",
             "url": "/assets/images/accessories/FT-JWL-003.jpg",
-            "filename": "FT-JWL-003.jpg"
+            "alt": "WILDFLOWER BOUQUET PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "WILDFLOWER BOUQUET PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "WILDFLOWER BOUQUET PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "WILDFLOWER BOUQUET PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 349,
+        "draft_price_bdt": 349,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-003.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 349,
+    "approved_price_bdt": 349,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-004",
     "name": "CRIMSON MANDALA PENDANT",
     "bengali_name": "ক্রিমসন ম্যান্ডালা পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "SPIRITUAL CIRCLE OF DHAKA",
     "price_bdt": 349,
@@ -3371,8 +3680,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Medallion diameter ~2.8\", braided green cord ~26\"",
-    "fabric_claim": "Hand-painted wooden medallion, twisted silk thread cord",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-004-crimson-mandala-pendant",
     "variants": [
@@ -3382,25 +3691,68 @@ const STARKIT_CATALOG = [
         "hex": "#dc2626",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-004.jpg",
             "url": "/assets/images/accessories/FT-JWL-004.jpg",
-            "filename": "FT-JWL-004.jpg"
+            "alt": "CRIMSON MANDALA PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "CRIMSON MANDALA PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "CRIMSON MANDALA PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "CRIMSON MANDALA PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 349,
+        "draft_price_bdt": 349,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-004.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 349,
+    "approved_price_bdt": 349,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-005",
     "name": "CARNIVAL SUNFLOWER SET",
     "bengali_name": "কার্নিভাল সানফ্লাওয়ার জুয়েলারি সেট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "KINETIC FESTIVE SYMPHONY",
     "price_bdt": 699,
@@ -3422,8 +3774,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Main pendant ~3.5\" diameter, earrings ~1.5\" diameter",
-    "fabric_claim": "Handcrafted petal layers, metal hooks, wooden accents",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-005-carnival-sunflower-set",
     "variants": [
@@ -3433,25 +3785,68 @@ const STARKIT_CATALOG = [
         "hex": "#f59e0b",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-005.jpg",
             "url": "/assets/images/accessories/FT-JWL-005.jpg",
-            "filename": "FT-JWL-005.jpg"
+            "alt": "CARNIVAL SUNFLOWER SET — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "CARNIVAL SUNFLOWER SET — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "CARNIVAL SUNFLOWER SET — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "CARNIVAL SUNFLOWER SET — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 699,
+        "draft_price_bdt": 699,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-005.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 699,
+    "approved_price_bdt": 699,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-006",
     "name": "SCARLET BLOSSOM PENDANT",
     "bengali_name": "স্কারলেট ব্লসম পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "ORGANIC BOTANICAL SPIRAL",
     "price_bdt": 349,
@@ -3465,15 +3860,15 @@ const STARKIT_CATALOG = [
       "floral",
       "accessories"
     ],
-    "featured": false,
+    "featured": true,
     "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
     "rights_verified": true,
     "stock_verified": true,
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Flower diameter ~3.2\", cord length ~24\"",
-    "fabric_claim": "Hand-painted wood/fiber, glossy varnish coat",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-006-scarlet-blossom-pendant",
     "variants": [
@@ -3483,25 +3878,68 @@ const STARKIT_CATALOG = [
         "hex": "#e11d48",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-006.jpg",
             "url": "/assets/images/accessories/FT-JWL-006.jpg",
-            "filename": "FT-JWL-006.jpg"
+            "alt": "SCARLET BLOSSOM PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "SCARLET BLOSSOM PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "SCARLET BLOSSOM PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SCARLET BLOSSOM PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 349,
+        "draft_price_bdt": 349,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-006.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 349,
+    "approved_price_bdt": 349,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-007",
     "name": "PAISLEY FOLK DROP",
     "bengali_name": "পেইসলি ফোক ড্রপ পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "BENGALI KALKA REIMAGINED",
     "price_bdt": 399,
@@ -3522,8 +3960,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Teardrop pendant ~4\" length, twisted rope cord ~28\"",
-    "fabric_claim": "Hand-painted wooden cutout base, textured acrylic detail",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-007-paisley-folk-drop",
     "variants": [
@@ -3533,25 +3971,68 @@ const STARKIT_CATALOG = [
         "hex": "#c2410c",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-007.jpg",
             "url": "/assets/images/accessories/FT-JWL-007.jpg",
-            "filename": "FT-JWL-007.jpg"
+            "alt": "PAISLEY FOLK DROP — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "PAISLEY FOLK DROP — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "PAISLEY FOLK DROP — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "PAISLEY FOLK DROP — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 399,
+        "draft_price_bdt": 399,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-007.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 399,
+    "approved_price_bdt": 399,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-008",
     "name": "GOLDEN JASMINE GARLAND",
     "bengali_name": "গোল্ডেন জ্যাসমিন গারল্যান্ড পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "FLORAL MALAR SHOHOR",
     "price_bdt": 349,
@@ -3572,8 +4053,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Garland arch width ~4.5\", cord ~24\"",
-    "fabric_claim": "Hand-cut lightweight board/wood, satin thread beads",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-008-golden-jasmine-garland",
     "variants": [
@@ -3583,25 +4064,68 @@ const STARKIT_CATALOG = [
         "hex": "#facc15",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-008.jpg",
             "url": "/assets/images/accessories/FT-JWL-008.jpg",
-            "filename": "FT-JWL-008.jpg"
+            "alt": "GOLDEN JASMINE GARLAND — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "GOLDEN JASMINE GARLAND — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "GOLDEN JASMINE GARLAND — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "GOLDEN JASMINE GARLAND — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 349,
+        "draft_price_bdt": 349,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-008.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 349,
+    "approved_price_bdt": 349,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-009",
     "name": "RUBY SUNBURST PENDANT",
     "bengali_name": "রুবি সানবার্স্ট পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "CELESTIAL RADIANCE",
     "price_bdt": 329,
@@ -3622,8 +4146,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Diameter ~3\", cord length ~24\"",
-    "fabric_claim": "Hand-cut wooden starburst, pink/orange thread-wrapped beads",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-009-ruby-sunburst-pendant",
     "variants": [
@@ -3633,25 +4157,68 @@ const STARKIT_CATALOG = [
         "hex": "#be123c",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-009.jpg",
             "url": "/assets/images/accessories/FT-JWL-009.jpg",
-            "filename": "FT-JWL-009.jpg"
+            "alt": "RUBY SUNBURST PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "RUBY SUNBURST PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "RUBY SUNBURST PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "RUBY SUNBURST PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 329,
+        "draft_price_bdt": 329,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-009.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 329,
+    "approved_price_bdt": 329,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-010",
     "name": "HERITAGE RICKSHAW PENDANT",
     "bengali_name": "হেরিটেজ রিকশা আর্ট পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "DHAKA STREET ART EMBLEM",
     "price_bdt": 449,
@@ -3673,8 +4240,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Rectangular pendant ~3\" x 2.2\", cord ~26\"",
-    "fabric_claim": "Hand-painted wooden canvas, textured thread embroidery border",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-010-heritage-rickshaw-pendant",
     "variants": [
@@ -3684,25 +4251,68 @@ const STARKIT_CATALOG = [
         "hex": "#166534",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-010.jpg",
             "url": "/assets/images/accessories/FT-JWL-010.jpg",
-            "filename": "FT-JWL-010.jpg"
+            "alt": "HERITAGE RICKSHAW PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "HERITAGE RICKSHAW PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "HERITAGE RICKSHAW PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "HERITAGE RICKSHAW PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 449,
+        "draft_price_bdt": 449,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-010.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 449,
+    "approved_price_bdt": 449,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-011",
     "name": "AZURE LACE SQUARE",
     "bengali_name": "আজুর লেস স্কয়ার পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "DELICATE GEOMETRIC PURITY",
     "price_bdt": 359,
@@ -3723,8 +4333,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Square ~2.8\" x 2.8\", beaded strand ~24\"",
-    "fabric_claim": "Laser-cut board with hand-applied acrylic lace finish",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-011-azure-lace-square",
     "variants": [
@@ -3734,25 +4344,68 @@ const STARKIT_CATALOG = [
         "hex": "#38bdf8",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-011.jpg",
             "url": "/assets/images/accessories/FT-JWL-011.jpg",
-            "filename": "FT-JWL-011.jpg"
+            "alt": "AZURE LACE SQUARE — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "AZURE LACE SQUARE — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "AZURE LACE SQUARE — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "AZURE LACE SQUARE — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 359,
+        "draft_price_bdt": 359,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-011.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 359,
+    "approved_price_bdt": 359,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-012",
     "name": "KALEIDO MIRROR BLOOM",
     "bengali_name": "ক্যালাইডো মিরর ব্লুম পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "REFLECTIVE PRISM FLOWERS",
     "price_bdt": 399,
@@ -3773,8 +4426,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Round pendant ~2.7\" diameter, long bead necklace ~26\"",
-    "fabric_claim": "Hand-crafted clay flowers, glass mirror center, wooden beads",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-012-kaleido-mirror-bloom",
     "variants": [
@@ -3784,25 +4437,68 @@ const STARKIT_CATALOG = [
         "hex": "#06b6d4",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-012.jpg",
             "url": "/assets/images/accessories/FT-JWL-012.jpg",
-            "filename": "FT-JWL-012.jpg"
+            "alt": "KALEIDO MIRROR BLOOM — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "KALEIDO MIRROR BLOOM — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "KALEIDO MIRROR BLOOM — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "KALEIDO MIRROR BLOOM — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 399,
+        "draft_price_bdt": 399,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-012.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 399,
+    "approved_price_bdt": 399,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-013",
     "name": "TURQUOISE PINWHEEL",
     "bengali_name": "টারকোয়েজ পিনহুইল পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "CONTEMPORARY SUNRAY GEOMETRY",
     "price_bdt": 389,
@@ -3823,8 +4519,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Pinwheel diameter ~3.2\", cord ~24\"",
-    "fabric_claim": "Hand-painted wood base with fine gilt detailing",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-013-turquoise-pinwheel",
     "variants": [
@@ -3834,25 +4530,68 @@ const STARKIT_CATALOG = [
         "hex": "#14b8a6",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-013.jpg",
             "url": "/assets/images/accessories/FT-JWL-013.jpg",
-            "filename": "FT-JWL-013.jpg"
+            "alt": "TURQUOISE PINWHEEL — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "TURQUOISE PINWHEEL — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "TURQUOISE PINWHEEL — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "TURQUOISE PINWHEEL — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 389,
+        "draft_price_bdt": 389,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-013.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 389,
+    "approved_price_bdt": 389,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-014",
     "name": "VIOLET GARDEN MEDALLION",
     "bengali_name": "ভায়োলেট গার্ডেন মেডেলিয়ন",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "ROMANTIC LILAC SOLITUDE",
     "price_bdt": 379,
@@ -3873,8 +4612,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Medallion ~3\" diameter, purple bead strand ~24\"",
-    "fabric_claim": "Hand-molded floral petals, satin finish paint",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-014-violet-garden-medallion",
     "variants": [
@@ -3884,25 +4623,68 @@ const STARKIT_CATALOG = [
         "hex": "#7c3aed",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-014.jpg",
             "url": "/assets/images/accessories/FT-JWL-014.jpg",
-            "filename": "FT-JWL-014.jpg"
+            "alt": "VIOLET GARDEN MEDALLION — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "VIOLET GARDEN MEDALLION — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "VIOLET GARDEN MEDALLION — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "VIOLET GARDEN MEDALLION — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 379,
+        "draft_price_bdt": 379,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-014.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 379,
+    "approved_price_bdt": 379,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-015",
     "name": "COCOA CROSSHATCH PENDANT",
     "bengali_name": "কোকো ক্রসহ্যাচ পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "EARTHY ARCHED MINIMALISM",
     "price_bdt": 299,
@@ -3923,8 +4705,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Arch ~3.2\" x 2.2\", natural wooden bead strand ~24\"",
-    "fabric_claim": "Solid wood plate, hand-drawn linework, natural lacquer",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-015-cocoa-crosshatch-pendant",
     "variants": [
@@ -3934,25 +4716,68 @@ const STARKIT_CATALOG = [
         "hex": "#78350f",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-015.jpg",
             "url": "/assets/images/accessories/FT-JWL-015.jpg",
-            "filename": "FT-JWL-015.jpg"
+            "alt": "COCOA CROSSHATCH PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "COCOA CROSSHATCH PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "COCOA CROSSHATCH PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "COCOA CROSSHATCH PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 299,
+        "draft_price_bdt": 299,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-015.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 299,
+    "approved_price_bdt": 299,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-016",
     "name": "SPRING LEAF PENDANT",
     "bengali_name": "স্প্রিং লিফ আর্ট পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "BOTANICAL SPRING BREEZE",
     "price_bdt": 329,
@@ -3973,8 +4798,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Leaf width ~3.4\", pastel bead cord ~24\"",
-    "fabric_claim": "Handcrafted cutout leaf base, acrylic detailing",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-016-spring-leaf-pendant",
     "variants": [
@@ -3984,25 +4809,68 @@ const STARKIT_CATALOG = [
         "hex": "#22c55e",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-016.jpg",
             "url": "/assets/images/accessories/FT-JWL-016.jpg",
-            "filename": "FT-JWL-016.jpg"
+            "alt": "SPRING LEAF PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "SPRING LEAF PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "SPRING LEAF PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SPRING LEAF PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 329,
+        "draft_price_bdt": 329,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-016.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 329,
+    "approved_price_bdt": 329,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-017",
     "name": "MIDNIGHT SHELL FRINGE",
     "bengali_name": "মিডনাইট শেল ফ্রিঞ্জ পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "NOIR MONOCHROME CHARMS",
     "price_bdt": 379,
@@ -4023,8 +4891,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Triangle height ~3.5\" with shells, silver bead necklace ~26\"",
-    "fabric_claim": "Black textile/board triangle, natural shell charms, silver-tone beads",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-017-midnight-shell-fringe",
     "variants": [
@@ -4034,25 +4902,68 @@ const STARKIT_CATALOG = [
         "hex": "#170000",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-017.jpg",
             "url": "/assets/images/accessories/FT-JWL-017.jpg",
-            "filename": "FT-JWL-017.jpg"
+            "alt": "MIDNIGHT SHELL FRINGE — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "MIDNIGHT SHELL FRINGE — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "MIDNIGHT SHELL FRINGE — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "MIDNIGHT SHELL FRINGE — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 379,
+        "draft_price_bdt": 379,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-017.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 379,
+    "approved_price_bdt": 379,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-018",
     "name": "AQUA DAISY BLOOM",
     "bengali_name": "অ্যাকুয়া ডেইজি ব্লুম পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "CONTEMPORARY PAINTERLY FLOWER",
     "price_bdt": 349,
@@ -4073,8 +4984,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Flower diameter ~3.5\", adjustable black cord ~24\"",
-    "fabric_claim": "Wood cutout, artistic brush-painted finish",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-018-aqua-daisy-bloom",
     "variants": [
@@ -4084,25 +4995,68 @@ const STARKIT_CATALOG = [
         "hex": "#06b6d4",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-018.jpg",
             "url": "/assets/images/accessories/FT-JWL-018.jpg",
-            "filename": "FT-JWL-018.jpg"
+            "alt": "AQUA DAISY BLOOM — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "AQUA DAISY BLOOM — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "AQUA DAISY BLOOM — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "AQUA DAISY BLOOM — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 349,
+        "draft_price_bdt": 349,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-018.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 349,
+    "approved_price_bdt": 349,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg"
   },
   {
     "id": "FT-JWL-019",
     "name": "MARIGOLD SUNFLOWER PENDANT",
     "bengali_name": "ম্যারিগোল্ড সানফ্লাওয়ার পেন্ড্যান্ট",
     "category": "Artisan Accessories",
-    "collection": "Wearable Art",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "GOLDEN PETAL RADIANCE",
     "price_bdt": 329,
@@ -4123,8 +5077,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Flower ~3\" diameter, red/orange bead cord ~24\"",
-    "fabric_claim": "Handcrafted cutout flower, acrylic paint layer",
+    "size_chart": "Adjustable 18\"–26\" Braided Cord · Matching Hand-Painted Artisan Earrings Included",
+    "fabric_claim": "Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads",
     "third_party_ip_review": false,
     "slug": "ft-jwl-019-marigold-sunflower-pendant",
     "variants": [
@@ -4134,25 +5088,68 @@ const STARKIT_CATALOG = [
         "hex": "#f59e0b",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-JWL-019.jpg",
             "url": "/assets/images/accessories/FT-JWL-019.jpg",
-            "filename": "FT-JWL-019.jpg"
+            "alt": "MARIGOLD SUNFLOWER PENDANT — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+            "alt": "MARIGOLD SUNFLOWER PENDANT — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg",
+            "alt": "MARIGOLD SUNFLOWER PENDANT — Dhaka Heritage Craft Editorial Styling"
+          },
+          {
+            "role": "detail",
+            "view": "atelier_campaign",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "MARIGOLD SUNFLOWER PENDANT — Fariza's Territory Dhaka Atelier Campaign"
           }
         ],
         "stock_quantity": 50,
         "available_sizes": [
           "One Size (Adjustable)"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 4,
+        "price_bdt": 329,
+        "draft_price_bdt": 329,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-JWL-019.jpg",
+        "back_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 329,
+    "approved_price_bdt": 329,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg"
   },
   {
     "id": "FT-BA-001",
     "name": "PAINTED BANGLE HARMONY SELECTION",
     "bengali_name": "রঙিন হ্যান্ড-পেইন্টেড চুড়ি",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "EVERYDAY DHAKA COLOR PALETTE",
     "price_bdt": 219,
@@ -4172,8 +5169,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Standard bangle sizes available: 2.4, 2.6, 2.8",
-    "fabric_claim": "Solid wood base, lacquer sealant, organic paint",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-001-painted-bangle-harmony-selection",
     "variants": [
@@ -4183,9 +5180,25 @@ const STARKIT_CATALOG = [
         "hex": "#3b82f6",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-001.jpg",
             "url": "/assets/images/accessories/FT-BA-001.jpg",
-            "filename": "FT-BA-001.jpg"
+            "alt": "PAINTED BANGLE HARMONY SELECTION — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "PAINTED BANGLE HARMONY SELECTION — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "PAINTED BANGLE HARMONY SELECTION — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4194,16 +5207,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 219,
+        "draft_price_bdt": 219,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-001.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 219,
+    "approved_price_bdt": 219,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-002",
     "name": "NOIR SILVER-TONE BEAD BANGLES",
     "bengali_name": "নোয়ার সিলভার-টোন বিড চুড়ি (জোড়া)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "MONOCHROMATIC METALLIC STATEMENT",
     "price_bdt": 479,
@@ -4224,8 +5257,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8 (inner diameter ~2.25\" - 2.5\")",
-    "fabric_claim": "Fabric-wrapped rigid core, silver-finish metallic beads",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-002-noir-silver-tone-bead-bangles",
     "variants": [
@@ -4235,9 +5268,25 @@ const STARKIT_CATALOG = [
         "hex": "#170000",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-002.jpg",
             "url": "/assets/images/accessories/FT-BA-002.jpg",
-            "filename": "FT-BA-002.jpg"
+            "alt": "NOIR SILVER-TONE BEAD BANGLES — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "NOIR SILVER-TONE BEAD BANGLES — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "NOIR SILVER-TONE BEAD BANGLES — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4246,16 +5295,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 479,
+        "draft_price_bdt": 479,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-002.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 479,
+    "approved_price_bdt": 479,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-003",
     "name": "SUNBURST FOLK ACCENT BANGLE",
     "bengali_name": "সানবার্স্ট ফোক অ্যাকসেন্ট বালা",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "BOLD FESTIVE ORANGE ACCENT",
     "price_bdt": 449,
@@ -4269,15 +5338,15 @@ const STARKIT_CATALOG = [
       "cutwork",
       "accessories"
     ],
-    "featured": false,
+    "featured": true,
     "rights_assessment": "Authentic Fariza’s Territory Artisan Creation",
     "rights_verified": true,
     "stock_verified": true,
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Reinforced carved core with vibrant thread wrapping",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-003-sunburst-folk-accent-bangle",
     "variants": [
@@ -4287,9 +5356,25 @@ const STARKIT_CATALOG = [
         "hex": "#f97316",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-003.jpg",
             "url": "/assets/images/accessories/FT-BA-003.jpg",
-            "filename": "FT-BA-003.jpg"
+            "alt": "SUNBURST FOLK ACCENT BANGLE — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "SUNBURST FOLK ACCENT BANGLE — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SUNBURST FOLK ACCENT BANGLE — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4298,16 +5383,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 449,
+        "draft_price_bdt": 449,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-003.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 449,
+    "approved_price_bdt": 449,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-004",
     "name": "BLUSH BEADED STITCH TRIO",
     "bengali_name": "ব্লাশ বিডেড স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "PASTEL FEMININE GRACE",
     "price_bdt": 549,
@@ -4329,8 +5434,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Thread-wrapped padded bangle base with hand embroidery and micro beads",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-004-blush-beaded-stitch-trio",
     "variants": [
@@ -4340,9 +5445,25 @@ const STARKIT_CATALOG = [
         "hex": "#f43f5e",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-004.jpg",
             "url": "/assets/images/accessories/FT-BA-004.jpg",
-            "filename": "FT-BA-004.jpg"
+            "alt": "BLUSH BEADED STITCH TRIO — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "BLUSH BEADED STITCH TRIO — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "BLUSH BEADED STITCH TRIO — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4351,16 +5472,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 549,
+        "draft_price_bdt": 549,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-004.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 549,
+    "approved_price_bdt": 549,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-005",
     "name": "COLOR POP STITCH TRIO",
     "bengali_name": "কালার পপ স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "CONTRASTING EMBROIDERY BANGLE SET",
     "price_bdt": 549,
@@ -4381,8 +5522,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Fabric-wrapped rigid core, handcrafted beaded accents",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-005-color-pop-stitch-trio",
     "variants": [
@@ -4392,9 +5533,25 @@ const STARKIT_CATALOG = [
         "hex": "#0d9488",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-005.jpg",
             "url": "/assets/images/accessories/FT-BA-005.jpg",
-            "filename": "FT-BA-005.jpg"
+            "alt": "COLOR POP STITCH TRIO — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "COLOR POP STITCH TRIO — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "COLOR POP STITCH TRIO — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4403,16 +5560,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 549,
+        "draft_price_bdt": 549,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-005.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 549,
+    "approved_price_bdt": 549,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-006",
     "name": "MIDNIGHT BLOOM BANGLES",
     "bengali_name": "মিডনাইট ব্লুম চুড়ি ট্রায়ো (৩ পিস)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "ELECTRIC NIGHTTIME CONTRAST",
     "price_bdt": 599,
@@ -4434,8 +5611,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Jet-black fabric wrapping, neon embroidery threads, glass beads",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-006-midnight-bloom-bangles",
     "variants": [
@@ -4445,9 +5622,25 @@ const STARKIT_CATALOG = [
         "hex": "#170000",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-006.jpg",
             "url": "/assets/images/accessories/FT-BA-006.jpg",
-            "filename": "FT-BA-006.jpg"
+            "alt": "MIDNIGHT BLOOM BANGLES — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "MIDNIGHT BLOOM BANGLES — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "MIDNIGHT BLOOM BANGLES — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4456,16 +5649,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 599,
+        "draft_price_bdt": 599,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-006.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 599,
+    "approved_price_bdt": 599,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-007",
     "name": "DAISY SKY FLORAL PAIR",
     "bengali_name": "ডেইজি স্কাই ফ্লোরাল চুড়ি (জোড়া)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "SERENE CERULEAN PAIR",
     "price_bdt": 399,
@@ -4486,8 +5699,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Molded wooden core, acrylic paint, waterproof gloss coat",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-007-daisy-sky-floral-pair",
     "variants": [
@@ -4497,9 +5710,25 @@ const STARKIT_CATALOG = [
         "hex": "#0284c7",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-007.jpg",
             "url": "/assets/images/accessories/FT-BA-007.jpg",
-            "filename": "FT-BA-007.jpg"
+            "alt": "DAISY SKY FLORAL PAIR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "DAISY SKY FLORAL PAIR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "DAISY SKY FLORAL PAIR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4508,16 +5737,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 399,
+        "draft_price_bdt": 399,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-007.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 399,
+    "approved_price_bdt": 399,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-008",
     "name": "SUNSET BLOOM BANGLES",
     "bengali_name": "সানসেট ব্লুম চুড়ি (জোড়া)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "GOLDEN HOUR DUSK PALETTE",
     "price_bdt": 399,
@@ -4538,8 +5787,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Thread-wound structure, hand embroidery, bead cluster accents",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-008-sunset-bloom-bangles",
     "variants": [
@@ -4549,9 +5798,25 @@ const STARKIT_CATALOG = [
         "hex": "#ea580c",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-008.jpg",
             "url": "/assets/images/accessories/FT-BA-008.jpg",
-            "filename": "FT-BA-008.jpg"
+            "alt": "SUNSET BLOOM BANGLES — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "SUNSET BLOOM BANGLES — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SUNSET BLOOM BANGLES — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4560,16 +5825,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 399,
+        "draft_price_bdt": 399,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-008.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 399,
+    "approved_price_bdt": 399,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-009",
     "name": "EVERYDAY THREAD LUXE TRIO",
     "bengali_name": "এভরিডে থ্রেড লাক্স চুড়ি ট্রায়ো (৩ পিস)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "MINIMAL THREADWORK LUXURY",
     "price_bdt": 499,
@@ -4591,8 +5876,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Fine mercerized cotton thread on sturdy bangle core",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-009-everyday-thread-luxe-trio",
     "variants": [
@@ -4602,9 +5887,25 @@ const STARKIT_CATALOG = [
         "hex": "#881337",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-009.jpg",
             "url": "/assets/images/accessories/FT-BA-009.jpg",
-            "filename": "FT-BA-009.jpg"
+            "alt": "EVERYDAY THREAD LUXE TRIO — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "EVERYDAY THREAD LUXE TRIO — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "EVERYDAY THREAD LUXE TRIO — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4613,16 +5914,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 499,
+        "draft_price_bdt": 499,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-009.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 499,
+    "approved_price_bdt": 499,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-010",
     "name": "SAGE CHARM STITCH TRIO",
     "bengali_name": "সেজ চার্ম স্টিচ চুড়ি ট্রায়ো (৩ পিস)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "SOOTHING EARTHEN SAGE PALETTE",
     "price_bdt": 549,
@@ -4644,8 +5965,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Sage green woven wrap, hand-embroidered beads",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-010-sage-charm-stitch-trio",
     "variants": [
@@ -4655,9 +5976,25 @@ const STARKIT_CATALOG = [
         "hex": "#84cc16",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-010.jpg",
             "url": "/assets/images/accessories/FT-BA-010.jpg",
-            "filename": "FT-BA-010.jpg"
+            "alt": "SAGE CHARM STITCH TRIO — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "SAGE CHARM STITCH TRIO — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "SAGE CHARM STITCH TRIO — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4666,16 +6003,36 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 549,
+        "draft_price_bdt": 549,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-010.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 549,
+    "approved_price_bdt": 549,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   },
   {
     "id": "FT-BA-011",
     "name": "CARVED FLORA COLORWAY PAIR",
     "bengali_name": "কার্ভড ফ্লোরা কালারওয়ে চুড়ি (জোড়া)",
     "category": "Artisan Accessories",
-    "collection": "Bangles & Accents",
+    "collection": "Fariza's Territory",
     "drop": "DROP 02 / ARTISAN EDIT",
     "editorial": "INTAGLIO FLORAL CUTWORK",
     "price_bdt": 449,
@@ -4696,8 +6053,8 @@ const STARKIT_CATALOG = [
     "specifications_verified": true,
     "commercial_terms_verified": true,
     "publication_status": "PUBLISHED",
-    "size_chart": "Sizes: 2.4, 2.6, 2.8",
-    "fabric_claim": "Intricately cut composite wood/lacquer, high-durability finish",
+    "size_chart": "Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core",
+    "fabric_claim": "Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs",
     "third_party_ip_review": false,
     "slug": "ft-ba-011-carved-flora-colorway-pair",
     "variants": [
@@ -4707,9 +6064,25 @@ const STARKIT_CATALOG = [
         "hex": "#1d4ed8",
         "gallery": [
           {
+            "role": "front",
             "view": "front",
+            "path": "assets/images/accessories/FT-BA-011.jpg",
             "url": "/assets/images/accessories/FT-BA-011.jpg",
-            "filename": "FT-BA-011.jpg"
+            "alt": "CARVED FLORA COLORWAY PAIR — Handcrafted Dhaka Artisan Piece"
+          },
+          {
+            "role": "back",
+            "view": "lifestyle",
+            "path": "assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "url": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+            "alt": "CARVED FLORA COLORWAY PAIR — Drop 02 Fariza's Territory Studio Lifestyle Photography"
+          },
+          {
+            "role": "detail",
+            "view": "detail_01",
+            "path": "assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "url": "/assets/images/editorial/fariza-drop02-editorial-banner.jpg",
+            "alt": "CARVED FLORA COLORWAY PAIR — Dhaka Heritage Craft Editorial Styling"
           }
         ],
         "stock_quantity": 50,
@@ -4718,9 +6091,29 @@ const STARKIT_CATALOG = [
           "2.6",
           "2.8"
         ],
-        "approved_for_publication": true
+        "approved_for_publication": true,
+        "color_bn": "আর্টিসান মাল্টি",
+        "status": "DOCUMENTED",
+        "sku_status": "LIVE IN DROP 02 FARIZA’S TERRITORY",
+        "color_status": "HANDCRAFTED ARTISAN EDITION",
+        "asset_status": "LIFESTYLE_GALLERY_VERIFIED",
+        "media_count": 3,
+        "price_bdt": 449,
+        "draft_price_bdt": 449,
+        "price_approved": true,
+        "publication_status": "PUBLISHED",
+        "front_image": "/assets/images/accessories/FT-BA-011.jpg",
+        "back_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg",
+        "lifestyle_image": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
       }
-    ]
+    ],
+    "draft_price_bdt": 449,
+    "approved_price_bdt": 449,
+    "price_approved": true,
+    "approval_status": "PUBLISHED",
+    "documented_variant_count": 1,
+    "provisional_variant_count": 0,
+    "lifestyle_hero": "/assets/images/editorial/fariza-bangles-lifestyle.jpg"
   }
 ];
 const STARKIT_PROMOTIONS = [

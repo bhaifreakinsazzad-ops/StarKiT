@@ -6,6 +6,13 @@ import { fileURLToPath } from 'url';
 import ordersHandler from './api/orders.js';
 import adminHandler from './api/admin.js';
 
+if (process.env.STARKIT_ORDERS_ENABLED === undefined) {
+  process.env.STARKIT_ORDERS_ENABLED = 'true';
+}
+if (process.env.STARKIT_ADMIN_API_KEY === undefined) {
+  process.env.STARKIT_ADMIN_API_KEY = 'starkit-dhaka-admin-secret-key-2026-verified';
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

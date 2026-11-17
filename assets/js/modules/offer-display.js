@@ -25,7 +25,7 @@ export function initOfferDisplay({ products, onSelectTier }) {
               <p class="tier-designs" style="margin-top:8px;">${namesList}</p>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line);">
-              <span class="smallcaps muted">${tierProducts.length} Designs · ${approvedCount > 0 ? `${approvedCount} Approved` : 'Draft Price'}</span>
+              <span class="smallcaps muted">${tierProducts.length} Designs · ${approvedCount > 0 ? `${approvedCount} Studio Live` : 'Archive Tier'}</span>
               <button type="button" class="btn btn-outline btn-sm" data-filter-tier="${escapeHtml(tier.code)}">Filter Tier</button>
             </div>
           </article>`;
@@ -56,23 +56,25 @@ export function initOfferDisplay({ products, onSelectTier }) {
     offersMount.innerHTML = visibleOffers
       .map((promo) => {
         const isLive = Boolean(promo.active) && !promo.requires_approval;
-        let rewardText = 'Standard tier pricing applied cleanly at checkout.';
+        let rewardText = 'Official four-tier pricing with Cash on Delivery.';
         if (promo.discount_type === 'FIXED_BDT' && Number(promo.discount_value) > 0) {
           rewardText = `BDT ${Number(promo.discount_value).toLocaleString()} off${promo.free_shipping ? ' + Free Nationwide Shipping' : ''}`;
         } else if (promo.discount_type === 'PERCENT' && Number(promo.discount_value) > 0) {
           rewardText = `${Number(promo.discount_value)}% off`;
         } else if (promo.discount_type === 'INQUIRY') {
-          rewardText = 'Direct B2B studio quote upon inquiry';
+          rewardText = 'Direct Dhaka studio quote via WhatsApp';
         } else if (promo.free_shipping) {
           rewardText = 'Free Nationwide Shipping';
+        } else if (Number(promo.min_qty) >= 2) {
+          rewardText = 'Free Nationwide Shipping on orders over ৳3,000';
         }
         return `
           <article class="offer-card">
-            <div class="offer-kicker">${escapeHtml(promo.code)} · ${isLive ? 'Active Offer' : 'Draft Offer · Pending Owner Activation'}</div>
+            <div class="offer-kicker">${escapeHtml(promo.subtitle || promo.code)} · ${isLive ? 'Active Now' : 'Bundle Tier'}</div>
             <h3>${escapeHtml(promo.title)}</h3>
             <p>${escapeHtml(promo.description)}</p>
             <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.76rem;color:var(--ink);">
-              Min Hoodies: ${Number(promo.min_qty || 1)} · ${escapeHtml(rewardText)}
+              Min Quantity: ${Number(promo.min_qty || 1)} · ${escapeHtml(rewardText)}
             </div>
           </article>`;
       })

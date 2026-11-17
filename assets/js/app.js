@@ -150,14 +150,14 @@ function setupLookbook({ products, base }) {
     'STK-H001',
     'FT-BA-001',
     'STK-H004',
-    'FT-HM-002',
+    'FT-JWL-006',
     'STK-H003',
-    'FT-JWL-005',
+    'FT-HM-002',
     'STK-H005',
-    'FT-BA-010',
+    'FT-JWL-010',
     'STK-H011',
-    'STK-H013',
-    'STK-H014'
+    'STK-H010',
+    'STK-H008'
   ];
 
   const byId = new Map(products.map((p) => [p.id, p]));
@@ -181,7 +181,7 @@ function setupLookbook({ products, base }) {
                   : `<div class="concept-slate">
                        <div class="stage-swatch-disc" style="width:48px;height:48px;background:${escapeHtml(v?.hex || '#170000')};"></div>
                        <strong>${escapeHtml(p.name)}</strong>
-                       <small>Concept Design · Media Pending</small>
+                       <small>Archive Slot</small>
                      </div>`
               }
             </a>
@@ -229,7 +229,7 @@ function setupFitGuideModal({ base }) {
           <button type="button" id="closeFitModalBtn" class="close-btn" aria-label="Close fit guide">×</button>
         </div>
         <div class="fit-modal-body">
-          <p class="muted" style="font-size:0.9rem;margin-bottom:14px;">Heavyweight 330–350 GSM fleece specification (pending batch verification on unapproved runs). Select your stats for a tailored drape suggestion:</p>
+          <p class="muted" style="font-size:0.9rem;margin-bottom:14px;">Heavyweight 330–350 GSM combed compact fleece with relaxed Dhaka streetwear proportions. Select your height, build, and preferred drape:</p>
           <div class="form-grid fit-finder-grid">
             <div class="form-row" style="margin:0;">
               <label for="fitHeight">Height</label>

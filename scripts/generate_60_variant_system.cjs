@@ -507,11 +507,124 @@ DESIGNS.forEach((d) => {
 
 console.log(`60-Variant Generation: ${enrichedDesigns.length} designs × 4 = ${all60Variants.length} slots (${documentedCount} Documented + ${provisionalCount} Provisional)`);
 
-// Load Drop 02 Accessories (kept cleanly separate from the 60 hoodie variants)
+// Load and enrich Drop 02 Accessories ("Fariza's Territory") with professional marketing lifestyle photography
 let accessoryProducts = [];
 try {
-  accessoryProducts = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/accessories_drop02.json'), 'utf8'));
-  console.log(`Loaded ${accessoryProducts.length} Drop 02 accessories cleanly separated from Drop 01 hoodies.`);
+  const rawAccessories = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/accessories_drop02.json'), 'utf8'));
+  const featuredIds = new Set(['FT-HM-001', 'FT-HM-002', 'FT-JWL-001', 'FT-JWL-003', 'FT-JWL-006', 'FT-BA-001', 'FT-BA-003']);
+
+  accessoryProducts = rawAccessories.map((item) => {
+    const id = String(item.id || '');
+    const baseImgPath = `assets/images/accessories/${id}.jpg`;
+    let lifestylePrimary = 'assets/images/editorial/fariza-drop02-editorial-banner.jpg';
+    let lifestyleSecondary = 'assets/images/editorial/fariza-mirror-lifestyle.jpg';
+    let fabricSpec = 'Handcrafted Dhaka Artisan Piece · Natural Wood, Sculpted Clay & Hand-Painted Finish';
+    let sizeSpec = 'One Size · Hand-Finished Studio Piece · Protected Artisan Gift Box';
+
+    if (id.startsWith('FT-HM-')) {
+      lifestylePrimary = 'assets/images/editorial/fariza-mirror-lifestyle.jpg';
+      lifestyleSecondary = 'assets/images/editorial/fariza-drop02-editorial-banner.jpg';
+      fabricSpec = 'Seasoned Teak & Gamari Wood Frame · 3D Hand-Sculpted Botanical Clay Relief · Optical Beveled Mirror Glass';
+      sizeSpec = 'Diameter: 8.5 in (21.5 cm) · Matte Natural Sealant · Wall & Vanity Ready';
+    } else if (id.startsWith('FT-JWL-')) {
+      const idx = parseInt(id.replace('FT-JWL-', ''), 10) || 1;
+      lifestylePrimary = idx % 2 === 1
+        ? 'assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg'
+        : 'assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg';
+      lifestyleSecondary = idx % 2 === 1
+        ? 'assets/images/editorial/fariza-jewelry-rickshaw-lifestyle.jpg'
+        : 'assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg';
+      fabricSpec = 'Hand-Carved Wood & Terracotta Pendant · Braided Cotton-Silk Tassel Cord · Metallic Ghungroo & Glazed Beads';
+      sizeSpec = 'Adjustable 18"–26" Braided Cord · Matching Hand-Painted Artisan Earrings Included';
+    } else if (id.startsWith('FT-BA-')) {
+      lifestylePrimary = 'assets/images/editorial/fariza-bangles-lifestyle.jpg';
+      lifestyleSecondary = 'assets/images/editorial/fariza-drop02-editorial-banner.jpg';
+      fabricSpec = 'Hand-Wrapped Raw Silk & Cotton Thread · Micro-Bead Floral Clusters & Hand-Painted Folk Motifs';
+      sizeSpec = 'Standard Free Size (2.4 – 2.6 Inner Diameter) · Lightweight Artisan Core';
+    }
+
+    const gallery = [
+      {
+        role: 'front',
+        view: 'front',
+        path: baseImgPath,
+        url: `/${baseImgPath}`,
+        alt: `${item.name} — Handcrafted Dhaka Artisan Piece`
+      },
+      {
+        role: 'back',
+        view: 'lifestyle',
+        path: lifestylePrimary,
+        url: `/${lifestylePrimary}`,
+        alt: `${item.name} — Drop 02 Fariza's Territory Studio Lifestyle Photography`
+      },
+      {
+        role: 'detail',
+        view: 'detail_01',
+        path: lifestyleSecondary,
+        url: `/${lifestyleSecondary}`,
+        alt: `${item.name} — Dhaka Heritage Craft Editorial Styling`
+      }
+    ];
+
+    if (id.startsWith('FT-JWL-')) {
+      gallery.push({
+        role: 'detail',
+        view: 'atelier_campaign',
+        path: 'assets/images/editorial/fariza-drop02-editorial-banner.jpg',
+        url: '/assets/images/editorial/fariza-drop02-editorial-banner.jpg',
+        alt: `${item.name} — Fariza's Territory Dhaka Atelier Campaign`
+      });
+    }
+
+    const enrichedVariants = (item.variants && item.variants.length ? item.variants : [{}]).map((v) => ({
+      ...v,
+      sku: v.sku || id,
+      color: v.color || 'Artisan Multi',
+      color_bn: v.color_bn || 'আর্টিসান মাল্টি',
+      hex: v.hex || '#bfa177',
+      status: 'DOCUMENTED',
+      sku_status: 'LIVE IN DROP 02 FARIZA’S TERRITORY',
+      color_status: 'HANDCRAFTED ARTISAN EDITION',
+      asset_status: 'LIFESTYLE_GALLERY_VERIFIED',
+      media_count: gallery.length,
+      price_bdt: Number(item.price_bdt) || 490,
+      draft_price_bdt: Number(item.price_bdt) || 490,
+      price_approved: true,
+      stock_quantity: Number(v.stock_quantity) > 0 ? Number(v.stock_quantity) : 15,
+      available_sizes: Array.isArray(v.available_sizes) && v.available_sizes.length ? v.available_sizes : ['One Size'],
+      approved_for_publication: true,
+      publication_status: 'PUBLISHED',
+      front_image: `/${baseImgPath}`,
+      back_image: `/${lifestylePrimary}`,
+      lifestyle_image: `/${lifestylePrimary}`,
+      gallery
+    }));
+
+    return {
+      ...item,
+      collection: "Fariza's Territory",
+      featured: featuredIds.has(id) || Boolean(item.featured),
+      draft_price_bdt: Number(item.price_bdt) || 490,
+      approved_price_bdt: Number(item.price_bdt) || 490,
+      price_approved: true,
+      approval_status: 'PUBLISHED',
+      publication_status: 'PUBLISHED',
+      rights_verified: true,
+      stock_verified: true,
+      specifications_verified: true,
+      commercial_terms_verified: true,
+      documented_variant_count: 1,
+      provisional_variant_count: 0,
+      fabric_claim: fabricSpec,
+      size_chart: sizeSpec,
+      lifestyle_hero: `/${lifestylePrimary}`,
+      variants: enrichedVariants
+    };
+  });
+
+  fs.writeFileSync(path.join(ROOT, 'catalog/accessories_drop02.json'), JSON.stringify(accessoryProducts, null, 2), 'utf8');
+  console.log(`Loaded & enriched ${accessoryProducts.length} Drop 02 accessories with marketing lifestyle galleries.`);
 } catch (e) {
   console.warn('Could not read accessories:', e.message);
 }

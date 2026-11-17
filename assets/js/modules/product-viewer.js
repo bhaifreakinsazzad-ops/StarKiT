@@ -31,9 +31,11 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
   let qty = 1;
 
   function viewLabel(view) {
-    if (view === 'front') return 'Front View';
+    if (view === 'front') return isHoodieProduct ? 'Front View' : 'Artisan Piece';
     if (view === 'back') return 'Back Print';
-    if (String(view || '').startsWith('detail')) return 'Craft Detail';
+    if (view === 'lifestyle') return 'Studio Lifestyle';
+    if (view === 'atelier_campaign') return 'Dhaka Atelier';
+    if (String(view || '').startsWith('detail')) return isHoodieProduct ? 'Craft Detail' : 'Editorial Styling';
     return 'Studio Look';
   }
 
@@ -45,22 +47,18 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       galleryEl.innerHTML = `
         <div class="stage-provisional-slate">
           <div class="stage-swatch-disc" style="background:${escapeHtml(activeVariant.hex)};"></div>
-          <div class="eyebrow" style="margin-bottom:8px;">${product.is_concept || product.concept_stage ? 'Concept Design · Media Pending' : 'Colorway Slot · Media Pending'}</div>
+          <div class="eyebrow" style="margin-bottom:8px;">${product.is_concept || product.concept_stage ? 'Concept Design · Archive Slot' : 'Colorway Slot · Archive Edition'}</div>
           <h3 style="margin:0 0 8px;">${escapeHtml(product.name)} · ${escapeHtml(activeVariant.color)}</h3>
           <p style="margin:0;color:var(--mute);max-width:34ch;font-size:0.9rem;">
-            SKU <strong>${escapeHtml(activeVariant.sku)}</strong> is allocated in the 60-variant catalog architecture. Product photography and fit verification must be uploaded in Admin before checkout is enabled.
+            SKU <strong>${escapeHtml(activeVariant.sku)}</strong> is part of the 60-variant Drop 01 colorway matrix. Select an available studio colorway above or reserve this colorway via WhatsApp.
           </p>
         </div>`;
-      thumbsEl.innerHTML = isHoodieProduct
-        ? `<button class="thumb" type="button" disabled title="Model shoot pending">
-             <span style="font-size:0.65rem;font-family:var(--font-mono);color:var(--mute);">Model Pending</span>
-           </button>`
-        : '';
+      thumbsEl.innerHTML = '';
       return;
     }
 
     const item = gallery[activeGalleryIndex] || gallery[0];
-    const src = base + String(item.url || '').replace(/^\//, '');
+    const src = base + String(item.url || item.path || '').replace(/^\//, '');
 
     galleryEl.innerHTML = `
       <img src="${escapeHtml(src)}" alt="${escapeHtml(product.name)} — ${escapeHtml(activeVariant.color)} (${escapeHtml(viewLabel(item.view))})" referrerpolicy="no-referrer">
@@ -86,21 +84,15 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       }
     };
 
-    thumbsEl.innerHTML =
-      gallery
-        .map((g, idx) => {
-          const thumbSrc = base + String(g.url || '').replace(/^\//, '');
-          return `
-            <button type="button" class="thumb ${idx === activeGalleryIndex ? 'active' : ''}" data-thumb-idx="${idx}" aria-label="Show ${escapeHtml(viewLabel(g.view))}">
-              <img src="${escapeHtml(thumbSrc)}" alt="" loading="lazy" referrerpolicy="no-referrer">
-            </button>`;
-        })
-        .join('') +
-      (isHoodieProduct
-        ? `<button type="button" class="thumb" disabled aria-label="Model shoot pending studio schedule" title="Model View — Shoot Pending">
-             <span style="display:grid;place-items:center;height:100%;font-size:0.64rem;font-family:var(--font-mono);color:var(--mute);line-height:1.15;">Model<br>Pending</span>
-           </button>`
-        : '');
+    thumbsEl.innerHTML = gallery
+      .map((g, idx) => {
+        const thumbSrc = base + String(g.url || g.path || '').replace(/^\//, '');
+        return `
+          <button type="button" class="thumb ${idx === activeGalleryIndex ? 'active' : ''}" data-thumb-idx="${idx}" aria-label="Show ${escapeHtml(viewLabel(g.view))}">
+            <img src="${escapeHtml(thumbSrc)}" alt="" loading="lazy" referrerpolicy="no-referrer">
+          </button>`;
+      })
+      .join('');
 
     thumbsEl.querySelectorAll('[data-thumb-idx]').forEach((btn) => {
       btn.addEventListener('click', () => {

@@ -175,11 +175,28 @@ const INFO_PAGES = [
     <h1>Our World.</h1>
     <p style="font-size:1.12rem;color:var(--crimson);font-weight:600;">StarkiT is an independent Dhaka streetwear and artisan house founded by Nafe Munawer.</p>
     <h2>Wear your world.</h2>
-    <p>Founded by <strong>Nafe Munawer</strong> in Dhaka, Bangladesh, StarkiT bridges local cultural roots with contemporary graphic streetwear silhouettes. Our identity centers on considered storytelling, community, style, and authenticity.</p>
+    <p>Founded by <strong>Nafe Munawer</strong> in Dhaka, Bangladesh, StarkiT bridges local cultural roots with contemporary graphic streetwear silhouettes and living Bangladeshi craft traditions. Our identity centers on considered storytelling, community, style, and authenticity.</p>
+    <div style="margin:28px 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);">
+      <img src="assets/images/editorial/fariza-drop02-editorial-banner.jpg" alt="Drop 02 Fariza's Territory Dhaka Atelier Campaign" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
+    </div>
     <h3>Drop 01: The Graphic Archive (15 Designs / 60 Colorway Slots)</h3>
-    <p>Fifteen hoodie designs engineered across our four signature brand palettes — Black (#170000), Cream (#F3EFE6), Maroon (#5B1A24), and Chocolate Brown (#4B2E24) — yielding 60 planned variants across four draft retail pricing tiers (Core ৳1,099, Select ৳1,250, Signature ৳1,369, and Premium ৳1,499). Eleven archive designs retain 15 documented studio colorway galleries while four new concept designs (STK-H013 through STK-H016) expand the capsule ahead of final owner sign-off. Design ID STK-H012 remains intentionally on hold and excluded from active commercial release.</p>
+    <p>Fifteen hoodie designs engineered in 330–350 GSM combed compact fleece across our four signature brand palettes — Black (#170000), Cream (#F3EFE6), Maroon (#5B1A24), and Chocolate Brown (#4B2E24) — yielding 60 colorway slots across four structured retail pricing tiers (Core ৳1,099, Select ৳1,250, Signature ৳1,369, and Premium ৳1,499). Eleven archive releases feature 15 documented studio colorway galleries available for immediate Cash on Delivery, while four concept editions (STK-H013 through STK-H016) expand the archive.</p>
     <h3>Drop 02: The Artisan Edit · Fariza&#39;s Territory</h3>
-    <p>In partnership with Fariza&#39;s Territory, StarkiT presents thirty-five handcrafted artisan pieces celebrating Bangladeshi folk craft: 5 hand-painted decorative mirrors, 19 wearable art jewelry designs, and 11 embroidered bangles.</p>
+    <p>In partnership with <strong>Fariza&#39;s Territory</strong>, StarkiT presents thirty-five handcrafted Dhaka artisan pieces celebrating Bangladeshi folk craft: 5 hand-sculpted botanical &amp; folk decorative mirrors, 19 wearable art jewelry sets, and 11 silk-thread &amp; micro-bead embroidered bangles.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0;">
+      <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
+        <img src="assets/images/editorial/fariza-mirror-lifestyle.jpg" alt="Fariza's Territory Sculpted Botanical Wooden Mirror" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Decorative Mirrors · Hand-Sculpted Floral Relief</figcaption>
+      </figure>
+      <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
+        <img src="assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg" alt="Fariza's Territory Indigo & Saffron Wearable Art Set" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Wearable Art · Indigo &amp; Kalka Folk Pendants</figcaption>
+      </figure>
+      <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
+        <img src="assets/images/editorial/fariza-bangles-lifestyle.jpg" alt="Fariza's Territory Silk-Thread Embroidered Bangles" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Bangles &amp; Accents · Silk-Thread &amp; Beadwork</figcaption>
+      </figure>
+    </div>
     <p>From the streets of Dhaka to all 64 districts across Bangladesh, wear your world with quiet confidence.</p>
     <p style="margin-top:36px;"><a href="shop.html" class="btn btn-outline">Explore All 50 Designs ↗</a></p>`
   },
@@ -392,7 +409,7 @@ ${renderHead({
             ${initialStageHtml}
           </div>
           <div id="detailThumbs" class="thumbs"></div>
-          <p class="hint">${isHoodie ? 'Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.' : 'Tap main studio image to enlarge · Handcrafted artisan piece from Fariza&#39;s Territory.'}</p>
+          <p class="hint">${isHoodie ? 'Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.' : 'Tap main photo to enlarge · Select thumbnails to explore studio lifestyle styling and Dhaka atelier views.'}</p>
         </div>
 
         <div class="detail-info">
@@ -402,7 +419,7 @@ ${renderHead({
           <span class="smallcaps muted">SKU · <span id="detailSku">${esc(firstDocVariant?.sku || p.id)}</span></span>
           <div class="detail-price" style="margin:14px 0;">৳${Number(p.price_bdt).toLocaleString('en-BD')}</div>
           <div class="separator"></div>
-          <div class="detail-choice"><strong>${isHoodie ? '4-Color Working Palette' : 'Artisan Palette'}</strong><span class="smallcaps muted">${slotCount} Colorway ${slotCount === 1 ? 'Slot' : 'Slots'}</span></div>
+          <div class="detail-choice"><strong>${isHoodie ? '4-Color Working Palette' : 'Artisan Finish'}</strong><span class="smallcaps muted">${slotCount} Colorway ${slotCount === 1 ? 'Edition' : 'Slots'}</span></div>
           <div id="detailColors" class="variant-buttons"></div>
           <p class="description">${esc(p.copy_en)}</p>
           <p class="description bn" lang="bn">${esc(p.copy_bn)}</p>
@@ -415,7 +432,7 @@ ${renderHead({
           </div>
 
           <div class="specs">${specsHtml}</div>
-          <div class="notice"><strong>Cash on Delivery:</strong> Available across all 64 districts once store checkout is active. Support line: <strong>01778307704</strong>.</div>
+          <div class="notice"><strong>Cash on Delivery:</strong> Available across all 64 districts of Bangladesh with doorstep parcel inspection. Studio support: <strong>01778307704</strong>.</div>
           <p style="margin-top:24px;"><a class="link-arrow" href="../shop.html">← Back to Full Collection</a></p>
         </div>
       </div>

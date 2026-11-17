@@ -128,27 +128,51 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
         ? currentVariant.available_sizes[0]
         : '';
 
+    let selectedImgIdx = 0;
+
     const paint = () => {
-      const imgObj = getPrimaryImage(p, currentVariant);
-      const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+      const gallery = Array.isArray(currentVariant?.gallery) ? currentVariant.gallery : [];
+      const activeGalleryItem = gallery[selectedImgIdx] || getPrimaryImage(p, currentVariant);
+      const imgPath = activeGalleryItem?.url
+        ? String(activeGalleryItem.url).replace(/^\//, '')
+        : activeGalleryItem?.path
+        ? String(activeGalleryItem.path).replace(/^\//, '')
+        : '';
       const purchasable = isVariantPurchasable(p, currentVariant, storeConfig);
       const sizes = currentVariant?.available_sizes || [];
       const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
       const tierLabel = PRICE_TIERS[p.price_tier]?.label || p.collection || '';
       const kickerLabel = p.collection || p.category || 'Drop 01';
 
+      const thumbsHtml =
+        gallery.length > 1
+          ? `<div class="qv-thumbs">
+               ${gallery
+                 .map((g, idx) => {
+                   const gPath = String(g.url || g.path || '').replace(/^\//, '');
+                   return `<button type="button" class="qv-thumb ${idx === selectedImgIdx ? 'active' : ''}" data-qv-img-idx="${idx}" aria-label="View angle ${idx + 1}">
+                     <img src="${base}${escapeHtml(gPath)}" alt="${escapeHtml(p.name)} view ${idx + 1}" loading="lazy" referrerpolicy="no-referrer">
+                   </button>`;
+                 })
+                 .join('')}
+             </div>`
+          : '';
+
       body.innerHTML = `
         <div class="qv-grid">
-          <div class="qv-photo">
-            ${
-              imgPath
-                ? `<img src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" referrerpolicy="no-referrer">`
-                : `<div class="concept-slate">
-                     <div class="stage-swatch-disc" style="width:58px;height:58px;background:${escapeHtml(currentVariant?.hex || '#170000')};"></div>
-                     <strong>${escapeHtml(p.name)}</strong>
-                     <small>${escapeHtml(currentVariant?.color || '')} · Media Pending</small>
-                   </div>`
-            }
+          <div>
+            <div class="qv-photo">
+              ${
+                imgPath
+                  ? `<img src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" referrerpolicy="no-referrer">`
+                  : `<div class="concept-slate">
+                       <div class="stage-swatch-disc" style="width:58px;height:58px;background:${escapeHtml(currentVariant?.hex || '#170000')};"></div>
+                       <strong>${escapeHtml(p.name)}</strong>
+                       <small>${escapeHtml(currentVariant?.color || '')} · Media Pending</small>
+                     </div>`
+              }
+            </div>
+            ${thumbsHtml}
           </div>
           <div>
             <div class="eyebrow" style="margin-bottom:6px;">${escapeHtml(kickerLabel)}</div>
@@ -178,7 +202,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
                        )
                        .join('')}
                    </div>`
-                : `<div class="notice" style="margin:10px 0;">Media &amp; sizing pending Admin approval.</div>`
+                : `<div class="notice" style="margin:10px 0;">Select an available colorway or reserve via WhatsApp.</div>`
             }
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
               ${
@@ -193,9 +217,17 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
           </div>
         </div>`;
 
+      body.querySelectorAll('[data-qv-img-idx]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedImgIdx = parseInt(btn.dataset.qvImgIdx, 10) || 0;
+          paint();
+        });
+      });
+
       body.querySelectorAll('[data-qv-sku]').forEach((btn) => {
         btn.addEventListener('click', () => {
           currentVariant = (p.variants || []).find((v) => v.sku === btn.dataset.qvSku) || currentVariant;
+          selectedImgIdx = 0;
           selectedSize =
             currentVariant?.available_sizes && currentVariant.available_sizes.length
               ? currentVariant.available_sizes[0]
@@ -303,9 +335,11 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
           (p.variants || []).find((v) => v.sku === chosenSku) || getPrimaryVariant(p);
         const frontObj = getPrimaryImage(p, activeVariant);
         const frontPath = frontObj?.url ? String(frontObj.url).replace(/^\//, '') : '';
-        const hasDistinctBack = Array.isArray(activeVariant?.gallery) && activeVariant.gallery.some((g) => g.view === 'back');
-        const backObj = hasDistinctBack ? getBackImage(p, activeVariant) : null;
-        const backPath = backObj?.url ? String(backObj.url).replace(/^\//, '') : '';
+        const secondaryGalleryItem = Array.isArray(activeVariant?.gallery)
+          ? activeVariant.gallery.find((g) => g.view === 'back' || g.role === 'back' || g.view === 'lifestyle')
+          : null;
+        const backObj = secondaryGalleryItem || (Array.isArray(activeVariant?.gallery) && activeVariant.gallery.some((g) => g.view === 'back') ? getBackImage(p, activeVariant) : null);
+        const backPath = backObj?.url ? String(backObj.url).replace(/^\//, '') : backObj?.path ? String(backObj.path).replace(/^\//, '') : '';
         const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
         const isFav = state.wishlist.has(p.id);
         const isComp = state.compareIds.includes(p.id);
@@ -415,6 +449,23 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
       btn.classList.add('active');
       state.category = btn.dataset.category || 'All';
       render();
+    });
+  });
+
+  document.querySelectorAll('[data-jump-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetCat = btn.dataset.jumpFilter || 'All';
+      state.category = targetCat;
+      state.tier = 'All';
+      state.color = 'All';
+      if (tierSelect) tierSelect.value = 'All';
+      if (colorSelect) colorSelect.value = 'All';
+      categoryButtons.forEach((b) => b.classList.toggle('active', b.dataset.category === targetCat));
+      render();
+      const collectionEl = document.getElementById('collection');
+      if (collectionEl) {
+        collectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
 
