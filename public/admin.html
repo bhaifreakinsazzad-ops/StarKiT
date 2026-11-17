@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#170000">
+  <meta name="robots" content="noindex,nofollow">
+  <title>StarkiT Admin — Store Operations Center</title>
+  <link rel="icon" type="image/png" href="assets/images/starkit-favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    :root {
+      --admin-bg: #f3efe6;
+      --card-bg: #ffffff;
+      --border-color: rgba(23, 0, 0, 0.12);
+      --badge-pending: #b45309;
+      --badge-confirmed: #1d4ed8;
+      --badge-processing: #6d28d9;
+      --badge-shipped: #4338ca;
+      --badge-delivered: #15803d;
+      --badge-cancelled: #b91c1c;
+    }
+    body { background: var(--admin-bg); min-height: 100vh; }
+    .admin-header {
+      background: #170000; color: #f3efe6; padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px; position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .admin-brand { display: flex; align-items: center; gap: 14px; }
+    .admin-brand img { height: 32px; width: auto; display: block; }
+    .admin-console-label {
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #bfa177; font-weight: 700;
+      border-left: 1px solid rgba(255, 255, 255, 0.22); padding-left: 14px;
+    }
+    .admin-nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .admin-tab-btn {
+      background: transparent; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 4px;
+      color: rgba(243, 239, 230, 0.85); padding: 8px 13px; font-size: 0.78rem; font-weight: 700;
+      transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .admin-tab-btn.active, .admin-tab-btn:hover { background: #ffffff; color: #170000; border-color: #ffffff; }
+    .admin-shell { max-width: 1440px; margin: 28px auto 64px; padding: 0 24px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 20px; }
+    .kpi-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mute); font-weight: 700; }
+    .kpi-value { font-family: var(--font-display); font-size: 1.95rem; font-weight: 800; margin: 6px 0 4px; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .kpi-sub { font-size: 0.8rem; color: var(--mute); }
+    .section-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 24px; margin-bottom: 24px; }
+    .section-head-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
+    .section-head-bar h2 { margin: 0; font-size: 1.35rem; font-weight: 800; }
+    .admin-table-wrap { overflow-x: auto; margin-top: 12px; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; text-align: left; }
+    .admin-table th {
+      background: #ece7de; border-bottom: 1px solid var(--border-color); padding: 11px 14px;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mute); white-space: nowrap;
+    }
+    .admin-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-variant-numeric: tabular-nums; }
+    .admin-table tr:hover { background: #faf8f5; }
+    .status-badge {
+      display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+      color: #ffffff; white-space: nowrap;
+    }
+    .status-pending_confirmation { background: var(--badge-pending); }
+    .status-confirmed { background: var(--badge-confirmed); }
+    .status-processing { background: var(--badge-processing); }
+    .status-shipped { background: var(--badge-shipped); }
+    .status-delivered { background: var(--badge-delivered); }
+    .status-cancelled { background: var(--badge-cancelled); }
+    .action-btn {
+      padding: 7px 12px; border: 1px solid var(--border-color); border-radius: 4px;
+      background: #ffffff; color: var(--ink); font-size: 0.76rem; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .action-btn:hover { background: #170000; color: #ffffff; border-color: #170000; }
+    .action-btn-wa { border-color: #16a34a; color: #15803d; }
+    .action-btn-wa:hover { background: #15803d; color: #ffffff; border-color: #15803d; }
+    .login-modal {
+      position: fixed; inset: 0; background: rgba(23, 0, 0, 0.92); backdrop-filter: blur(8px);
+      display: grid; place-items: center; z-index: 100; padding: 20px;
+    }
+    .login-box {
+      background: #ffffff; border: 1px solid var(--border-color); border-radius: 6px;
+      padding: 34px; max-width: 480px; width: 100%; max-height: 92vh; overflow-y: auto;
+      text-align: center; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+    }
+    .sku-img { width: 48px; height: 48px; object-fit: contain; background: #ece7de; border: 1px solid var(--border-color); border-radius: 4px; }
+    .stock-input { width: 74px; padding: 6px 8px; border: 1px solid rgba(23, 0, 0, 0.22); border-radius: 4px; font-family: var(--font-mono); font-weight: 600; text-align: center; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .drive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 12px; }
+    .drive-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: 6px; display: flex; flex-direction: column; overflow: hidden; }
+    .drive-thumb { height: 170px; background: #ece7de; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+    .drive-meta { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .gate-check-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 8px; text-align: left; font-size: 0.84rem; }
+    @media print {
+      body * { visibility: hidden; }
+      #invoiceModal, #invoiceModal * { visibility: visible; }
+      #invoiceModal { position: absolute; inset: 0; background: #fff; padding: 0; }
+      #invoiceModal .btn { display: none; }
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "./assets/js/vendor/firebase-app.js",
+      "firebase/auth": "./assets/js/vendor/firebase-auth.js",
+      "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js": "./assets/js/vendor/firebase-app.js"
+    }
+  }
+  </script>
+  <script>window.STARKIT_BASE = "./";</script>
+  <script defer src="assets/js/store-config.js"></script>
+  <script defer src="assets/js/catalog-data.js"></script>
+  <script type="module" src="assets/js/drive-sync.js"></script>
+  <script type="module" src="assets/js/app.js"></script>
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1390081606323661');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1390081606323661&ev=PageView&noscript=1" /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+
+  <!-- Admin Authentication Gate -->
+  <div id="loginGate" class="login-modal">
+    <div class="login-box">
+      <img src="assets/images/starkit-logo-dark.png" alt="StarkiT" style="height:42px;width:auto;margin:0 auto;">
+      <h2 style="margin:14px 0 6px;">Operations Portal</h2>
+      <p style="color:var(--mute);font-size:0.88rem;margin-bottom:18px;">Authenticate via Administrator Key or Supabase RBAC Session Token (memory-only; never written to browser storage).</p>
+      <form id="loginForm">
+        <div style="display:flex;justify-content:center;gap:16px;margin-bottom:14px;font-size:0.84rem;font-weight:700;">
+          <label><input type="radio" name="authMode" value="key" checked> X-Admin-Key</label>
+          <label><input type="radio" name="authMode" value="jwt"> Supabase JWT</label>
+        </div>
+        <input type="password" id="passkeyInput" class="search-field" style="width:100%;text-align:center;font-family:var(--font-mono);font-size:0.9rem;margin-bottom:14px;" placeholder="Enter 32+ char Admin Key or JWT" required autofocus autocomplete="current-password">
+        <button type="submit" class="btn" style="width:100%;">Authenticate &amp; Enter ↗</button>
+        <p id="loginError" style="color:#b91c1c;font-size:0.8rem;margin-top:12px;font-weight:700;display:none;">Authentication failed. Verify your STARKIT_ADMIN_API_KEY or Supabase JWT permissions.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Admin Header -->
+  <header class="admin-header">
+    <div class="admin-brand">
+      <img src="assets/images/starkit-logo-transparent.png" alt="StarkiT">
+      <span class="admin-console-label">Operations Console</span>
+      <span id="syncIndicator" style="font-family:var(--font-mono);font-size:0.74rem;color:rgba(243,239,230,0.68);">Locked</span>
+    </div>
+    <div class="admin-nav">
+      <button type="button" class="admin-tab-btn active" data-tab="tab-overview">Overview</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-orders">Orders (<span id="ordersCountBadge">0</span>)</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-inventory">Inventory &amp; 7-Gate</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-promotions">Tiers &amp; Offers</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-drive">Media &amp; Drive</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-audit">Audit Logs</button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-settings">Settings</button>
+      <a href="index.html" target="_blank" rel="noopener noreferrer" class="admin-tab-btn" style="border-color:rgba(191,161,119,0.5);color:#bfa177;">Storefront ↗</a>
+      <button type="button" id="logoutBtn" class="action-btn" style="background:transparent;color:#ffffff;border-color:rgba(255,255,255,0.28);">Logout</button>
+    </div>
+  </header>
+
+  <main class="admin-shell">
+
+    <!-- Tab 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Revenue (BDT)</div>
+          <div class="kpi-value" id="kpiRevenue">৳0</div>
+          <div class="kpi-sub">Active &amp; delivered non-cancelled orders</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value" id="kpiTotalOrders">0</div>
+          <div class="kpi-sub">Server-verified COD records</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Pending Confirmation</div>
+          <div class="kpi-value" style="color:#b45309;" id="kpiPending">0</div>
+          <div class="kpi-sub">Awaiting confirmation call / WhatsApp</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Out for Delivery</div>
+          <div class="kpi-value" style="color:#4338ca;" id="kpiShipped">0</div>
+          <div class="kpi-sub">Dispatched via courier network</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Drop 01 Architecture</div>
+          <div class="kpi-value" id="kpiSkus">15 / 60</div>
+          <div class="kpi-sub" id="kpiSkusSub">15 Doc · 45 Pending + 35 Drop 02</div>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-bottom:24px;">
+        <strong>IP / Hold Register Notice:</strong> Design <code>STK-H012 (Kinetic Stage — Marshmello Edition)</code> is excluded from the 15-design / 60-slot Drop 01 master and held pending third-party commercial licensing. New concept designs occupy <code>STK-H013</code> through <code>STK-H016</code>.
+      </div>
+
+      <div class="section-card">
+        <div class="section-head-bar">
+          <h2>Recent Customer Orders</h2>
+          <button type="button" class="action-btn" onclick="switchTab('tab-orders')">View All Orders ↗</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>District</th>
+                <th>Items Summary</th>
+                <th>Total BDT</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: ORDERS -->
+    <section id="tab-orders" class="tab-content">
+      <div class="section-card">
+        <div class="section-head-bar">
+          <div>
+            <h2>Order Management &amp; Fulfillment</h2>
+            <p style="margin:4px 0 0;font-size:0.86rem;color:var(--mute);">Review customer COD orders, update fulfillment states, open printable invoices, and export courier CSVs.</p>
+          </div>
+          <button type="button" class="action-btn" id="exportCsvBtn">Export CSV (Courier)</button>
+        </div>
+
+        <div style="display:flex;gap:12px;margin:16px 0;flex-wrap:wrap;align-items:center;">
+          <input type="search" id="orderSearchInput" class="search-field" style="flex:1;min-width:240px;" placeholder="Search customer name, phone, or STK reference...">
+          <select id="orderStatusFilter" class="sort-field">
+            <option value="all">All Statuses</option>
+            <option value="pending_confirmation">Pending Confirmation</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+          <select id="orderZoneFilter" class="sort-field">
+            <option value="all">All Delivery Zones</option>
+            <option value="dhaka">Inside Dhaka</option>
+            <option value="outside">Outside Dhaka</option>
+          </select>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Timestamp</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Delivery Address</th>
+                <th>Items &amp; Sizes</th>
+                <th>Total (BDT)</th>
+                <th>Status</th>
+                <th>Change Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersMasterBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: INVENTORY & 7-GATE APPROVAL -->
+    <section id="tab-inventory" class="tab-content">
+      <div class="section-card">
+        <div class="section-head-bar">
+          <div>
+            <h2>Inventory &amp; 7-Gate Evidence Approval Control</h2>
+            <p style="margin:4px 0 0;font-size:0.86rem;color:var(--mute);">All 60 Drop 01 slots + 35 Drop 02 artisan SKUs. Public checkout unlocks strictly after completed 7-gate sign-off.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="action-btn" onclick="switchTab('tab-drive')">Upload / Import Media ↗</button>
+            <button type="button" class="action-btn" id="saveInventoryBtn" style="background:#170000;color:#ffffff;border-color:#170000;">Save Stock Changes</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Preview</th>
+                <th>Product Name &amp; Tier</th>
+                <th>SKU</th>
+                <th>Colorway</th>
+                <th>Price (BDT)</th>
+                <th>Stock Qty</th>
+                <th>Sizes</th>
+                <th>Gate Status</th>
+                <th>Approval</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: FOUR-TIER PRICING & PROMOTIONS -->
+    <section id="tab-promotions" class="tab-content">
+      <div class="section-card">
+        <h2>Four-Tier Hoodie Pricing Structure</h2>
+        <p style="color:var(--mute);font-size:0.88rem;margin-bottom:14px;">All tier prices remain in Draft state pending formal owner pricing sign-off via 7-gate evidence workflow.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Tier Code</th><th>Retail BDT</th><th>Assigned Designs (15)</th><th>Approval State</th></tr>
+            </thead>
+            <tbody id="adminTiersBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>Admin-Configurable Multi-Piece Offers</h2>
+        <p style="color:var(--mute);font-size:0.88rem;margin-bottom:14px;">Multi-piece offers default to inactive until explicitly configured and approved by the store owner.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Code</th><th>Offer Title</th><th>Min Qty</th><th>Discount Rule</th><th>Free Shipping</th><th>State</th><th>Control</th></tr>
+            </thead>
+            <tbody id="adminPromosBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: MEDIA UPLOADER & GOOGLE DRIVE SYNC -->
+    <section id="tab-drive" class="tab-content">
+      <div class="section-card">
+        <h2>Direct Supabase Storage Media Uploader</h2>
+        <p style="color:var(--mute);font-size:0.88rem;margin-bottom:16px;">Upload verified studio PNG, JPEG, or WebP garment images directly into private/public Supabase Storage bucket <code>starkit-media</code>.</p>
+        <form id="mediaUploadForm" class="form-grid" style="grid-template-columns:1.2fr 0.8fr 1fr auto;align-items:end;">
+          <div class="form-row" style="margin:0;">
+            <label for="uploadTargetSku">Target SKU *</label>
+            <select id="uploadTargetSku" required></select>
+          </div>
+          <div class="form-row" style="margin:0;">
+            <label for="uploadTargetView">Gallery View *</label>
+            <select id="uploadTargetView" required>
+              <option value="front">front</option>
+              <option value="back">back</option>
+              <option value="detail_01">detail_01</option>
+              <option value="detail_02">detail_02</option>
+              <option value="reference_composite">reference_composite</option>
+            </select>
+          </div>
+          <div class="form-row" style="margin:0;">
+            <label for="uploadImageFile">Studio Image (Max 4.5 MB) *</label>
+            <input type="file" id="uploadImageFile" accept="image/webp,image/png,image/jpeg" required>
+          </div>
+          <button type="submit" class="btn">Upload to Bucket ↗</button>
+        </form>
+      </div>
+      <div id="driveSyncMount"></div>
+    </section>
+
+    <!-- Tab 6: AUDIT LOGS -->
+    <section id="tab-audit" class="tab-content">
+      <div class="section-card">
+        <h2>Administrator Security &amp; Governance Audit Trail</h2>
+        <p style="color:var(--mute);font-size:0.88rem;margin-bottom:14px;">Immutable log of status updates, stock edits, 7-gate approvals, promotion activations, media uploads, and settings changes.</p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Timestamp</th><th>Action</th><th>Actor</th><th>Target</th></tr></thead>
+            <tbody id="auditLogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 7: STORE SETTINGS -->
+    <section id="tab-settings" class="tab-content">
+      <div class="section-card" style="max-width:860px;">
+        <h2>Store Operational Settings</h2>
+        <p style="color:var(--mute);font-size:0.88rem;margin-bottom:20px;">Configure Cash on Delivery fees, free shipping threshold, and storefront preview vs. commercial launch state.</p>
+
+        <form id="storeSettingsForm">
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="settingDhaka">Delivery Charge: Inside Dhaka (BDT)</label>
+              <input type="number" id="settingDhaka" value="80" required min="0">
+            </div>
+            <div class="form-row">
+              <label for="settingOutside">Delivery Charge: Outside Dhaka (BDT)</label>
+              <input type="number" id="settingOutside" value="150" required min="0">
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="settingFreeThreshold">Free Shipping Threshold (BDT)</label>
+              <input type="number" id="settingFreeThreshold" value="3000" required min="0">
+            </div>
+            <div class="form-row">
+              <label for="settingCodStatus">Cash on Delivery (COD) Status</label>
+              <select id="settingCodStatus">
+                <option value="false">Paused / Disabled</option>
+                <option value="true">Active &amp; Enabled Nationwide</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="settingPhone">Customer Support Phone / WhatsApp</label>
+              <input type="text" id="settingPhone" value="01778307704" required>
+            </div>
+            <div class="form-row">
+              <label for="settingStoreMode">Store Mode</label>
+              <select id="settingStoreMode">
+                <option value="preview">Preview Catalog Only</option>
+                <option value="public">Live Commercial Storefront (Accepting Orders)</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn" style="margin-top:16px;">Save Settings ↗</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 7-Gate Evidence Approval Modal -->
+  <div id="sevenGateModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:560px;text-align:left;padding:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);padding-bottom:12px;margin-bottom:16px;">
+        <div>
+          <h3 style="margin:0;font-size:1.2rem;font-weight:800;">7-Gate Publication Evidence</h3>
+          <small id="gateSkuTitle" style="font-family:var(--font-mono);color:var(--maroon);"></small>
+        </div>
+        <button type="button" onclick="document.getElementById('sevenGateModal').style.display='none'" style="background:transparent;border:0;font-size:1.4rem;cursor:pointer;">×</button>
+      </div>
+      <form id="sevenGateForm">
+        <label class="gate-check-row"><input type="checkbox" id="gateLegal"><span><strong>1. Artwork &amp; IP Rights:</strong> Written license or original ownership verified.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gateSpecs"><span><strong>2. Garment Specs:</strong> Fabric GSM &amp; stitch specs physically inspected.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gateMedia"><span><strong>3. Studio Photography:</strong> Front/back garment photography matches colorway.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gateDesign"><span><strong>4. Size Run Verified:</strong> M–XXL measurements confirmed against fit guide.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gateStock"><span><strong>5. Physical Stock Count:</strong> Positive inventory verified in Dhaka studio.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gatePricing"><span><strong>6. Tier Pricing Signed Off:</strong> Retail BDT tier approved by owner.</span></label>
+        <label class="gate-check-row"><input type="checkbox" id="gateCommercial"><span><strong>7. Commercial Terms:</strong> Delivery &amp; exchange policy cleared for sale.</span></label>
+
+        <div class="form-grid" style="margin-top:12px;">
+          <div class="form-row" style="margin:0;">
+            <label for="gateTargetStatus">Next State Transition *</label>
+            <select id="gateTargetStatus" required></select>
+          </div>
+          <div class="form-row" style="margin:0;">
+            <label for="gateOwner">Reviewer Name *</label>
+            <input type="text" id="gateOwner" required placeholder="e.g. Nafe Munawer">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="gateNotes">Verification Notes</label>
+          <input type="text" id="gateNotes" placeholder="Batch ID, rights ref, or sample note">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="document.getElementById('sevenGateModal').style.display='none'">Cancel</button>
+          <button type="submit" class="btn" style="flex:1;">Submit Evidence ↗</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Printable Invoice Slip Modal -->
+  <div id="invoiceModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:620px;text-align:left;padding:30px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1.5px solid #170000;padding-bottom:14px;margin-bottom:16px;">
+        <div>
+          <img src="assets/images/starkit-logo-dark.png" alt="StarkiT" style="height:32px;width:auto;display:block;">
+          <small style="display:block;font-weight:700;letter-spacing:0.1em;color:var(--mute);margin-top:6px;">WEAR YOUR WORLD · DHAKA</small>
+        </div>
+        <div style="text-align:right;">
+          <h3 id="invRef" style="margin:0;font-family:var(--font-mono);font-size:1.1rem;">STK-XXXXX</h3>
+          <small id="invDate" style="color:var(--mute);"></small>
+        </div>
+      </div>
+      <div style="margin-bottom:16px;font-size:0.86rem;line-height:1.55;">
+        <strong>Delivery To:</strong><br>
+        <span id="invCustName" style="font-weight:700;"></span><br>
+        <span id="invCustPhone" style="font-family:var(--font-mono);"></span><br>
+        <span id="invCustAddress"></span> (<span id="invCustDistrict"></span>)
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:0.84rem;font-variant-numeric:tabular-nums;">
+        <thead>
+          <tr style="background:#ece7de;border-bottom:1px solid var(--border-color);">
+            <th style="padding:8px;text-align:left;">Item</th>
+            <th style="padding:8px;text-align:center;">Size</th>
+            <th style="padding:8px;text-align:center;">Qty</th>
+            <th style="padding:8px;text-align:right;">Total</th>
+          </tr>
+        </thead>
+        <tbody id="invItemsBody"></tbody>
+      </table>
+      <div style="border-top:1px solid var(--border-color);padding-top:12px;text-align:right;font-size:0.9rem;line-height:1.6;">
+        <div>Subtotal: <strong id="invSubtotal"></strong></div>
+        <div id="invDiscountRow" style="display:none;color:#15803d;">Promotions: <strong id="invDiscount"></strong></div>
+        <div>Delivery Fee: <strong id="invShipping"></strong></div>
+        <div style="font-size:1.15rem;font-weight:800;margin-top:6px;">Total Due (COD): <span id="invTotal"></span></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:22px;">
+        <button type="button" class="btn" style="flex:1;" onclick="window.print()">Print Invoice</button>
+        <button type="button" class="btn btn-outline" style="flex:1;" onclick="document.getElementById('invoiceModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Drive File Preview Modal -->
+  <div id="drivePreviewModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:760px;text-align:left;padding:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:16px;">
+        <h3 id="drivePreviewTitle" style="margin:0;font-size:1.1rem;font-weight:700;word-break:break-all;">Drive File Preview</h3>
+        <button type="button" onclick="document.getElementById('drivePreviewModal').style.display='none'" style="background:transparent;border:0;font-size:1.4rem;cursor:pointer;">×</button>
+      </div>
+      <div id="drivePreviewBody"></div>
+    </div>
+  </div>
+
+  <!-- Confirm Import From Google Drive Modal -->
+  <div id="driveImportConfirmModal" class="login-modal" style="display:none;">
+    <div class="login-box" style="max-width:480px;text-align:left;padding:26px;">
+      <h3 style="margin:0 0 10px;font-size:1.15rem;font-weight:800;">Import Google Drive Asset to Supabase</h3>
+      <p id="driveImportDesc" style="font-size:0.86rem;color:var(--mute);line-height:1.55;margin:0 0 14px;"></p>
+      <div class="form-row">
+        <label for="driveImportSku">Assign Target SKU</label>
+        <select id="driveImportSku"></select>
+      </div>
+      <div class="form-row">
+        <label for="driveImportView">Gallery View</label>
+        <select id="driveImportView">
+          <option value="front">front</option>
+          <option value="back">back</option>
+          <option value="detail_01">detail_01</option>
+          <option value="reference_composite">reference_composite</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button type="button" class="btn btn-outline" style="flex:1;" onclick="document.getElementById('driveImportConfirmModal').style.display='none'">Cancel</button>
+        <button type="button" id="confirmDriveImportBtn" class="btn" style="flex:1;">Confirm Import ↗</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminToast" role="status" aria-live="polite" style="display:none;position:fixed;bottom:24px;right:24px;z-index:200;background:#170000;color:#f3efe6;padding:14px 20px;border-radius:4px;font-weight:700;font-size:0.85rem;border:1px solid #bfa177;box-shadow:0 12px 32px rgba(0,0,0,0.3);"></div>
+</body>
+</html>

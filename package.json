@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "build": "npm run check",
+    "build": "npm run generate && node scripts/copy_to_public.cjs",
     "lint": "npm run check",
     "generate": "node scripts/generate_60_variant_system.cjs && node scripts/generate_all_pages.cjs && node scripts/generate_supabase_seeds.cjs",
     "package": "node scripts/build_distribution_package.cjs",

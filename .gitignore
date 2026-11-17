@@ -35,3 +35,4 @@ desktop.ini
 # Distribution Build Folder
 StarkiT_DROP01_44_Variant_Complete_Store/
 .vercel
+.env*
