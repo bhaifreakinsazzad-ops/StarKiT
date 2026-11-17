@@ -1,3 +1,4 @@
+// server.js – Express server for StarkiT storefront
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,11 +12,10 @@ const app = express();
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
+// Basic security hardening
 app.disable('x-powered-by');
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// Safe security headers compatible with iframe preview & Meta Pixel
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -23,6 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Block access to internal files and directories
 const BLOCKED_PREFIXES = ['/supabase', '/scripts', '/catalog', '/docs', '/node_modules'];
 const BLOCKED_EXACT = new Set([
   '/server.js',
@@ -41,6 +42,39 @@ const BLOCKED_EXACT = new Set([
 ]);
 const BLOCKED_EXT = /\.(py|sql|cjs|md|csv|pdf|env|lock)$/i;
 
+app.use((req, res, next) => {
+  const reqPath = (req.path || '/').toLowerCase();
+  if (
+    reqPath.includes('/.') ||
+    BLOCKED_EXACT.has(reqPath) ||
+    BLOCKED_PREFIXES.some(prefix => reqPath === prefix || reqPath.startsWith(prefix + '/')) ||
+    BLOCKED_EXT.test(reqPath)
+  ) {
+    return res.status(404).type('html').send(NOT_FOUND_HTML);
+  }
+  next();
+});
+
+// Serve static files (HTML, CSS, JS, assets)
+app.use(express.static(__dirname, { extensions: ['html'], dotfiles: 'ignore' }));
+
+// Root route – serve index.html explicitly for clarity
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// API endpoints
+app.all('/api/orders', (req, res, next) => {
+  Promise.resolve(ordersHandler(req, res)).catch(next);
+});
+app.all('/api/admin', (req, res, next) => {
+  Promise.resolve(adminHandler(req, res)).catch(next);
+});
+app.use('/api', (req, res) => {
+  res.status(404).setHeader('Cache-Control', 'no-store').json({ error: 'API endpoint not found' });
+});
+
+// Branded 404 fallback page
 const NOT_FOUND_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,62 +98,11 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-// API endpoints
-app.all('/api/orders', (req, res, next) => {
-  Promise.resolve(ordersHandler(req, res)).catch(next);
-});
-
-app.all('/api/admin', (req, res, next) => {
-  Promise.resolve(adminHandler(req, res)).catch(next);
-});
-
-app.use('/api', (req, res) => {
-  res.status(404).setHeader('Cache-Control', 'no-store').json({ error: 'API endpoint not found' });
-});
-
-// Serve pinned Firebase browser SDK modules locally for Workspace OAuth
-app.get('/vendor/firebase/firebase-app.js', (req, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  res.sendFile(path.join(__dirname, 'node_modules/firebase/firebase-app.js'));
-});
-
-app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  res.sendFile(path.join(__dirname, 'node_modules/firebase/firebase-auth.js'));
-});
-
-// Block internal repository, database, and build artifacts from direct HTTP exposure
-app.use((req, res, next) => {
-  const reqPath = (req.path || '/').toLowerCase();
-  if (
-    reqPath.includes('/.') ||
-    BLOCKED_EXACT.has(reqPath) ||
-    BLOCKED_PREFIXES.some((prefix) => reqPath === prefix || reqPath.startsWith(prefix + '/')) ||
-    BLOCKED_EXT.test(reqPath)
-  ) {
-    return res.status(404).type('html').send(NOT_FOUND_HTML);
-  }
-  next();
-});
-
-// Cache policy for static assets vs HTML
-app.use('/assets', (req, res, next) => {
-  res.setHeader('Cache-Control', 'public, max-age=86400');
-  next();
-});
-
-app.use(
-  express.static(__dirname, {
-    extensions: ['html'],
-    dotfiles: 'ignore'
-  })
-);
-
-// Branded 404 fallback
 app.use((req, res) => {
   res.status(404).type('html').send(NOT_FOUND_HTML);
 });
 
+// Error handling
 app.use((err, req, res, _next) => {
   console.error('Server error:', err);
   if (!res.headersSent) {
