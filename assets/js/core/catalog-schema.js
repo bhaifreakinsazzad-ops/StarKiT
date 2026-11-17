@@ -107,8 +107,12 @@ export function getBackImage(product, variant) {
   return v.gallery.find((g) => g.view === 'back') || getPrimaryImage(product, v);
 }
 
-export function isVariantPurchasable(product, variant, storeConfig = {}) {
-  if (!product || !variant) return false;
+export function isVariantPurchasable(arg1, arg2, storeConfig = {}) {
+  if (!arg1 || !arg2) return false;
+  const isSwapped = Boolean(arg1.sku && !arg1.variants && (arg2.variants || arg2.publication_status));
+  const product = isSwapped ? arg2 : arg1;
+  const variant = isSwapped ? arg1 : arg2;
+
   if (storeConfig.mode === 'preview' || storeConfig.cod_enabled === false) return false;
   if (product.publication_status !== 'PUBLISHED') return false;
   if (product.rights_verified !== true) return false;
@@ -116,7 +120,10 @@ export function isVariantPurchasable(product, variant, storeConfig = {}) {
   if (product.specifications_verified !== true) return false;
   if (product.commercial_terms_verified !== true) return false;
   if (product.price_approved === false) return false;
-  if (variant.status !== 'DOCUMENTED') return false;
+  if (variant.status === 'PROVISIONAL') return false;
+  if (variant.status ? variant.status !== 'DOCUMENTED' : !Array.isArray(variant.gallery) || variant.gallery.length === 0) {
+    return false;
+  }
   if (variant.approved_for_publication !== true) return false;
   if (!Number.isInteger(variant.stock_quantity) || variant.stock_quantity <= 0) return false;
   if (!Array.isArray(variant.available_sizes) || variant.available_sizes.length === 0) return false;

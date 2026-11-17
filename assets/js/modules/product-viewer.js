@@ -67,6 +67,22 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
     galleryEl.onclick = () => {
       if (onOpenZoom) onOpenZoom(src, `${product.name} — ${activeVariant.color}`);
     };
+    galleryEl.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (onOpenZoom) onOpenZoom(src, `${product.name} — ${activeVariant.color}`);
+      } else if (e.key === 'ArrowRight' && gallery.length > 1) {
+        e.preventDefault();
+        activeGalleryIndex = (activeGalleryIndex + 1) % gallery.length;
+        renderGallery();
+        animateGallerySwap(galleryEl);
+      } else if (e.key === 'ArrowLeft' && gallery.length > 1) {
+        e.preventDefault();
+        activeGalleryIndex = (activeGalleryIndex - 1 + gallery.length) % gallery.length;
+        renderGallery();
+        animateGallerySwap(galleryEl);
+      }
+    };
 
     thumbsEl.innerHTML =
       gallery
@@ -246,9 +262,62 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
     purchaseBtn?.click();
   });
 
+  function renderRelatedDesigns() {
+    if (document.getElementById('relatedArchiveMount')) return;
+    const isHoodie = String(product.id).startsWith('STK-');
+    const candidates = (products || []).filter((p) => {
+      if (p.id === product.id) return false;
+      const pv = getPrimaryVariant(p);
+      if (!pv || !Array.isArray(pv.gallery) || pv.gallery.length === 0) return false;
+      if (isHoodie) return String(p.id).startsWith('STK-');
+      return String(p.collection || p.category) === String(product.collection || product.category);
+    });
+    const picks = candidates.slice(0, 4);
+    if (!picks.length) return;
+
+    const section = document.createElement('section');
+    section.id = 'relatedArchiveMount';
+    section.className = 'related-archive-section';
+    section.innerHTML = `
+      <div class="section-head" style="margin-bottom:18px;">
+        <div>
+          <div class="eyebrow">Continue Exploring</div>
+          <h2 style="margin:4px 0 0;font-size:clamp(1.45rem,2.6vw,2rem);font-weight:800;">More From ${escapeHtml(isHoodie ? 'Drop 01 · The Graphic Archive' : product.collection || "Fariza's Territory")}</h2>
+        </div>
+        <a href="${base}shop.html${isHoodie ? '?category=Streetwear' : `?category=${encodeURIComponent(product.collection || 'All')}`}" class="btn btn-outline btn-sm">View Full Collection ↗</a>
+      </div>
+      <div class="related-archive-grid">
+        ${picks
+          .map((item) => {
+            const pv = getPrimaryVariant(item);
+            const imgObj = pv?.gallery?.[0];
+            const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+            const href = `${base}products/${escapeHtml(item.slug)}.html`;
+            return `
+              <article class="card">
+                <div class="card-media">
+                  <a href="${href}" aria-label="Inspect ${escapeHtml(item.name)}" style="position:absolute;inset:0;display:block;">
+                    <img class="front single-view" src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(item.name)}" loading="lazy" referrerpolicy="no-referrer">
+                  </a>
+                </div>
+                <div class="card-meta">
+                  <div>
+                    <span class="card-kicker">${escapeHtml(item.collection || item.category || 'Archive')}</span>
+                    <a href="${href}">${escapeHtml(item.name)}</a>
+                  </div>
+                  <span class="price tabular">${formatBdt(item.price_bdt)}</span>
+                </div>
+              </article>`;
+          })
+          .join('')}
+      </div>`;
+    detailRoot.parentElement?.appendChild(section);
+  }
+
   if (skuEl && activeVariant) skuEl.textContent = activeVariant.sku;
   renderColors();
   renderGallery();
   renderSizes();
   updatePurchaseState();
+  renderRelatedDesigns();
 }

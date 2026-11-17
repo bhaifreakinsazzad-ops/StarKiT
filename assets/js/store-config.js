@@ -1,6 +1,6 @@
-// StarkiT Storefront Client Metadata — Fail-Closed Defaults (authoritative state enforced server-side)
+// StarkiT Storefront Client Metadata — 7-Gate Enforced Storefront (authoritative state enforced server-side)
 window.STARKIT_CONFIG = {
-  mode: 'preview',
+  mode: 'public',
   currency: 'BDT',
   brand: 'StarkiT',
   brand_bn: 'স্টারকিট',
@@ -11,7 +11,7 @@ window.STARKIT_CONFIG = {
   support_phone: '01778307704',
   support_whatsapp: '+8801778307704',
   contact_verified: true,
-  cod_enabled: false,
+  cod_enabled: true,
   delivery_dhaka: 80,
   delivery_outside: 150,
   free_shipping_threshold: 3000,

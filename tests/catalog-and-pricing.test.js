@@ -97,6 +97,11 @@ test('Variant purchasability fails closed in preview mode or when gates are inco
   const liveVariant = { ...docVariant, approved_for_publication: true };
   assert.equal(isVariantPurchasable(liveProd, liveVariant, { mode: 'preview', cod_enabled: false }), false);
   assert.equal(isVariantPurchasable(liveProd, liveVariant, { mode: 'public', cod_enabled: true }), true);
+  assert.equal(isVariantPurchasable(liveVariant, liveProd, { mode: 'public', cod_enabled: true }), true);
+
+  const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/catalog.json'), 'utf8'));
+  const accessory = catalog.products.find((p) => p.id === 'FT-BA-008');
+  assert.equal(isVariantPurchasable(accessory, accessory.variants[0], { mode: 'public', cod_enabled: true }), true);
 });
 
 test('Pricing engine applies 0 unapproved bundle discount by default, and exact discount once activated', () => {

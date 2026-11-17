@@ -19,17 +19,94 @@ import { initAdminManager } from './modules/admin-manager.js';
 function setupNavigation() {
   const menuToggle = document.getElementById('menuToggle');
   const mainNav = document.getElementById('mainNav');
-  if (!menuToggle || !mainNav) return;
 
-  menuToggle.addEventListener('click', () => {
-    const open = mainNav.classList.toggle('open');
-    menuToggle.setAttribute('aria-expanded', String(open));
+  // Ensure accurate active link highlight across all storefront and policy pages
+  if (mainNav) {
+    const path = (window.location.pathname || '').toLowerCase();
+    const links = Array.from(mainNav.querySelectorAll('a'));
+    links.forEach((a) => a.classList.remove('active'));
+    const matchLink = links.find((a) => {
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      if ((path === '/' || path.endsWith('/index.html') || path.endsWith('/index')) && href.includes('index.html')) {
+        return true;
+      }
+      if ((path.includes('/shop') || path.includes('/products/')) && href.includes('shop.html')) {
+        return true;
+      }
+      if (path.includes('/about') && href.includes('about.html')) {
+        return true;
+      }
+      if (path.includes('/shipping') && href.includes('shipping.html')) {
+        return true;
+      }
+      return false;
+    });
+    if (matchLink) matchLink.classList.add('active');
+  }
+
+  if (menuToggle && mainNav) {
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = mainNav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    mainNav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (mainNav.classList.contains('open') && !mainNav.contains(e.target) && e.target !== menuToggle) {
+        mainNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Global Escape & backdrop dismissal for modals and drawers
+  const modalIds = ['quickViewModal', 'compareModal', 'fitModal'];
+  modalIds.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) el.classList.remove('open');
+      });
+    }
   });
 
-  mainNav.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
+  ['sevenGateModal', 'invoiceModal', 'drivePreviewModal', 'driveImportConfirmModal'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) el.style.display = 'none';
+      });
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (mainNav && mainNav.classList.contains('open')) {
       mainNav.classList.remove('open');
-      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle?.setAttribute('aria-expanded', 'false');
+    }
+    ['quickViewModal', 'compareModal', 'fitModal'].forEach((id) => {
+      document.getElementById(id)?.classList.remove('open');
+    });
+    const drawer = document.getElementById('cartDrawer');
+    const overlay = document.getElementById('overlay');
+    if (drawer?.classList.contains('open')) {
+      drawer.classList.remove('open');
+      overlay?.classList.remove('open');
+      document.body.classList.remove('locked');
+    }
+    ['sevenGateModal', 'invoiceModal', 'drivePreviewModal', 'driveImportConfirmModal'].forEach((id) => {
+      const m = document.getElementById(id);
+      if (m && m.style.display && m.style.display !== 'none') {
+        m.style.display = 'none';
+      }
     });
   });
 }

@@ -18,16 +18,55 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
   const countEl = document.getElementById('resultsCount');
   const categoryButtons = document.querySelectorAll('#categoryFilters [data-category], [data-category]');
 
+  const urlParams = new URLSearchParams(window.location.search);
   const state = {
-    category: 'All',
-    tier: 'All',
-    color: 'All',
-    query: '',
-    sort: 'featured',
+    category: urlParams.get('category') || 'All',
+    tier: urlParams.get('tier') || 'All',
+    color: urlParams.get('color') || 'All',
+    query: urlParams.get('q') || '',
+    sort: urlParams.get('sort') || 'featured',
     compareIds: [],
     selectedVariants: new Map(), // productId -> sku
     wishlist: new Set(JSON.parse(sessionStorage.getItem('starkit_wishlist') || '[]'))
   };
+
+  if (searchInput && state.query) searchInput.value = state.query;
+  if (sortSelect && state.sort) sortSelect.value = state.sort;
+  if (tierSelect && state.tier) tierSelect.value = state.tier;
+  if (colorSelect && state.color) colorSelect.value = state.color;
+  if (state.category !== 'All' && categoryButtons.length) {
+    categoryButtons.forEach((b) => {
+      b.classList.toggle('active', (b.dataset.category || 'All').toLowerCase() === state.category.toLowerCase());
+    });
+  }
+
+  function syncUrlState() {
+    if (!window.location.pathname.includes('shop')) return;
+    const params = new URLSearchParams();
+    if (state.category && state.category !== 'All') params.set('category', state.category);
+    if (state.tier && state.tier !== 'All') params.set('tier', state.tier);
+    if (state.color && state.color !== 'All') params.set('color', state.color);
+    if (state.query.trim()) params.set('q', state.query.trim());
+    if (state.sort && state.sort !== 'featured') params.set('sort', state.sort);
+    const qs = params.toString();
+    const nextUrl = `${window.location.pathname}${qs ? `?${qs}` : ''}`;
+    try {
+      window.history.replaceState(null, '', nextUrl);
+    } catch {}
+  }
+
+  function resetAllFilters() {
+    state.category = 'All';
+    state.tier = 'All';
+    state.color = 'All';
+    state.query = '';
+    if (searchInput) searchInput.value = '';
+    if (tierSelect) tierSelect.value = 'All';
+    if (colorSelect) colorSelect.value = 'All';
+    categoryButtons.forEach((b) => b.classList.toggle('active', (b.dataset.category || 'All') === 'All'));
+    syncUrlState();
+    render();
+  }
 
   function getFilteredProducts() {
     const q = state.query.trim().toLowerCase();
@@ -145,7 +184,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
               ${
                 purchasable
                   ? `<button type="button" class="btn" id="qvAddCart" style="flex:1;">Add to Bag · ${formatBdt(p.price_bdt)}</button>`
-                  : `<button type="button" class="btn" disabled style="flex:1;">${currentVariant?.status === 'DOCUMENTED' ? 'Preview Only' : 'Media Pending'}</button>`
+                  : `<a href="https://wa.me/8801778307704?text=${encodeURIComponent(
+                      `Hello StarkiT! I am inquiring about "${p.name}" (SKU: ${currentVariant?.sku || p.id}, Color: ${currentVariant?.color || ''}, Size: ${selectedSize || 'Standard'}, Price: ${formatBdt(p.price_bdt)}).`
+                    )}" target="_blank" rel="noopener noreferrer" class="btn" style="flex:1;text-align:center;">Reserve via WhatsApp ↗</a>`
               }
               <a href="${pdpHref}" class="btn btn-outline">Full Details ↗</a>
             </div>
@@ -228,11 +269,20 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
   }
 
   function render() {
+    syncUrlState();
     const items = getFilteredProducts();
+    const hasActiveFilters =
+      state.category !== 'All' || state.tier !== 'All' || state.color !== 'All' || state.query.trim() !== '';
+
     if (countEl) {
       const hoodieTotal = items.filter((p) => String(p.id).startsWith('STK-')).length;
       const accTotal = items.filter((p) => String(p.id).startsWith('FT-')).length;
-      countEl.textContent = `${items.length} designs (${hoodieTotal} hoodies · ${accTotal} accessories)`;
+      countEl.innerHTML = `${items.length} designs (${hoodieTotal} hoodies · ${accTotal} accessories)${
+        hasActiveFilters
+          ? `<button type="button" class="filter-reset-inline" id="inlineResetFiltersBtn" aria-label="Clear active filters">Reset ×</button>`
+          : ''
+      }`;
+      countEl.querySelector('#inlineResetFiltersBtn')?.addEventListener('click', resetAllFilters);
     }
 
     if (!items.length) {
@@ -242,16 +292,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
           <p class="muted">Adjust your collection, colorway, tier filter, or search term.</p>
           <button type="button" class="btn btn-outline" id="resetCatalogFilters">Reset Filters</button>
         </div>`;
-      grid.querySelector('#resetCatalogFilters')?.addEventListener('click', () => {
-        state.category = 'All';
-        state.tier = 'All';
-        state.color = 'All';
-        state.query = '';
-        if (searchInput) searchInput.value = '';
-        if (tierSelect) tierSelect.value = 'All';
-        if (colorSelect) colorSelect.value = 'All';
-        render();
-      });
+      grid.querySelector('#resetCatalogFilters')?.addEventListener('click', resetAllFilters);
       return;
     }
 

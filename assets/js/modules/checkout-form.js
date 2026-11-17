@@ -147,7 +147,40 @@ export function initCheckoutForm({ base, storeConfig, cartApi }) {
       window.location.href = `${base}order-confirmation.html?ref=${encodeURIComponent(data.reference)}`;
     } catch (err) {
       luxuryToast(err.message);
-      if (noticeEl) noticeEl.textContent = err.message;
+      const pricing = cartApi.getPricingSummary(payload.customer.zone);
+      const refPreview = `STK-PREVIEW-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+      const waItemsList = pricing.items
+        .map((i) => `• ${i.product_name} (${i.sku}, ${i.color}, Size ${i.size}) × ${i.quantity} = ${formatBdt(i.line_total_bdt)}`)
+        .join('\n');
+      const waText = encodeURIComponent(
+        `Hello StarkiT! I would like to place a Cash on Delivery order:\n\n${waItemsList}\n\nDelivery: ${payload.customer.district} (${payload.customer.zone === 'dhaka' ? 'Inside Dhaka' : 'Outside Dhaka'})\nTotal Payable: ${formatBdt(pricing.total_bdt)}\nName: ${payload.customer.name}\nAddress: ${payload.customer.address}`
+      );
+      if (noticeEl) {
+        noticeEl.innerHTML = `
+          <div style="margin-bottom:10px;"><strong>${escapeHtml(err.message)}</strong></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a href="https://wa.me/8801778307704?text=${waText}" target="_blank" rel="noopener noreferrer" class="btn btn-sm">Complete Order on WhatsApp ↗</a>
+            <button type="button" class="btn btn-outline btn-sm" id="previewOrderReceiptBtn">Preview Confirmation Receipt →</button>
+          </div>`;
+        noticeEl.querySelector('#previewOrderReceiptBtn')?.addEventListener('click', () => {
+          const maskedReceipt = {
+            reference: refPreview,
+            status: 'preview_reservation',
+            zone: payload.customer.zone,
+            district: payload.customer.district,
+            masked_phone: maskPhoneForDisplay(payload.customer.phone),
+            subtotal_bdt: pricing.subtotal_bdt,
+            discount_bdt: pricing.discount_bdt || 0,
+            shipping_bdt: pricing.shipping_bdt,
+            total_bdt: pricing.total_bdt,
+            created_at: new Date().toISOString()
+          };
+          try {
+            sessionStorage.setItem('starkit_last_receipt', JSON.stringify(maskedReceipt));
+          } catch {}
+          window.location.href = `${base}order-confirmation.html?ref=${encodeURIComponent(refPreview)}`;
+        });
+      }
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Confirm Cash on Delivery Order';

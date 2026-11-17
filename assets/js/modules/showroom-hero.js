@@ -336,6 +336,9 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
       : 'Preview Only — Inspect PDP';
 
     const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
+    const waReserveHref = `https://wa.me/8801778307704?text=${encodeURIComponent(
+      `Hello StarkiT! I would like to reserve/inquire about "${p.name}" (SKU: ${v.sku}, Color: ${v.color}, Size: ${state.selectedSize || 'L'}, Tier Price: ${formatBdt(p.price_bdt)}).`
+    )}`;
 
     panelEl.innerHTML = `
       <div class="panel-kicker">
@@ -368,7 +371,14 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
           ${!purchasable && v.status !== 'DOCUMENTED' ? 'disabled aria-disabled="true"' : ''}
         >${ctaLabel}</button>
         <a href="${pdpHref}" class="btn btn-outline" aria-label="View full page for ${escapeHtml(p.name)}">Details ↗</a>
-      </div>`;
+      </div>
+      ${
+        !purchasable
+          ? `<div style="margin-top:8px;text-align:center;">
+               <a href="${waReserveHref}" target="_blank" rel="noopener noreferrer" class="link-arrow" style="font-size:0.78rem;">Reserve or Inquire via WhatsApp (+8801778307704) ↗</a>
+             </div>`
+          : ''
+      }`;
 
     panelEl.querySelectorAll('[data-panel-sku]').forEach((btn) => {
       btn.addEventListener('click', () => {
