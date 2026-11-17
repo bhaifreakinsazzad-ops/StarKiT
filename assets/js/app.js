@@ -5,7 +5,14 @@
  * Universal Cart & Nationwide Cash on Delivery (COD) Checkout.
  */
 import { initSpatialHero } from './spatial-three.js';
-import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
+import {
+  initInteractiveUI,
+  luxuryToast,
+  animateHeroSwap,
+  animateGallerySwap,
+  animateCartOpen,
+  animateSpringPop
+} from './interactive-anime.js';
 
 (() => {
   'use strict';
@@ -65,6 +72,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
   let sort = 'featured';
   let heroIdx = 0;
   let heroLocked = false;
+  let spatialHero = null;
   let cart = [];
   let favs = [];
 
@@ -98,6 +106,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
   function message(txt, type = 'info') {
     if (typeof luxuryToast === 'function') {
       luxuryToast(txt, type);
+      return;
     }
     const t = $('#toast');
     if (!t) return;
@@ -131,7 +140,10 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
     ov.classList.toggle('open', open);
     d.classList.toggle('open', open);
     document.body.classList.toggle('locked', open);
-    if (open) renderCart();
+    if (open) {
+      renderCart();
+      animateCartOpen();
+    }
   }
 
   function sanitizeCart() {
@@ -195,6 +207,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       cart.push({ product_id: p.id, sku: v.sku, size, qty: addQty });
     }
     persist();
+    animateSpringPop($$('[data-cart-count]'));
     toggleCart(true);
     message(`Added "${p.name}" (${size}) × ${addQty} to bag`, 'success');
     trackMeta('AddToCart', {
@@ -335,6 +348,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       b.classList.toggle('active', is);
       b.textContent = is ? '♥' : '♡';
       b.setAttribute('aria-pressed', String(is));
+      if (b.dataset.fav === id) animateSpringPop(b);
     });
   }
 
@@ -457,11 +471,23 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       .filter(visible);
     if (!featured.length) return;
 
-    const show = (idx) => {
+    const show = (idx, dir = 1, initial = false) => {
       heroIdx = (idx + featured.length) % featured.length;
       const p = featured[heroIdx];
       const v = p.variants[0];
       const img = v.gallery.find((g) => g.view === 'reference_composite') || first(p, v);
+
+      if (initial) {
+        picture.innerHTML = `<a href="${ROOT}products/${p.slug}.html" aria-label="Explore ${safe(p.name)}"><img src="${asset(img.url)}" alt="${safe(p.name)} product artwork"></a>`;
+        const n = $('#heroName');
+        if (n) n.textContent = p.name;
+        const count = $('#heroSlide');
+        if (count)
+          count.textContent =
+            String(heroIdx + 1).padStart(2, '0') + ' / ' + String(featured.length).padStart(2, '0');
+        heroLocked = false;
+        return;
+      }
 
       picture.classList.add('is-entering');
       window.setTimeout(() => {
@@ -473,17 +499,20 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
           count.textContent =
             String(heroIdx + 1).padStart(2, '0') + ' / ' + String(featured.length).padStart(2, '0');
         picture.classList.remove('is-entering');
+        animateHeroSwap(picture, n, dir);
+        if (spatialHero && typeof spatialHero.pulse === 'function') spatialHero.pulse(dir);
         heroLocked = false;
-      }, 180);
+      }, 150);
     };
 
-    show(0);
+    show(0, 1, true);
 
     $$('[data-slide]').forEach((b) =>
       b.addEventListener('click', () => {
         if (heroLocked) return;
         heroLocked = true;
-        show(heroIdx + Number(b.dataset.slide));
+        const dir = Number(b.dataset.slide) || 1;
+        show(heroIdx + dir, dir);
       })
     );
 
@@ -493,7 +522,8 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       'touchend',
       (e) => {
         if (Math.abs(start - e.changedTouches[0].clientX) > 55) {
-          show(heroIdx + (start > e.changedTouches[0].clientX ? 1 : -1));
+          const dir = start > e.changedTouches[0].clientX ? 1 : -1;
+          show(heroIdx + dir, dir);
         }
       },
       { passive: true }
@@ -649,12 +679,20 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
       $('#qtyDecBtn')?.addEventListener('click', () => {
         selectedQty = Math.max(1, selectedQty - 1);
-        $('#detailQtyInput').value = selectedQty;
+        const qInput = $('#detailQtyInput');
+        if (qInput) {
+          qInput.value = selectedQty;
+          animateSpringPop(qInput);
+        }
         updatePurchaseBtn();
       });
       $('#qtyIncBtn')?.addEventListener('click', () => {
         selectedQty = Math.min(10, selectedQty + 1);
-        $('#detailQtyInput').value = selectedQty;
+        const qInput = $('#detailQtyInput');
+        if (qInput) {
+          qInput.value = selectedQty;
+          animateSpringPop(qInput);
+        }
         updatePurchaseBtn();
       });
     }
@@ -686,6 +724,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       curr = v.gallery.find((g) => g.view === view) || v.gallery[0];
       if (!curr) return;
       gallery.innerHTML = `<img src="${asset(curr.url)}" alt="${safe(p.name)} ${safe(curr.view.replace(/_/g, ' '))}"><span class="view-tag">${p.id.startsWith('STK-') ? safe(curr.view.replace(/_/g, ' ')) : 'HANDCRAFTED IN DHAKA'}</span>`;
+      animateGallerySwap(gallery);
       if (thumbs) {
         thumbs.innerHTML = v.gallery
           .map(
@@ -980,6 +1019,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
       if (!b) return;
       selectedSize = b.dataset.size;
       $$('[data-size]', sizeWrapper).forEach((x) => x.classList.toggle('selected', x === b));
+      animateSpringPop(b);
       updatePurchaseBtn();
       updateStickyBar();
     });
@@ -1463,7 +1503,7 @@ import { initInteractiveUI, luxuryToast } from './interactive-anime.js';
 
     // Initialize Three.js 3D WebGL Canvas
     try {
-      initSpatialHero('spatialHeroContainer');
+      spatialHero = initSpatialHero('spatialHeroContainer');
     } catch (e) {
       console.warn('Three.js spatial initialization error:', e);
     }

@@ -1,5 +1,12 @@
 /**
  * StarkiT Luxury Interactive Micro-UI Engine
- * Powered by Anime.js, Motion.dev, and Three.js
+ * Powered by Anime.js v4.5.0 and Three.js
  */
-export { initMotionEngine as initInteractiveUI, luxuryToast } from './motion-engine.js';
+export {
+  initMotionEngine as initInteractiveUI,
+  luxuryToast,
+  animateHeroSwap,
+  animateGallerySwap,
+  animateCartOpen,
+  animateSpringPop
+} from './motion-engine.js';

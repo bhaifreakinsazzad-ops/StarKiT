@@ -9,7 +9,7 @@
     "start": "node server.js",
     "build": "npm run check",
     "lint": "npm run check",
-    "check": "node --check server.js && node --check assets/js/app.js && node --check assets/js/drive-sync.js && node --check api/orders.js && node --check api/admin.js",
+    "check": "node --check server.js && node --check assets/js/app.js && node --check assets/js/spatial-three.js && node --check assets/js/motion-engine.js && node --check assets/js/interactive-anime.js && node --check assets/js/drive-sync.js && node --check api/orders.js && node --check api/admin.js",
     "test": "npm run check && node verify_package.js && node scripts/test_storefront_dom.cjs && node scripts/test_customer_flow.cjs"
   },
   "dependencies": {
