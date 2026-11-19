@@ -35,7 +35,7 @@ if (process.env.STARKIT_ORDERS_ENABLED === undefined) {
 }
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const HOST = '0.0.0.0';
 
 // Running behind Cloud Run / Vercel / reverse proxies (1 hop)
@@ -99,6 +99,36 @@ const CSP_HEADER = [
   "form-action 'self'"
 ].join('; ');
 
+// Branded 404 fallback page (declared before middlewares to avoid TDZ errors)
+const NOT_FOUND_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#170000">
+  <title>404 — Page Not Found | StarkiT</title>
+  <link rel="icon" type="image/png" href="/assets/images/starkit-favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body style="background:#f6f4f0;color:#170000;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;">
+  <main style="max-width:480px;">
+    <a href="/index.html" style="display:inline-block;margin-bottom:28px;">
+      <img src="/assets/images/starkit-logo-dark.png" alt="StarkiT" style="height:44px;width:auto;margin:0 auto;">
+    </a>
+    <p class="eyebrow" style="justify-content:center;color:#5B1A24;margin-bottom:10px;">StarkiT Archive</p>
+    <h1 style="font-size:clamp(3.2rem,9vw,4.8rem);font-weight:800;line-height:0.95;margin:0 0 14px;font-variant-numeric:tabular-nums;">404</h1>
+    <p style="font-size:1rem;color:#5c5654;line-height:1.65;margin:0 0 28px;">This page could not be found in the StarkiT archive. Return to the showroom to explore our Drop 01 graphic hoodies.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/shop.html" class="btn">Explore Collection</a>
+      <a href="/index.html" class="btn btn-outline">Back to Showroom</a>
+    </div>
+  </main>
+</body>
+</html>`;
+
 app.disable('x-powered-by');
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
@@ -113,8 +143,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Block access to internal files and directories
-const BLOCKED_PREFIXES = ['/supabase', '/scripts', '/catalog', '/docs', '/node_modules', '/tests'];
+// API endpoints (mounted BEFORE static file blocker & express.static so /api/*.js cannot leak)
+app.use('/api', apiLimiter);
+app.all('/api/orders', (req, res, next) => {
+  Promise.resolve(ordersHandler(req, res)).catch(next);
+});
+app.all('/api/admin', (req, res, next) => {
+  Promise.resolve(adminHandler(req, res)).catch(next);
+});
+app.use('/api', (req, res) => {
+  res.status(404).setHeader('Cache-Control', 'no-store').json({ error: 'API endpoint not found' });
+});
+
+// Block direct HTTP access to internal files, source code, and build output directories
+const BLOCKED_PREFIXES = [
+  '/api',
+  '/public',
+  '/starkit_drop01_hoodies_complete_store',
+  '/supabase',
+  '/scripts',
+  '/catalog',
+  '/docs',
+  '/node_modules',
+  '/tests'
+];
 const BLOCKED_EXACT = new Set([
   '/server.js',
   '/package.json',
@@ -160,48 +212,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API endpoints
-app.use('/api', apiLimiter);
-app.all('/api/orders', (req, res, next) => {
-  Promise.resolve(ordersHandler(req, res)).catch(next);
-});
-app.all('/api/admin', (req, res, next) => {
-  Promise.resolve(adminHandler(req, res)).catch(next);
-});
-app.use('/api', (req, res) => {
-  res.status(404).setHeader('Cache-Control', 'no-store').json({ error: 'API endpoint not found' });
-});
-
-// Branded 404 fallback page
-const NOT_FOUND_HTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#170000">
-  <title>404 — Page Not Found | StarkiT</title>
-  <link rel="icon" type="image/png" href="/assets/images/starkit-favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body style="background:#f6f4f0;color:#170000;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;">
-  <main style="max-width:480px;">
-    <a href="/index.html" style="display:inline-block;margin-bottom:28px;">
-      <img src="/assets/images/starkit-logo-dark.png" alt="StarkiT" style="height:44px;width:auto;margin:0 auto;">
-    </a>
-    <p class="eyebrow" style="justify-content:center;color:#5B1A24;margin-bottom:10px;">StarkiT Archive</p>
-    <h1 style="font-size:clamp(3.2rem,9vw,4.8rem);font-weight:800;line-height:0.95;margin:0 0 14px;font-variant-numeric:tabular-nums;">404</h1>
-    <p style="font-size:1rem;color:#5c5654;line-height:1.65;margin:0 0 28px;">This page could not be found in the StarkiT archive. Return to the showroom to explore our Drop 01 graphic hoodies.</p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/shop.html" class="btn">Explore Collection</a>
-      <a href="/index.html" class="btn btn-outline">Back to Showroom</a>
-    </div>
-  </main>
-</body>
-</html>`;
-
 app.use((req, res) => {
   res.status(404).type('html').send(NOT_FOUND_HTML);
 });
@@ -213,6 +223,16 @@ app.use((err, req, res, _next) => {
   }
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`StarkiT storefront listening on http://${HOST}:${PORT}`);
-});
+const isMainModule =
+  typeof process !== 'undefined' &&
+  Array.isArray(process.argv) &&
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === __filename;
+
+if (isMainModule) {
+  app.listen(PORT, HOST, () => {
+    console.log(`StarkiT storefront listening on http://${HOST}:${PORT}`);
+  });
+}
+
+export { app };

@@ -2331,10 +2331,6 @@ button[disabled] {
   gap: 14px;
 }
 
-.fit-finder-grid {
-  grid-template-columns: repeat(3, 1fr);
-}
-
 .summary-panel {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -2686,8 +2682,7 @@ button[disabled] {
     grid-template-columns: 1fr;
     gap: 28px;
   }
-  .form-grid,
-  .fit-finder-grid {
+  .form-grid {
     grid-template-columns: 1fr;
   }
 }

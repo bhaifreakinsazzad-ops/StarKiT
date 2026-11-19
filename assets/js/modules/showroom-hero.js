@@ -1,4 +1,4 @@
-import { escapeHtml, formatBdt } from '../core/validation.js';
+import { escapeHtml, formatBdt, resolveAssetUrl } from '../core/validation.js';
 import {
   PRICE_TIERS,
   getPrimaryVariant,
@@ -53,11 +53,12 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     railEl.innerHTML = state.hoodies
       .map((p, idx) => {
         const pv = getPrimaryVariant(p);
+        const pvPrice = Number(pv?.price_bdt ?? p.price_bdt ?? 0);
         const imgObj = getPrimaryImage(p, pv);
-        const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+        const imgPath = imgObj?.url ? resolveAssetUrl(imgObj.url, base) : '';
         const active = idx === state.designIndex;
         const thumbHtml = imgPath
-          ? `<img src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" loading="lazy" referrerpolicy="no-referrer">`
+          ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" loading="lazy" referrerpolicy="no-referrer">`
           : `<span>${escapeHtml(p.id.replace('STK-', ''))}</span>`;
         return `
           <button
@@ -67,12 +68,12 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
             data-product-id="${escapeHtml(p.id)}"
             aria-pressed="${active ? 'true' : 'false'}"
             aria-current="${active ? 'true' : 'false'}"
-            aria-label="Inspect ${escapeHtml(p.name)} (${escapeHtml(p.id)}, ${formatBdt(p.price_bdt)}) — Look ${idx + 1} of ${total}"
+            aria-label="Inspect ${escapeHtml(p.name)} (${escapeHtml(p.id)}, ${formatBdt(pvPrice)}) — Look ${idx + 1} of ${total}"
           >
             <div class="wardrobe-thumb" aria-hidden="true">${thumbHtml}</div>
             <div class="wardrobe-meta">
               <strong>${escapeHtml(p.name)}</strong>
-              <small>${escapeHtml(p.id)} · ${formatBdt(p.price_bdt)}</small>
+              <small>${escapeHtml(p.id)} · ${formatBdt(pvPrice)}</small>
             </div>
           </button>`;
       })
@@ -156,9 +157,9 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     const hasBack = gallery.some((g) => g.view === 'back') && Boolean(getBackImage(p, v));
     const hasDetail = gallery.some((g) => String(g.view || '').startsWith('detail'));
     const currentPhoto = resolveImageForView(v, state.viewMode);
-    const fullImgUrl = currentPhoto ? base + String(currentPhoto.url || '').replace(/^\//, '') : '';
+    const fullImgUrl = currentPhoto ? resolveAssetUrl(currentPhoto.url || currentPhoto.path || '', base) : '';
 
-    const stageMediaHtml = currentPhoto
+    const stageMediaHtml = fullImgUrl
       ? `<img id="showroomHeroImg" src="${escapeHtml(fullImgUrl)}" alt="${escapeHtml(p.name)} — ${escapeHtml(v.color)} (${escapeHtml(state.viewMode)} view)" referrerpolicy="no-referrer">`
       : `<div class="stage-provisional-slate">
            <div class="stage-swatch-disc" style="background:${escapeHtml(v.hex)};" aria-hidden="true"></div>
@@ -305,12 +306,13 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     const tierInfo = PRICE_TIERS[p.price_tier];
     const tierLabel = tierInfo ? tierInfo.label : p.price_tier || 'Drop 01';
     const collectionLabel = p.collection || p.category || 'Drop 01';
+    const activePrice = Number(v.price_bdt ?? p.price_bdt ?? 0);
 
     let statusMessage = '';
     if (v.status !== 'DOCUMENTED') {
       statusMessage = `${escapeHtml(v.color)} (${escapeHtml(v.sku)}) photography and stock verification are pending in Admin.`;
     } else if (!p.price_approved) {
-      statusMessage = `Tier pricing (${escapeHtml(tierLabel)} · ${formatBdt(p.price_bdt)}) and 7-gate approval are pending owner sign-off.`;
+      statusMessage = `Tier pricing (${escapeHtml(tierLabel)} · ${formatBdt(activePrice)}) and 7-gate approval are pending owner sign-off.`;
     } else if (!purchasable) {
       statusMessage = 'Preview mode active — online Cash on Delivery opens once storefront is enabled in Admin.';
     } else {
@@ -318,14 +320,14 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
     }
 
     const ctaLabel = purchasable
-      ? `Add to Bag · ${formatBdt(p.price_bdt)}`
+      ? `Add to Bag · ${formatBdt(activePrice)}`
       : v.status !== 'DOCUMENTED'
       ? 'Media Pending'
       : 'Preview Only — Inspect PDP';
 
     const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
     const waReserveHref = `https://wa.me/8801778307704?text=${encodeURIComponent(
-      `Hello StarkiT! I would like to reserve/inquire about "${p.name}" (SKU: ${v.sku}, Color: ${v.color}, Size: ${state.selectedSize || 'L'}, Tier Price: ${formatBdt(p.price_bdt)}).`
+      `Hello StarkiT! I would like to reserve/inquire about "${p.name}" (SKU: ${v.sku}, Color: ${v.color}, Size: ${state.selectedSize || 'L'}, Tier Price: ${formatBdt(activePrice)}).`
     )}`;
 
     panelEl.innerHTML = `
@@ -336,7 +338,7 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
       <h2 id="heroName">${escapeHtml(p.name)}</h2>
       ${p.bengali_name || p.copy_bn ? `<div class="bn" style="font-size:0.88rem;color:var(--mute);margin-top:2px;">${escapeHtml(p.bengali_name || p.copy_bn)}</div>` : ''}
       <div class="panel-price-row">
-        <span class="panel-price tabular">${formatBdt(p.price_bdt)}</span>
+        <span class="panel-price tabular">${formatBdt(activePrice)}</span>
         <span class="panel-tier-note">${escapeHtml(tierLabel)} · ${p.price_approved ? 'Approved' : 'Draft Price'}</span>
       </div>
       <div class="panel-label">

@@ -418,8 +418,14 @@ export function runtimeSubmitApprovalEvidence({ product_id, evidence, next_statu
   prod.commercial_terms_verified = ev.commercial_terms_ok;
 
   if (approve_tier_price === true && PRICE_TIERS[prod.price_tier]) {
-    prod.approved_price_bdt = prod.draft_price_bdt || prod.price_bdt;
+    const resolvedPrice = Number(prod.draft_price_bdt || prod.price_bdt);
+    prod.approved_price_bdt = resolvedPrice;
+    prod.price_bdt = resolvedPrice;
     prod.price_approved = true;
+    for (const v of prod.variants) {
+      v.price_bdt = resolvedPrice;
+      v.price_approved = true;
+    }
   }
 
   if (next_status === 'PUBLISHED' && complete) {
@@ -661,16 +667,19 @@ export function runtimeSubmitOrder({ idempotencyKey, customer, items }) {
     applied_promotions: pricing.applied_promotions,
     status: 'pending_confirmation',
     created_at: createdAt,
-    store_order_items: resolvedItems.map((r) => ({
-      id: crypto.randomUUID(),
-      sku: r.variant.sku,
-      product_name: r.product.name,
-      color: r.variant.color,
-      size: r.size,
-      quantity: r.quantity,
-      unit_price_bdt: Number(r.product.price_bdt),
-      line_total_bdt: Number(r.product.price_bdt) * r.quantity
-    }))
+    store_order_items: resolvedItems.map((r) => {
+      const unitPrice = Number(r.variant.price_bdt ?? r.product.price_bdt ?? 0);
+      return {
+        id: crypto.randomUUID(),
+        sku: r.variant.sku,
+        product_name: r.product.name,
+        color: r.variant.color,
+        size: r.size,
+        quantity: r.quantity,
+        unit_price_bdt: unitPrice,
+        line_total_bdt: unitPrice * r.quantity
+      };
+    })
   };
 
   store.orders.unshift(orderRecord);

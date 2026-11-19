@@ -20,7 +20,7 @@
 | **Multi-Piece Offers** | Unconfigured static labels | **Admin-configurable promotion engine** (`SINGLE_PIECE` active; `DUO_SELECTION`, `TRIO_PLUS`, `WHOLESALE_RESELLER` draft/inactive until owner rule approval) |
 | **Interactive Hero** | Static grid / experimental single file | **Three.js Spatial Showroom + Virtual Wardrobe (11 looks) + 3-view stage + Live Swatches + Right Purchase Panel** |
 | **Frontend Architecture** | Monolithic script patterns | Modular ES Modules (`assets/js/core/*` + `assets/js/modules/*`) sharing pure logic with backend/tests |
-| **Checkout & Commercial Gate** | Open local demo / unhardened flags | Fail-closed (`STARKIT_ORDERS_ENABLED=false`, `mode: 'preview'`, `cod_enabled: false`), server-side price & promo computation, SKU approval gate |
+| **Checkout & Commercial Gate** | Open local demo / unhardened flags | Origin-validated & fail-closed without Supabase credentials (`STARKIT_ORDERS_ENABLED=true` toggle in `.env.example`, DB defaults `cod_enabled: false` until admin/migration activation), server-side price & promo computation, SKU approval gate |
 | **Admin Authentication** | Simple key prompt | **Dual Auth**: `X-Admin-Key` (timing-safe SHA-256 compare, min 32 chars) OR **Supabase Auth JWT + `store_admin_users` RBAC** (`owner`, `admin`, `merchandiser`, `viewer`), memory-only headers (zero `localStorage`) |
 | **7-Gate Approval Workflow** | Manual boolean flag | Evidence-backed `submit_approval_evidence` enforcing all 7 verification gates (`artwork_rights`, `garment_specs`, `sample_photo`, `size_run`, `stock_count`, `pricing_approved`, `commercial_terms`) and immutable `store_audit_logs` |
 
@@ -36,7 +36,7 @@
 
 ## 3. Four-Tier Draft Pricing Model
 
-All 11 hoodie designs assign a canonical `price_tier`, `price_bdt`, `legacy_price_bdt`, and `price_approved: false` pending owner commercial sign-off:
+All 11 hoodie designs assign a canonical `price_tier`, `price_bdt`, `legacy_price_bdt`, and `price_approved` workflow flag governed by 7-gate admin verification (seeded published in storefront baseline; transitions & tier price sign-off tracked in `store_products` / `store_product_approvals`):
 
 | Tier Code | Label | Draft Price (BDT) | Assigned Designs | Count |
 |---|---|---|---|---|
@@ -49,8 +49,8 @@ All 11 hoodie designs assign a canonical `price_tier`, `price_bdt`, `legacy_pric
 
 ## 4. Security & Server Architecture Remediations
 
-1. **Path & Directory Hardening (`server.js`):** Normalized filesystem path resolution blocks directory traversal (`..`) and blocks public HTTP access (`404`) to `/api`, `/catalog`, `/supabase`, `/scripts`, `/docs`, `/tests`, `/firebase-applet-config.json`, and `/node_modules`.
-2. **Strict Security Headers (`server.js` + `vercel.json`):** Sets `Content-Security-Policy` (`frame-ancestors 'none'` on HTML, restricted `script-src`/`img-src`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy`.
+1. **Path & Directory Hardening (`server.js`):** Normalized filesystem path resolution blocks directory traversal (`..`) and blocks public HTTP access (`404`) to `/api/*.js` source files, `/public`, `/starkit_drop01_hoodies_complete_store`, `/catalog`, `/supabase`, `/scripts`, `/docs`, `/tests`, `/firebase-applet-config.json`, `/package.json`, and `/node_modules`.
+2. **Security Headers (`server.js` + `vercel.json`):** Sets `Content-Security-Policy` (restricted `script-src`, `style-src`, `img-src`, `connect-src`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security`, and `Permissions-Policy` (preserving preview/storefront iFrame compatibility without `X-Frame-Options: DENY`).
 3. **Public vs. Private Data Split:** Storefront fetches promotions safely from `assets/promotions.json` (kept synced by `scripts/generate_60_variant_system.cjs`), leaving `catalog/*.json` strictly private on the server.
 4. **Fail-Closed Order API (`api/orders.js`):**
    - Rejects non-`POST` (`405`) and invalid cross-origin requests (`403`).

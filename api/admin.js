@@ -269,30 +269,32 @@ async function buildPublicStorefrontState(db) {
       }
     }
 
-    if (!variantsRes.error && Array.isArray(variantsRes.data) && variantsRes.data.length) {
-      const varMap = new Map(variantsRes.data.map((v) => [v.sku, v]));
-      merged.variants = baseline.variants.map((v) => {
-        const remote = varMap.get(v.sku);
-        const remoteMedia = mediaBySku.get(v.sku) || [];
-        let gallery = Array.isArray(v.gallery) ? [...v.gallery] : [];
-        for (const m of remoteMedia) {
-          const idx = gallery.findIndex((g) => g.view === m.view);
-          if (idx >= 0) gallery[idx] = { ...gallery[idx], url: m.url };
-          else gallery.push(m);
-        }
-        if (!remote) return { ...v, gallery };
-        return {
-          ...v,
-          status: remote.status || v.status,
-          price_bdt: Number(remote.price_bdt || v.price_bdt),
-          price_approved: typeof remote.price_approved === 'boolean' ? remote.price_approved : v.price_approved,
-          stock_quantity: typeof remote.stock_quantity === 'number' ? remote.stock_quantity : v.stock_quantity,
-          sizes: Array.isArray(remote.sizes) ? remote.sizes : v.sizes,
-          approved_for_publication: Boolean(remote.approved_for_publication),
-          gallery
-        };
-      });
-    }
+    const varMap =
+      !variantsRes.error && Array.isArray(variantsRes.data) && variantsRes.data.length
+        ? new Map(variantsRes.data.map((v) => [v.sku, v]))
+        : null;
+
+    merged.variants = baseline.variants.map((v) => {
+      const remote = varMap ? varMap.get(v.sku) : null;
+      const remoteMedia = mediaBySku.get(v.sku) || [];
+      const gallery = Array.isArray(v.gallery) ? [...v.gallery] : [];
+      for (const m of remoteMedia) {
+        const idx = gallery.findIndex((g) => g.view === m.view);
+        if (idx >= 0) gallery[idx] = { ...gallery[idx], url: m.url };
+        else gallery.push(m);
+      }
+      if (!remote) return { ...v, gallery };
+      return {
+        ...v,
+        status: remote.status || v.status,
+        price_bdt: Number(remote.price_bdt || v.price_bdt),
+        price_approved: typeof remote.price_approved === 'boolean' ? remote.price_approved : v.price_approved,
+        stock_quantity: typeof remote.stock_quantity === 'number' ? remote.stock_quantity : v.stock_quantity,
+        sizes: Array.isArray(remote.sizes) ? remote.sizes : v.sizes,
+        approved_for_publication: Boolean(remote.approved_for_publication),
+        gallery
+      };
+    });
 
     return merged;
   } catch {
@@ -548,9 +550,33 @@ export default async function handler(req, res) {
       ]);
 
       const CANONICAL_HOODIE_RE = /^STK-H0(0[1-9]|1[01])$/;
-      const filteredVariants = (variantsResult.data || []).filter(
-        (v) => CANONICAL_HOODIE_RE.test(String(v.product_id || '')) && v.status === 'DOCUMENTED'
+      const baselineState = getPublicStorefrontState();
+      const baselineGalleryBySku = new Map(
+        baselineState.variants.map((v) => [v.sku, Array.isArray(v.gallery) ? [...v.gallery] : []])
       );
+      const mediaRows = mediaRes.error ? [] : mediaRes.data || [];
+      const mediaBySku = new Map();
+      for (const m of mediaRows) {
+        if (!m?.sku || !m?.public_url) continue;
+        if (!mediaBySku.has(m.sku)) mediaBySku.set(m.sku, []);
+        const list = mediaBySku.get(m.sku);
+        const view = m.view_type || 'front';
+        if (!list.some((item) => item.view === view)) {
+          list.push({ view, url: m.public_url });
+        }
+      }
+
+      const filteredVariants = (variantsResult.data || [])
+        .filter((v) => CANONICAL_HOODIE_RE.test(String(v.product_id || '')) && v.status === 'DOCUMENTED')
+        .map((v) => {
+          const gallery = [...(baselineGalleryBySku.get(v.sku) || [])];
+          for (const m of mediaBySku.get(v.sku) || []) {
+            const idx = gallery.findIndex((g) => g.view === m.view);
+            if (idx >= 0) gallery[idx] = { ...gallery[idx], url: m.url };
+            else gallery.push(m);
+          }
+          return { ...v, gallery };
+        });
       const filteredProducts = (productsRes.error ? [] : productsRes.data || []).filter((p) =>
         CANONICAL_HOODIE_RE.test(String(p.id || ''))
       );
@@ -568,7 +594,7 @@ export default async function handler(req, res) {
         products: filteredProducts,
         approvals: filteredApprovals,
         promotions: promosRes.error ? [] : promosRes.data || [],
-        media_assets: mediaRes.error ? [] : mediaRes.data || [],
+        media_assets: mediaRows,
         audit_logs: auditRes.error ? [] : auditRes.data || []
       });
     }
@@ -734,6 +760,17 @@ export default async function handler(req, res) {
         .select('*')
         .single();
       if (updErr) throw new Error('Unable to update store_products');
+
+      if (approve_tier_price === true && updatedProd.approved_price_bdt) {
+        await db
+          .from('store_variants')
+          .update({
+            price_bdt: updatedProd.approved_price_bdt,
+            price_approved: true,
+            updated_at: new Date().toISOString()
+          })
+          .eq('product_id', product_id);
+      }
 
       if (next_status === 'PUBLISHED' && complete) {
         await db

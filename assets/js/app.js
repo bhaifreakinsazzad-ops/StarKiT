@@ -5,7 +5,7 @@
  */
 import { initSpatialHero } from './spatial-three.js';
 import { initMotionEngine, luxuryToast } from './interactive-anime.js';
-import { escapeHtml } from './core/validation.js';
+import { escapeHtml, resolveAssetUrl } from './core/validation.js';
 import { getPrimaryVariant, getPrimaryImage } from './core/catalog-schema.js';
 import { initCartDrawer } from './modules/cart-drawer.js';
 import { initShowroomHero } from './modules/showroom-hero.js';
@@ -163,7 +163,7 @@ function setupLookbook({ products, base }) {
       if (!p) return '';
       const v = getPrimaryVariant(p);
       const imgObj = getPrimaryImage(p, v);
-      const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+      const imgPath = imgObj?.url ? resolveAssetUrl(imgObj.url, base) : '';
       const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
       const categoryLabel = p.collection || p.category || 'Drop 01';
 
@@ -173,7 +173,7 @@ function setupLookbook({ products, base }) {
             <a href="${pdpHref}">
               ${
                 imgPath
-                  ? `<img loading="lazy" referrerpolicy="no-referrer" src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}">`
+                  ? `<img loading="lazy" referrerpolicy="no-referrer" src="${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}">`
                   : `<div class="concept-slate">
                        <div class="stage-swatch-disc" style="width:48px;height:48px;background:${escapeHtml(v?.hex || '#170000')};"></div>
                        <strong>${escapeHtml(p.name)}</strong>

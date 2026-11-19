@@ -1,4 +1,4 @@
-import { escapeHtml, formatBdt } from '../core/validation.js';
+import { escapeHtml, formatBdt, resolveAssetUrl } from '../core/validation.js';
 import {
   PRICE_TIERS,
   getPrimaryVariant,
@@ -143,11 +143,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
     const paint = () => {
       const gallery = Array.isArray(currentVariant?.gallery) ? currentVariant.gallery : [];
       const activeGalleryItem = gallery[selectedImgIdx] || getPrimaryImage(p, currentVariant);
-      const imgPath = activeGalleryItem?.url
-        ? String(activeGalleryItem.url).replace(/^\//, '')
-        : activeGalleryItem?.path
-        ? String(activeGalleryItem.path).replace(/^\//, '')
-        : '';
+      const rawImg = activeGalleryItem?.url || activeGalleryItem?.path || '';
+      const imgPath = rawImg ? resolveAssetUrl(rawImg, base) : '';
+      const activePrice = Number(currentVariant?.price_bdt ?? p.price_bdt ?? 0);
       const purchasable = isVariantPurchasable(p, currentVariant, storeConfig);
       const sizes = currentVariant?.available_sizes || [];
       const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
@@ -159,9 +157,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
           ? `<div class="qv-thumbs">
                ${gallery
                  .map((g, idx) => {
-                   const gPath = String(g.url || g.path || '').replace(/^\//, '');
+                   const gPath = resolveAssetUrl(g.url || g.path || '', base);
                    return `<button type="button" class="qv-thumb ${idx === selectedImgIdx ? 'active' : ''}" data-qv-img-idx="${idx}" aria-label="View angle ${idx + 1}">
-                     <img src="${base}${escapeHtml(gPath)}" alt="${escapeHtml(p.name)} view ${idx + 1}" loading="lazy" referrerpolicy="no-referrer">
+                     <img src="${escapeHtml(gPath)}" alt="${escapeHtml(p.name)} view ${idx + 1}" loading="lazy" referrerpolicy="no-referrer">
                    </button>`;
                  })
                  .join('')}
@@ -174,7 +172,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             <div class="qv-photo">
               ${
                 imgPath
-                  ? `<img src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" referrerpolicy="no-referrer">`
+                  ? `<img src="${escapeHtml(imgPath)}" alt="${escapeHtml(p.name)}" referrerpolicy="no-referrer">`
                   : `<div class="concept-slate">
                        <div class="stage-swatch-disc" style="width:58px;height:58px;background:${escapeHtml(currentVariant?.hex || '#170000')};"></div>
                        <strong>${escapeHtml(p.name)}</strong>
@@ -188,7 +186,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             <div class="eyebrow" style="margin-bottom:6px;">${escapeHtml(kickerLabel)}</div>
             <h3 style="margin:0 0 4px;font-size:1.55rem;font-weight:800;">${escapeHtml(p.name)}</h3>
             <div class="panel-sku">${escapeHtml(currentVariant?.sku || p.id)}${tierLabel ? ` · ${escapeHtml(tierLabel)}` : ''}</div>
-            <div class="price tabular" style="font-size:1.4rem;font-weight:800;margin:12px 0;">${formatBdt(p.price_bdt)}</div>
+            <div class="price tabular" style="font-size:1.4rem;font-weight:800;margin:12px 0;">${formatBdt(activePrice)}</div>
             <p style="font-size:0.9rem;color:var(--mute);line-height:1.55;">${escapeHtml(p.copy_en || '')}</p>
             <div class="panel-label"><span>Colorway · ${escapeHtml(currentVariant?.color || '')}</span></div>
             <div class="panel-swatches" style="margin-bottom:12px;">
@@ -217,9 +215,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
               ${
                 purchasable
-                  ? `<button type="button" class="btn" id="qvAddCart" style="flex:1;">Add to Bag · ${formatBdt(p.price_bdt)}</button>`
+                  ? `<button type="button" class="btn" id="qvAddCart" style="flex:1;">Add to Bag · ${formatBdt(activePrice)}</button>`
                   : `<a href="https://wa.me/8801778307704?text=${encodeURIComponent(
-                      `Hello StarkiT! I am inquiring about "${p.name}" (SKU: ${currentVariant?.sku || p.id}, Color: ${currentVariant?.color || ''}, Size: ${selectedSize || 'Standard'}, Price: ${formatBdt(p.price_bdt)}).`
+                      `Hello StarkiT! I am inquiring about "${p.name}" (SKU: ${currentVariant?.sku || p.id}, Color: ${currentVariant?.color || ''}, Size: ${selectedSize || 'Standard'}, Price: ${formatBdt(activePrice)}).`
                     )}" target="_blank" rel="noopener noreferrer" class="btn" style="flex:1;text-align:center;">Reserve via WhatsApp ↗</a>`
               }
               <a href="${pdpHref}" class="btn btn-outline">Full Details ↗</a>
@@ -342,12 +340,14 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
         const activeVariant =
           (p.variants || []).find((v) => v.sku === chosenSku) || getPrimaryVariant(p);
         const frontObj = getPrimaryImage(p, activeVariant);
-        const frontPath = frontObj?.url ? String(frontObj.url).replace(/^\//, '') : '';
+        const frontPath = frontObj?.url ? resolveAssetUrl(frontObj.url, base) : '';
         const secondaryGalleryItem = Array.isArray(activeVariant?.gallery)
           ? activeVariant.gallery.find((g) => g.view === 'back' || g.role === 'back' || g.view === 'lifestyle')
           : null;
         const backObj = secondaryGalleryItem || (Array.isArray(activeVariant?.gallery) && activeVariant.gallery.some((g) => g.view === 'back') ? getBackImage(p, activeVariant) : null);
-        const backPath = backObj?.url ? String(backObj.url).replace(/^\//, '') : backObj?.path ? String(backObj.path).replace(/^\//, '') : '';
+        const rawBack = backObj?.url || backObj?.path || '';
+        const backPath = rawBack ? resolveAssetUrl(rawBack, base) : '';
+        const activePrice = Number(activeVariant?.price_bdt ?? p.price_bdt ?? 0);
         const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
         const isFav = state.wishlist.has(p.id);
         const isComp = state.compareIds.includes(p.id);
@@ -359,8 +359,8 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
         if (frontPath) {
           mediaContent = `
             <a href="${pdpHref}" aria-label="Inspect ${escapeHtml(p.name)}" style="position:absolute;inset:0;display:block;">
-              <img class="front ${backPath ? '' : 'single-view'}" src="${base}${escapeHtml(frontPath)}" alt="${escapeHtml(p.name)} front" loading="lazy" referrerpolicy="no-referrer">
-              ${backPath ? `<img class="back" src="${base}${escapeHtml(backPath)}" alt="${escapeHtml(p.name)} back" loading="lazy" referrerpolicy="no-referrer">` : ''}
+              <img class="front ${backPath ? '' : 'single-view'}" src="${escapeHtml(frontPath)}" alt="${escapeHtml(p.name)} front" loading="lazy" referrerpolicy="no-referrer">
+              ${backPath ? `<img class="back" src="${escapeHtml(backPath)}" alt="${escapeHtml(p.name)} back" loading="lazy" referrerpolicy="no-referrer">` : ''}
             </a>`;
         } else {
           mediaContent = `
@@ -397,7 +397,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
                 <a href="${pdpHref}">${escapeHtml(p.name)}</a>
                 ${p.bengali_name ? `<span class="card-bn">${escapeHtml(p.bengali_name)}</span>` : ''}
               </div>
-              <span class="price tabular">${formatBdt(p.price_bdt)}</span>
+              <span class="price tabular">${formatBdt(activePrice)}</span>
             </div>
             <div class="swatches">
               ${swatchesHtml}

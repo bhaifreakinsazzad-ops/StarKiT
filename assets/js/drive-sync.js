@@ -343,6 +343,7 @@ export async function initDriveSyncUI() {
       state.importedUrls[file.id] = data.url;
       document.getElementById('driveImportConfirmModal').style.display = 'none';
       showToast(`Imported ${data.fileName} → ${data.storage_path}`);
+      window.dispatchEvent(new CustomEvent('starkit:media-imported', { detail: data }));
       render();
     } catch (err) {
       showToast(`Import error: ${err.message}`);

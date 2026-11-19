@@ -33,7 +33,7 @@ STARKIT_MEDIA_BUCKET=starkit-media
 
 # Store Commercial Operation Controls
 STARKIT_STORE_MODE=public              # 'preview' or 'public'
-STARKIT_ORDERS_ENABLED=false           # Set 'true' to enable live POST /api/orders intake
+STARKIT_ORDERS_ENABLED=true            # Set 'false' to pause live POST /api/orders intake
 STARKIT_DB_APPROVAL_AUTHORITATIVE=true # Lets Supabase store_variants 7-gate flags authorize runtime sales
 STARKIT_PUBLIC_URL=https://your-domain.vercel.app
 

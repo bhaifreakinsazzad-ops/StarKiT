@@ -19,6 +19,8 @@ import {
   detectImageSignature,
   formatBdt,
   isValidBdPhone,
+  resolveAssetUrl,
+  sanitizeCsvCell,
   validateOrderRequestBody
 } from '../assets/js/core/validation.js';
 
@@ -172,4 +174,86 @@ test('Validation guards enforce Bangladesh phones, order bodies, and image magic
   assert.equal(detectImageSignature(Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]))?.ext, 'jpg');
   assert.equal(detectImageSignature(Buffer.from('RIFFxxxxWEBP'))?.ext, 'webp');
   assert.equal(detectImageSignature(Buffer.from('<svg></svg>   ')), null);
+});
+
+test('Asset URL resolver & CSV sanitizer block XSS schemes and spreadsheet formula injection', () => {
+  assert.equal(resolveAssetUrl('/assets/images/STK-H001-BLK__01_front.webp', './'), './assets/images/STK-H001-BLK__01_front.webp');
+  assert.equal(resolveAssetUrl('assets/images/STK-H001-BLK__01_front.webp', '../'), '../assets/images/STK-H001-BLK__01_front.webp');
+  assert.equal(resolveAssetUrl('https://cdn.example.com/media/hoodie.webp', './'), 'https://cdn.example.com/media/hoodie.webp');
+  assert.equal(resolveAssetUrl('data:image/webp;base64,UklGRh4AAABXRUJQVlA4', './'), 'data:image/webp;base64,UklGRh4AAABXRUJQVlA4');
+  assert.equal(resolveAssetUrl('javascript:alert(1)', './'), '');
+  assert.equal(resolveAssetUrl('data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=', './'), '');
+
+  assert.equal(sanitizeCsvCell('=CMD("calc")'), `"'=CMD(""calc"")"`);
+  assert.equal(sanitizeCsvCell('+8801778307704'), `"' +8801778307704"`.replace("' ", "'"));
+  assert.equal(sanitizeCsvCell('-100'), `"'-100"`);
+  assert.equal(sanitizeCsvCell('Tanvir "Test"\nLine2'), `"Tanvir ""Test"" Line2"`);
+});
+
+test('Pricing engine prefers variant price_bdt override and evaluates combinable promo stacks vs best single promo', () => {
+  const map = new Map([
+    [
+      'STK-H001-BLK',
+      {
+        product: { id: 'STK-H001', price_bdt: 1369 },
+        variant: { sku: 'STK-H001-BLK', price_bdt: 1450 }
+      }
+    ]
+  ]);
+
+  const combinablePromos = [
+    {
+      code: 'STACK_A',
+      title: 'Stack A',
+      tier_type: 'MULTI',
+      min_qty: 2,
+      applies_to: 'hoodies',
+      discount_type: 'FIXED_BDT',
+      discount_value: 100,
+      free_shipping: false,
+      combinable: true,
+      active: true,
+      requires_approval: false
+    },
+    {
+      code: 'STACK_B',
+      title: 'Stack B',
+      tier_type: 'MULTI',
+      min_qty: 2,
+      applies_to: 'hoodies',
+      discount_type: 'PERCENT',
+      discount_value: 10,
+      free_shipping: true,
+      combinable: true,
+      active: true,
+      requires_approval: false
+    },
+    {
+      code: 'SOLO_BEST',
+      title: 'Solo Best',
+      tier_type: 'MULTI',
+      min_qty: 2,
+      applies_to: 'hoodies',
+      discount_type: 'FIXED_BDT',
+      discount_value: 250,
+      free_shipping: false,
+      combinable: false,
+      active: true,
+      requires_approval: false
+    }
+  ];
+
+  // Subtotal = 2 * 1450 = 2900. Stack A + B = 100 + 290 = 390 + free shipping > Solo Best (250)
+  const stacked = calculateOrderPricing({
+    items: [{ sku: 'STK-H001-BLK', quantity: 2 }],
+    catalogMap: map,
+    zone: 'outside',
+    promotions: combinablePromos
+  });
+  assert.equal(stacked.subtotal_bdt, 2900);
+  assert.equal(stacked.discount_bdt, 390);
+  assert.equal(stacked.is_free_shipping, true);
+  assert.equal(stacked.shipping_bdt, 0);
+  assert.equal(stacked.total_bdt, 2510);
+  assert.deepEqual(stacked.applied_promotions.map((p) => p.code), ['STACK_A', 'STACK_B']);
 });

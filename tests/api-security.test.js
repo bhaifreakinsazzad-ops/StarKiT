@@ -5,6 +5,7 @@ import path from 'node:path';
 
 import orderHandler from '../api/orders.js';
 import adminHandler from '../api/admin.js';
+import { app } from '../server.js';
 import { resetRuntimeStore } from '../assets/js/core/runtime-store.js';
 
 function createMockRes() {
@@ -397,5 +398,114 @@ test('Admin API get_drive_config fails closed when unauthenticated and reads str
     else process.env.FIREBASE_AUTH_DOMAIN = prevFbDomain;
     if (prevFbProj === undefined) delete process.env.FIREBASE_PROJECT_ID;
     else process.env.FIREBASE_PROJECT_ID = prevFbProj;
+  }
+});
+
+test('Express HTTP server blocks /api/*.js source leaks, /public, and sensitive files with 404 while keeping storefront iFrame-compatible', async () => {
+  const prevUrl = process.env.SUPABASE_URL;
+  const prevSrv = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  const server = await new Promise((resolve) => {
+    const s = app.listen(0, '127.0.0.1', () => resolve(s));
+  });
+
+  try {
+    const { port } = server.address();
+    const baseUrl = `http://127.0.0.1:${port}`;
+
+    for (const blockedPath of [
+      '/api/admin.js',
+      '/api/orders.js',
+      '/server.js',
+      '/public/index.html',
+      '/package.json',
+      '/firebase-applet-config.json',
+      '/catalog/starkit_products.json'
+    ]) {
+      const res = await fetch(`${baseUrl}${blockedPath}`);
+      assert.equal(res.status, 404, `Expected 404 for ${blockedPath}, got ${res.status}`);
+    }
+
+    const homeRes = await fetch(`${baseUrl}/`);
+    assert.equal(homeRes.status, 200);
+    assert.equal(homeRes.headers.get('x-content-type-options'), 'nosniff');
+    assert.equal(homeRes.headers.get('x-frame-options'), null);
+    assert.match(homeRes.headers.get('content-security-policy') || '', /default-src 'self'/);
+
+    const adminPageRes = await fetch(`${baseUrl}/admin.html`);
+    assert.equal(adminPageRes.status, 200);
+
+    const stateRes = await fetch(`${baseUrl}/api/admin?action=public_storefront_state`);
+    assert.equal(stateRes.status, 200);
+    const stateJson = await stateRes.json();
+    assert.equal(stateJson.products.length, 11);
+    assert.equal(stateJson.variants.length, 15);
+  } finally {
+    server.closeAllConnections?.();
+    await new Promise((resolve) => server.close(resolve));
+    if (prevUrl !== undefined) process.env.SUPABASE_URL = prevUrl;
+    if (prevSrv !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
+  }
+});
+
+test('submit_approval_evidence with approve_tier_price syncs variant price_bdt and price_approved into storefront & orders', async () => {
+  resetRuntimeStore();
+  const prevKey = process.env.STARKIT_ADMIN_API_KEY;
+  const prevUrl = process.env.SUPABASE_URL;
+  const prevSrv = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const prevEnabled = process.env.STARKIT_ORDERS_ENABLED;
+
+  const adminKey = 'e'.repeat(40);
+  process.env.STARKIT_ADMIN_API_KEY = adminKey;
+  process.env.STARKIT_ORDERS_ENABLED = 'true';
+  delete process.env.SUPABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  try {
+    const evidence = {
+      artwork_rights_ok: true,
+      garment_specs_ok: true,
+      sample_photo_ok: true,
+      size_run_ok: true,
+      stock_count_ok: true,
+      pricing_approved_ok: true,
+      commercial_terms_ok: true,
+      evidence_notes: 'Tier price sign-off verification'
+    };
+
+    const res = createMockRes();
+    await adminHandler(
+      {
+        method: 'POST',
+        url: '/api/admin?action=submit_approval_evidence',
+        headers: { host: 'starkit.bd', 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.40.1' },
+        body: { product_id: 'STK-H001', next_status: 'PUBLISHED', approve_tier_price: true, evidence }
+      },
+      res
+    );
+    assert.equal(res.state.statusCode, 200);
+    assert.equal(res.state.body.product.price_approved, true);
+    assert.equal(res.state.body.product.approved_price_bdt, 1369);
+
+    const pubRes = createMockRes();
+    await adminHandler({ method: 'GET', url: '/api/admin?action=public_storefront_state', headers: {} }, pubRes);
+    const blk = pubRes.state.body.variants.find((v) => v.sku === 'STK-H001-BLK');
+    const crm = pubRes.state.body.variants.find((v) => v.sku === 'STK-H001-CRM');
+    assert.equal(blk.price_bdt, 1369);
+    assert.equal(blk.price_approved, true);
+    assert.equal(crm.price_bdt, 1369);
+    assert.equal(crm.price_approved, true);
+  } finally {
+    resetRuntimeStore();
+    if (prevKey === undefined) delete process.env.STARKIT_ADMIN_API_KEY;
+    else process.env.STARKIT_ADMIN_API_KEY = prevKey;
+    if (prevUrl === undefined) delete process.env.SUPABASE_URL;
+    else process.env.SUPABASE_URL = prevUrl;
+    if (prevSrv === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    else process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
+    if (prevEnabled === undefined) delete process.env.STARKIT_ORDERS_ENABLED;
+    else process.env.STARKIT_ORDERS_ENABLED = prevEnabled;
   }
 });

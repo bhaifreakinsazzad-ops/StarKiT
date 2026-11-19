@@ -1,4 +1,4 @@
-import { escapeHtml, formatBdt } from '../core/validation.js';
+import { escapeHtml, formatBdt, resolveAssetUrl, sanitizeCsvCell } from '../core/validation.js';
 import { APPROVAL_TRANSITIONS, PRICE_TIERS } from '../core/catalog-schema.js';
 import { DEFAULT_PROMOTIONS } from '../core/pricing-engine.js';
 
@@ -49,6 +49,18 @@ export function initAdminManager() {
     if (!el) return;
     el.textContent = label;
     el.style.color = ok ? '#bfa177' : 'rgba(243,239,230,0.68)';
+  }
+
+  async function refreshDashboard() {
+    if (!state.authenticated) return;
+    try {
+      const dashRes = await adminFetch('api/admin?action=get_dashboard');
+      if (!dashRes.ok) return;
+      applyDashboardData(await dashRes.json());
+      renderDashboard();
+    } catch {
+      // Keep current view if background refresh fails
+    }
   }
 
   function applyDashboardData(data) {
@@ -130,9 +142,6 @@ export function initAdminManager() {
         )
       )
       .join('');
-
-    const manSku = document.getElementById('manSku');
-    if (manSku) manSku.innerHTML = options;
 
     const uploadSku = document.getElementById('uploadTargetSku');
     if (uploadSku) uploadSku.innerHTML = options;
@@ -260,6 +269,7 @@ export function initAdminManager() {
           });
           if (!res.ok) throw new Error('Update rejected');
           adminToast(`Order ${ref} updated to ${newStatus.replace(/_/g, ' ')}.`);
+          await refreshDashboard();
         } catch {
           order.status = prev;
           renderDashboard();
@@ -322,9 +332,10 @@ export function initAdminManager() {
     state.catalog.forEach((p) => {
       (p.variants || []).forEach((v) => {
         const isProv = v.status === 'PROVISIONAL' || !v.gallery || v.gallery.length === 0;
+        const primaryUrl = v.gallery && v.gallery[0] ? resolveAssetUrl(v.gallery[0].url || v.gallery[0].path || '', './') : '';
         const imgHtml =
-          !isProv && v.gallery && v.gallery[0]
-            ? `<img class="sku-img" src="${escapeHtml(String(v.gallery[0].url || '').replace(/^\//, ''))}" alt="${escapeHtml(p.name)}">`
+          !isProv && primaryUrl
+            ? `<img class="sku-img" src="${escapeHtml(primaryUrl)}" alt="${escapeHtml(p.name)}">`
             : `<div class="sku-img" style="display:flex;align-items:center;justify-content:center;background:${escapeHtml(v.hex)};color:${v.hex === '#F3EFE6' ? '#170000' : '#ffffff'};font-size:0.62rem;font-weight:700;">PEND</div>`;
 
         const approvalRec = approvalByProduct.get(p.id);
@@ -333,6 +344,8 @@ export function initAdminManager() {
           : isProv
           ? 'PROVISIONAL'
           : p.approval_status || (approvalRec?.reviewed_at ? 'IN_REVIEW' : 'MEDIA_VERIFIED');
+        const effectivePrice = Number(v.price_bdt ?? p.price_bdt ?? 0);
+        const isPriceApproved = typeof v.price_approved === 'boolean' ? v.price_approved : Boolean(p.price_approved);
 
         rows.push(`
           <tr>
@@ -340,7 +353,7 @@ export function initAdminManager() {
             <td><strong>${escapeHtml(p.name)}</strong><br><small style="color:var(--mute);">${escapeHtml(p.id)} · ${escapeHtml(PRICE_TIERS[p.price_tier]?.label || p.collection || '')}</small></td>
             <td><code style="font-family:var(--font-mono);font-size:0.78rem;">${escapeHtml(v.sku)}</code></td>
             <td><span class="color-dot" style="background:${escapeHtml(v.hex)};vertical-align:middle;margin-right:6px;"></span>${escapeHtml(v.color)}</td>
-            <td class="tabular">${formatBdt(p.price_bdt)} ${p.price_approved ? '' : '<small style="color:#b45309;">(Draft)</small>'}</td>
+            <td class="tabular">${formatBdt(effectivePrice)} ${isPriceApproved ? '' : '<small style="color:#b45309;">(Draft)</small>'}</td>
             <td><input type="number" class="stock-input" data-stock-sku="${escapeHtml(v.sku)}" value="${Number(v.stock_quantity || 0)}" min="0"></td>
             <td><span style="font-size:0.76rem;">${(v.available_sizes || []).length ? escapeHtml(v.available_sizes.join(', ')) : '<em>Pending</em>'}</span></td>
             <td><span class="status-badge" style="background:${v.approved_for_publication ? '#15803d' : isProv ? '#5b1a24' : '#b45309'};">${escapeHtml(gatesReady)}</span></td>
@@ -509,6 +522,7 @@ export function initAdminManager() {
           promo.requires_approval = !nextActive;
           renderPricingAndPromotions();
           adminToast(`Promotion ${code} saved (${nextActive ? 'Active' : 'Draft/Paused'}).`);
+          await refreshDashboard();
         } catch (err) {
           adminToast(err.message);
         }
@@ -557,20 +571,28 @@ export function initAdminManager() {
   document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('loginError');
-    if (errEl) errEl.style.display = 'none';
+    const showLoginError = (msg) => {
+      if (!errEl) return;
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+    };
+    if (errEl) {
+      errEl.textContent = '';
+      errEl.style.display = 'none';
+    }
 
     const mode = document.querySelector('input[name="authMode"]:checked')?.value || 'key';
     const passVal = document.getElementById('passkeyInput').value.trim();
 
     if (mode === 'jwt') {
       if (passVal.length < 20) {
-        if (errEl) errEl.style.display = 'block';
+        showLoginError('Enter a valid Supabase Auth JWT (minimum 20 characters).');
         return;
       }
       authHeaders = { Authorization: `Bearer ${passVal}` };
     } else {
       if (passVal.length < 32) {
-        if (errEl) errEl.style.display = 'block';
+        showLoginError('Enter a valid Admin API Key (minimum 32 characters).');
         return;
       }
       authHeaders = { 'X-Admin-Key': passVal };
@@ -578,8 +600,10 @@ export function initAdminManager() {
 
     try {
       const response = await adminFetch('api/admin?action=get_dashboard');
-      if (!response.ok) throw new Error('Authentication rejected');
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data?.error || 'Authentication rejected by server.');
+      }
       state.authenticated = true;
       window.__STARKIT_ADMIN_HEADERS = authHeaders;
       window.dispatchEvent(new CustomEvent('starkit:admin-authenticated'));
@@ -589,10 +613,10 @@ export function initAdminManager() {
       document.getElementById('passkeyInput').value = '';
       loginGate.style.display = 'none';
       renderDashboard();
-    } catch {
+    } catch (err) {
       authHeaders = {};
       window.__STARKIT_ADMIN_HEADERS = {};
-      if (errEl) errEl.style.display = 'block';
+      showLoginError(err?.message || 'Access rejected. Verify Admin Key or Supabase Auth JWT.');
     }
   });
 
@@ -648,6 +672,7 @@ export function initAdminManager() {
       }
       dirtyInventory.clear();
       adminToast(`Saved stock updates for ${updates.length} SKU(s).`);
+      await refreshDashboard();
     } catch (err) {
       adminToast(err.message);
     }
@@ -687,11 +712,7 @@ export function initAdminManager() {
       adminToast(
         `${productId} (${sku}) transitioned cleanly to ${data.product?.approval_status || targetStatus}.`
       );
-      const dashRes = await adminFetch('api/admin?action=get_dashboard');
-      if (dashRes.ok) {
-        applyDashboardData(await dashRes.json());
-        renderDashboard();
-      }
+      await refreshDashboard();
     } catch (err) {
       adminToast(err.message);
     }
@@ -734,23 +755,26 @@ export function initAdminManager() {
       if (!res.ok) throw new Error(data.error || 'Upload failed');
       adminToast(`Uploaded ${file.name} for ${sku} (${view}) → ${data.storage_path}.`);
       fileInput.value = '';
-      const dashRes = await adminFetch('api/admin?action=get_dashboard');
-      if (dashRes.ok) {
-        applyDashboardData(await dashRes.json());
-        renderDashboard();
-      }
+      await refreshDashboard();
     } catch (err) {
       adminToast(err.message);
     }
   });
 
+  function parseNonNegativeInt(id, fallback) {
+    const raw = document.getElementById(id)?.value;
+    if (raw === '' || raw == null) return fallback;
+    const parsed = Number.parseInt(String(raw).trim(), 10);
+    return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+  }
+
   document.getElementById('storeSettingsForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const payload = {
       settings: [
-        { key: 'delivery_dhaka_bdt', value: parseInt(document.getElementById('settingDhaka').value, 10) || 80 },
-        { key: 'delivery_outside_bdt', value: parseInt(document.getElementById('settingOutside').value, 10) || 150 },
-        { key: 'free_shipping_threshold', value: parseInt(document.getElementById('settingFreeThreshold').value, 10) || 3000 },
+        { key: 'delivery_dhaka_bdt', value: parseNonNegativeInt('settingDhaka', 80) },
+        { key: 'delivery_outside_bdt', value: parseNonNegativeInt('settingOutside', 150) },
+        { key: 'free_shipping_threshold', value: parseNonNegativeInt('settingFreeThreshold', 3000) },
         { key: 'cod_enabled', value: document.getElementById('settingCodStatus').value === 'true' },
         { key: 'support_phone', value: String(document.getElementById('settingPhone').value).trim() },
         { key: 'store_mode', value: String(document.getElementById('settingStoreMode').value).trim() }
@@ -765,6 +789,7 @@ export function initAdminManager() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Settings update rejected');
       adminToast('Store operational settings saved.');
+      await refreshDashboard();
     } catch (err) {
       adminToast(err.message);
     }
@@ -775,11 +800,29 @@ export function initAdminManager() {
       adminToast('No orders to export.');
       return;
     }
-    const headers = ['Reference', 'Created', 'Customer', 'Phone', 'Zone', 'District', 'Address', 'Total_BDT', 'Status'];
+    const headers = [
+      'Reference',
+      'Created',
+      'Customer',
+      'Phone',
+      'Zone',
+      'District',
+      'Address',
+      'Items',
+      'Subtotal_BDT',
+      'Discount_BDT',
+      'Shipping_BDT',
+      'Total_BDT',
+      'Notes',
+      'Status'
+    ];
     const csvRows = [
       headers.join(','),
-      ...state.orders.map((o) =>
-        [
+      ...state.orders.map((o) => {
+        const itemsSummary = (o.items || o.store_order_items || [])
+          .map((i) => `${i.sku || i.product_name || 'Item'} (${i.size || ''} x ${Number(i.quantity) || 1})`)
+          .join('; ');
+        return [
           o.reference,
           o.created_at,
           o.customer_name,
@@ -787,12 +830,17 @@ export function initAdminManager() {
           o.zone,
           o.district,
           o.shipping_address,
-          o.total_bdt,
+          itemsSummary,
+          o.subtotal_bdt ?? 0,
+          o.discount_bdt ?? 0,
+          o.shipping_bdt ?? 0,
+          o.total_bdt ?? 0,
+          o.notes || '',
           o.status
         ]
-          .map((cell) => `"${String(cell || '').replace(/"/g, '""')}"`)
-          .join(',')
-      )
+          .map((cell) => sanitizeCsvCell(cell))
+          .join(',');
+      })
     ];
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
@@ -800,6 +848,12 @@ export function initAdminManager() {
     a.download = `starkit-orders-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
+  });
+
+  window.addEventListener('starkit:media-imported', () => {
+    if (state.authenticated) {
+      refreshDashboard();
+    }
   });
 
   ['orderSearchInput', 'orderStatusFilter', 'orderZoneFilter'].forEach((id) => {

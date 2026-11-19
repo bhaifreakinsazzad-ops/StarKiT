@@ -35,6 +35,7 @@ create table if not exists public.store_variants (
   specifications_verified boolean not null default false,
   stock_verified boolean not null default false,
   commercial_terms_verified boolean not null default false,
+  price_approved boolean not null default false,
   approved_for_publication boolean not null default false,
   updated_at timestamptz not null default now()
 );
@@ -123,6 +124,13 @@ declare
   v_existing_total int;
   v_promo record;
   v_promo_discount int;
+  v_promo_base int;
+  v_best_single_discount int := 0;
+  v_best_single_free_ship boolean := false;
+  v_best_single_promo jsonb := null;
+  v_comb_discount int := 0;
+  v_comb_free_ship boolean := false;
+  v_comb_promos jsonb := '[]'::jsonb;
 begin
   if p_customer_name is null or length(trim(p_customer_name)) < 2 or length(p_customer_name) > 120
      or p_customer_phone is null or p_customer_phone !~ '^([+]?880|0)1[3-9][0-9]{8}$'
@@ -234,33 +242,55 @@ begin
       where active = true and requires_approval = false
       order by min_qty desc, discount_value desc
     loop
+      v_promo_base := case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end;
       if (v_promo.applies_to = 'hoodies' and v_hoodie_qty >= v_promo.min_qty and v_hoodie_subtotal > 0)
          or (v_promo.applies_to <> 'hoodies' and v_total_qty >= v_promo.min_qty and v_subtotal > 0)
       then
         v_promo_discount := 0;
         if v_promo.discount_type = 'FIXED_BDT' and v_promo.discount_value > 0 then
-          v_promo_discount := least(
-            case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end,
-            v_promo.discount_value
-          );
+          v_promo_discount := least(v_promo_base, v_promo.discount_value);
         elsif v_promo.discount_type = 'PERCENT' and v_promo.discount_value > 0 and v_promo.discount_value <= 80 then
-          v_promo_discount := least(
-            case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end,
-            round((case when v_promo.applies_to = 'hoodies' then v_hoodie_subtotal else v_subtotal end) * v_promo.discount_value / 100.0)::int
-          );
+          v_promo_discount := least(v_promo_base, round(v_promo_base * v_promo.discount_value / 100.0)::int);
         end if;
-        if v_promo_discount > v_discount or (v_promo_discount = v_discount and v_promo.free_shipping and not v_promo_free_ship) then
-          v_discount := v_promo_discount;
-          v_promo_free_ship := v_promo.free_shipping;
-          v_applied_promos := jsonb_build_array(jsonb_build_object(
-            'code', v_promo.code,
-            'title', v_promo.title,
-            'discount_bdt', v_promo_discount,
-            'free_shipping', v_promo.free_shipping
-          ));
+
+        if v_promo_discount > 0 or v_promo.free_shipping then
+          if coalesce(v_promo.combinable, false) then
+            v_comb_discount := v_comb_discount + v_promo_discount;
+            v_comb_free_ship := v_comb_free_ship or v_promo.free_shipping;
+            v_comb_promos := v_comb_promos || jsonb_build_array(jsonb_build_object(
+              'code', v_promo.code,
+              'title', v_promo.title,
+              'discount_bdt', v_promo_discount,
+              'free_shipping', v_promo.free_shipping
+            ));
+          else
+            if v_best_single_promo is null
+               or v_promo_discount > v_best_single_discount
+               or (v_promo_discount = v_best_single_discount and v_promo.free_shipping and not v_best_single_free_ship)
+            then
+              v_best_single_discount := v_promo_discount;
+              v_best_single_free_ship := v_promo.free_shipping;
+              v_best_single_promo := jsonb_build_object(
+                'code', v_promo.code,
+                'title', v_promo.title,
+                'discount_bdt', v_promo_discount,
+                'free_shipping', v_promo.free_shipping
+              );
+            end if;
+          end if;
         end if;
       end if;
     end loop;
+
+    if v_best_single_promo is not null and v_best_single_discount >= v_comb_discount then
+      v_discount := v_best_single_discount;
+      v_promo_free_ship := v_best_single_free_ship;
+      v_applied_promos := jsonb_build_array(v_best_single_promo);
+    elsif jsonb_array_length(v_comb_promos) > 0 then
+      v_discount := least(v_subtotal, v_comb_discount);
+      v_promo_free_ship := v_comb_free_ship;
+      v_applied_promos := v_comb_promos;
+    end if;
   end if;
 
   select value into v_free_threshold from public.store_settings where key = 'free_shipping_threshold';
