@@ -286,10 +286,18 @@ export function initSpatialHero(containerId = 'spatialHeroContainer') {
   const cWine = new THREE.Color(0x8e2934);
   const cWhite = new THREE.Color(0xf6f4f0);
 
+  let seed = 0x53544b31;
+  const nextRand = () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
   for (let i = 0; i < particleCount; i++) {
-    const r = 3.0 + Math.random() * 6.5;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
+    const r = 3.0 + nextRand() * 6.5;
+    const theta = nextRand() * Math.PI * 2;
+    const phi = Math.acos(2 * nextRand() - 1);
     positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
     positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
     positions[i * 3 + 2] = r * Math.cos(phi);

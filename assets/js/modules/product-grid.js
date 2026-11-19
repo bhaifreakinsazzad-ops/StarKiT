@@ -18,6 +18,15 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
   const countEl = document.getElementById('resultsCount');
   const categoryButtons = document.querySelectorAll('#categoryFilters [data-category], [data-category]');
 
+  function loadWishlist() {
+    try {
+      const raw = JSON.parse(sessionStorage.getItem('starkit_wishlist') || '[]');
+      return new Set(Array.isArray(raw) ? raw.filter((x) => typeof x === 'string') : []);
+    } catch {
+      return new Set();
+    }
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const state = {
     category: urlParams.get('category') || 'All',
@@ -27,7 +36,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
     sort: urlParams.get('sort') || 'featured',
     compareIds: [],
     selectedVariants: new Map(), // productId -> sku
-    wishlist: new Set(JSON.parse(sessionStorage.getItem('starkit_wishlist') || '[]'))
+    wishlist: loadWishlist()
   };
 
   if (searchInput && state.query) searchInput.value = state.query;
@@ -418,7 +427,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
         const id = btn.dataset.favId;
         if (state.wishlist.has(id)) state.wishlist.delete(id);
         else state.wishlist.add(id);
-        sessionStorage.setItem('starkit_wishlist', JSON.stringify([...state.wishlist]));
+        try {
+          sessionStorage.setItem('starkit_wishlist', JSON.stringify([...state.wishlist]));
+        } catch {}
         render();
       });
     });

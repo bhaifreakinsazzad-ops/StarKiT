@@ -2,6 +2,13 @@ import { escapeHtml, formatBdt } from '../core/validation.js';
 import { APPROVAL_TRANSITIONS, PRICE_TIERS } from '../core/catalog-schema.js';
 import { DEFAULT_PROMOTIONS } from '../core/pricing-engine.js';
 
+function escCss(val) {
+  const str = String(val ?? '');
+  return typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+    ? CSS.escape(str)
+    : str.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+}
+
 export function initAdminManager() {
   const loginGate = document.getElementById('loginGate');
   if (!loginGate) return;
@@ -192,6 +199,7 @@ export function initAdminManager() {
           })
         : '—';
       const rawPhone = String(o.customer_phone || '');
+      const telDigits = rawPhone.replace(/[^+\d]/g, '');
       const waUrl = `https://wa.me/${encodeURIComponent(rawPhone.replace(/^0/, '880'))}?text=${encodeURIComponent(
         `Hello ${o.customer_name || ''}! StarkiT update for order ${o.reference}.`
       )}`;
@@ -202,7 +210,7 @@ export function initAdminManager() {
           <td><small>${escapeHtml(dateStr)}</small></td>
           <td><strong>${escapeHtml(o.customer_name)}</strong></td>
           <td>
-            <a href="tel:${escapeHtml(rawPhone)}" style="text-decoration:underline;font-family:var(--font-mono);">${escapeHtml(rawPhone)}</a>
+            <a href="tel:${escapeHtml(telDigits)}" style="text-decoration:underline;font-family:var(--font-mono);">${escapeHtml(rawPhone)}</a>
             <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-wa" style="padding:2px 6px;margin-left:4px;font-size:0.7rem;">WA ↗</a>
           </td>
           ${isMaster ? `<td><small>${escapeHtml(o.shipping_address)}, ${escapeHtml(o.district)} (${escapeHtml(o.zone)})</small></td>` : `<td>${escapeHtml(o.district)}</td>`}
@@ -464,9 +472,10 @@ export function initAdminManager() {
       async function savePromo(code, nextActive) {
         const promo = state.promotions.find((x) => x.code === code);
         if (!promo) return;
-        const typeEl = promoBody.querySelector(`[data-promo-type="${code}"]`);
-        const valEl = promoBody.querySelector(`[data-promo-value="${code}"]`);
-        const shipEl = promoBody.querySelector(`[data-promo-freeship="${code}"]`);
+        const safeCode = escCss(code);
+        const typeEl = promoBody.querySelector(`[data-promo-type="${safeCode}"]`);
+        const valEl = promoBody.querySelector(`[data-promo-value="${safeCode}"]`);
+        const shipEl = promoBody.querySelector(`[data-promo-freeship="${safeCode}"]`);
         const discountType = typeEl ? typeEl.value : promo.discount_type || 'NONE';
         const discountValue = valEl ? Math.max(0, parseInt(valEl.value, 10) || 0) : Number(promo.discount_value || 0);
         const freeShipping = shipEl ? Boolean(shipEl.checked) : Boolean(promo.free_shipping);
@@ -595,14 +604,27 @@ export function initAdminManager() {
     location.reload();
   });
 
-  window.switchTab = function (tabId) {
+  function switchTab(tabId) {
     document.querySelectorAll('.admin-tab-btn').forEach((b) => b.classList.toggle('active', b.dataset.tab === tabId));
     document.querySelectorAll('.tab-content').forEach((c) => c.classList.toggle('active', c.id === tabId));
-  };
+  }
 
   document.querySelectorAll('.admin-tab-btn[data-tab]').forEach((b) => {
-    b.addEventListener('click', () => window.switchTab(b.dataset.tab));
+    b.addEventListener('click', () => switchTab(b.dataset.tab));
   });
+
+  document.querySelectorAll('[data-switch-tab]').forEach((b) => {
+    b.addEventListener('click', () => switchTab(b.dataset.switchTab));
+  });
+
+  document.querySelectorAll('[data-close-modal]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const modal = document.getElementById(b.dataset.closeModal);
+      if (modal) modal.style.display = 'none';
+    });
+  });
+
+  document.getElementById('printInvoiceBtn')?.addEventListener('click', () => window.print());
 
   document.getElementById('saveInventoryBtn')?.addEventListener('click', async () => {
     if (!dirtyInventory.size) {
@@ -611,7 +633,7 @@ export function initAdminManager() {
     }
     const updates = [];
     dirtyInventory.forEach((sku) => {
-      const inp = document.querySelector(`[data-stock-sku="${sku}"]`);
+      const inp = document.querySelector(`[data-stock-sku="${escCss(sku)}"]`);
       if (inp) updates.push({ sku, stock_quantity: parseInt(inp.value, 10) || 0 });
     });
 

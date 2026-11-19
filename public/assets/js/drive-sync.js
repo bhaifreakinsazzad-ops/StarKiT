@@ -24,6 +24,19 @@ function esc(str) {
   }[c]));
 }
 
+function safeDriveWebUrl(rawUrl) {
+  if (typeof rawUrl !== 'string' || !rawUrl.trim()) return '';
+  try {
+    const parsed = new URL(rawUrl.trim());
+    if (parsed.protocol === 'https:' && /(?:^|\.)(?:drive|docs)\.google\.com$/i.test(parsed.hostname)) {
+      return parsed.toString();
+    }
+  } catch {
+    return '';
+  }
+  return '';
+}
+
 export function extractDriveFolderId(input) {
   const raw = String(input || '').trim();
   if (!raw) return DEFAULT_FOLDER_ID;
@@ -258,7 +271,10 @@ export async function initDriveSyncUI() {
     if (!modal || !titleEl || !bodyEl) return;
 
     titleEl.textContent = file.name;
-    bodyEl.innerHTML = '<p style="color:#776d6b;font-weight:700;">Loading preview from Google Drive…</p>';
+    const loadingMsg = document.createElement('p');
+    loadingMsg.style.cssText = 'color:#776d6b;font-weight:700;';
+    loadingMsg.textContent = 'Loading preview from Google Drive…';
+    bodyEl.replaceChildren(loadingMsg);
     modal.style.display = 'grid';
 
     try {
@@ -271,13 +287,25 @@ export async function initDriveSyncUI() {
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         activeObjectUrls.push(url);
-        bodyEl.innerHTML = `<img src="${url}" alt="${esc(file.name)}" style="max-height:65vh;max-width:100%;object-fit:contain;margin:auto;background:#f7f5f1;border:1px solid #dcd4cc;">`;
+        const previewImg = document.createElement('img');
+        previewImg.src = url;
+        previewImg.alt = String(file.name || 'Drive preview');
+        previewImg.style.cssText =
+          'max-height:65vh;max-width:100%;object-fit:contain;margin:auto;display:block;background:#f7f5f1;border:1px solid #dcd4cc;';
+        bodyEl.replaceChildren(previewImg);
       } else {
         const text = await res.text();
-        bodyEl.innerHTML = `<pre style="max-height:60vh;overflow:auto;background:#170000;color:#f7f5f1;padding:16px;font-size:0.78rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;margin:0;">${esc(text.slice(0, 25000))}</pre>`;
+        const pre = document.createElement('pre');
+        pre.style.cssText =
+          'max-height:60vh;overflow:auto;background:#170000;color:#f7f5f1;padding:16px;font-size:0.78rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;margin:0;';
+        pre.textContent = text.slice(0, 25000);
+        bodyEl.replaceChildren(pre);
       }
     } catch (err) {
-      bodyEl.innerHTML = `<p style="color:#dc2626;font-weight:700;">Unable to load preview: ${esc(err.message)}</p>`;
+      const errP = document.createElement('p');
+      errP.style.cssText = 'color:#dc2626;font-weight:700;';
+      errP.textContent = `Unable to load preview: ${err.message}`;
+      bodyEl.replaceChildren(errP);
     }
   }
 
@@ -427,12 +455,13 @@ export async function initDriveSyncUI() {
                 ? `<img data-drive-img-id="${esc(f.id)}" alt="${esc(f.name)}" style="width:100%;height:100%;object-fit:contain;background:#f7f5f1;">`
                 : `<div style="font-size:2rem;">📄</div><span style="font-size:0.65rem;font-weight:800;letter-spacing:0.08em;color:#776d6b;margin-top:4px;">${esc((f.mimeType || '').split('.').pop().split('/').pop().toUpperCase())}</span>`;
 
+              const safeWebUrl = safeDriveWebUrl(f.webViewLink);
               const actionsHtml = folder
                 ? `<button type="button" class="action-btn" data-open-folder="${esc(f.id)}" data-folder-name="${esc(f.name)}" style="flex:1;justify-content:center;">Open Folder →</button>`
                 : `
                   ${img || textDoc ? `<button type="button" class="action-btn" data-preview-file="${esc(f.id)}">Preview</button>` : ''}
                   ${img ? `<button type="button" class="action-btn" data-import-file="${esc(f.id)}" style="background:#170000;color:#fff;border-color:#170000;">${importedUrl ? 'Re-Import' : 'Import Image'}</button>` : ''}
-                  ${f.webViewLink ? `<a href="${esc(f.webViewLink)}" target="_blank" rel="noopener noreferrer" class="action-btn">Drive ↗</a>` : ''}
+                  ${safeWebUrl ? `<a href="${esc(safeWebUrl)}" target="_blank" rel="noopener noreferrer" class="action-btn">Drive ↗</a>` : ''}
                 `;
 
               return `
@@ -458,7 +487,7 @@ export async function initDriveSyncUI() {
             <h2>GOOGLE DRIVE FOLDER &amp; MEDIA SYNC</h2>
             <p style="margin:4px 0 0;font-size:0.85rem;color:var(--mute);">Browse your linked StarkiT Drive folders, inspect photography and sheets, and import approved product images directly into the storefront.</p>
           </div>
-          <a href="https://drive.google.com/drive/folders/${esc(activeFolder.id)}" target="_blank" rel="noopener noreferrer" class="action-btn">Open Current Folder in Drive ↗</a>
+          <a href="https://drive.google.com/drive/folders/${encodeURIComponent(activeFolder.id)}" target="_blank" rel="noopener noreferrer" class="action-btn">Open Current Folder in Drive ↗</a>
         </div>
 
         <form id="driveFolderUrlForm" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
@@ -619,7 +648,13 @@ export async function initDriveSyncUI() {
           skuSelect.innerHTML = `<option value="UNASSIGNED">UNASSIGNED (Library Asset)</option>${opts}`;
         }
         if (descEl && modal) {
-          descEl.innerHTML = `Download <strong>${esc(file.name)}</strong> (${formatBytes(file.size)}) from Google Drive and upload it to Supabase Storage for the selected SKU and view.`;
+          const strongName = document.createElement('strong');
+          strongName.textContent = String(file.name || '');
+          descEl.replaceChildren(
+            'Download ',
+            strongName,
+            ` (${formatBytes(file.size)}) from Google Drive and upload it to Supabase Storage for the selected SKU and view.`
+          );
           const confirmBtn = document.getElementById('confirmDriveImportBtn');
           if (confirmBtn) {
             confirmBtn.disabled = false;

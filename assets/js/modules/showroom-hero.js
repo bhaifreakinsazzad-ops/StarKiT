@@ -399,12 +399,17 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
 
     renderWardrobe(focusTarget?.type === 'wardrobe');
 
+    const escCss = (v) =>
+      typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+        ? CSS.escape(String(v))
+        : String(v).replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+
     if (focusTarget?.type === 'tab') {
-      stageEl.querySelector(`[data-stage-view="${focusTarget.view}"]`)?.focus();
+      stageEl.querySelector(`[data-stage-view="${escCss(focusTarget.view)}"]`)?.focus();
     } else if (focusTarget?.type === 'swatch') {
-      panelEl.querySelector(`[data-panel-sku="${focusTarget.sku}"]`)?.focus();
+      panelEl.querySelector(`[data-panel-sku="${escCss(focusTarget.sku)}"]`)?.focus();
     } else if (focusTarget?.type === 'size') {
-      panelEl.querySelector(`[data-panel-size="${focusTarget.size}"]`)?.focus();
+      panelEl.querySelector(`[data-panel-size="${escCss(focusTarget.size)}"]`)?.focus();
     }
 
     if (direction !== 0) {

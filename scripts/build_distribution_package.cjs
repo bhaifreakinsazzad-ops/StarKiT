@@ -1,16 +1,16 @@
 /**
  * StarkiT — Master Client Handover & Distribution Packaging Script
- * Builds StarkiT_DROP01_44_Variant_Complete_Store/ and StarkiT_DROP01_44_Variant_Complete_Store.zip
+ * Builds StarkiT_DROP01_Hoodies_Complete_Store/ and StarkiT_DROP01_Hoodies_Complete_Store.zip
  * containing the complete production storefront, serverless APIs, media assets, canonical catalogs,
  * Supabase migrations (001-005), test suite, and documentation.
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
-const PKG_NAME = 'StarkiT_DROP01_44_Variant_Complete_Store';
+const PKG_NAME = 'StarkiT_DROP01_Hoodies_Complete_Store';
 const PKG_DIR = path.join(ROOT, PKG_NAME);
 const ZIP_FILE = path.join(ROOT, `${PKG_NAME}.zip`);
 
@@ -147,13 +147,22 @@ fs.copyFileSync(path.join(ROOT, 'README.md'), path.join(PKG_DIR, 'README.md'));
 
 console.log('✓ Package folder structure assembled.');
 
-// 3. Compress into ZIP file using PowerShell Compress-Archive
+// 3. Compress into ZIP file (cross-platform: PowerShell on win32, Python stdlib zipfile on POSIX)
 console.log(`Compressing ${PKG_NAME} into ${PKG_NAME}.zip ...`);
 try {
-  execSync(
-    `powershell -NoProfile -Command "Compress-Archive -Path '${PKG_DIR}' -DestinationPath '${ZIP_FILE}' -Force"`,
-    { stdio: 'inherit' }
-  );
+  if (process.platform === 'win32') {
+    execFileSync(
+      'powershell',
+      ['-NoProfile', '-Command', `Compress-Archive -Path '${PKG_DIR}' -DestinationPath '${ZIP_FILE}' -Force`],
+      { stdio: 'inherit' }
+    );
+  } else {
+    execFileSync(
+      'python3',
+      ['-m', 'zipfile', '-c', ZIP_FILE, PKG_NAME],
+      { cwd: ROOT, stdio: 'inherit' }
+    );
+  }
   const zipStat = fs.statSync(ZIP_FILE);
   console.log(`✓ ARCHIVE CREATED SUCCESSFULLY: ${ZIP_FILE}`);
   console.log(`✓ ARCHIVE SIZE: ${(zipStat.size / (1024 * 1024)).toFixed(2)} MB`);

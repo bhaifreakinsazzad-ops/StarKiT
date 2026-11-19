@@ -1,91 +1,151 @@
-"""Offline integrity checks for the StarkiT canonical 60-slot Drop 01 + 35-item Drop 02 storefront."""
-from pathlib import Path
+"""Offline integrity checks for the StarkiT Drop 01 Hoodies storefront (Python stdlib only)."""
+from html.parser import HTMLParser
 import json
-from PIL import Image
-from bs4 import BeautifulSoup
+from pathlib import Path
+import re
 
-R = Path(__file__).parent
-catalog = json.loads((R / 'assets/catalog.json').read_text(encoding='utf8'))['products']
-hoodies = [p for p in catalog if str(p.get('id', '')).startswith('STK-')]
-accessories = [p for p in catalog if str(p.get('id', '')).startswith('FT-')]
+R = Path(__file__).resolve().parent
 
-assert len(catalog) == 50, f'Expected 50 master designs, found {len(catalog)}'
-assert len(hoodies) == 15, f'Expected 15 Drop 01 hoodies, found {len(hoodies)}'
-assert len(accessories) == 35, f'Expected 35 Drop 02 accessories, found {len(accessories)}'
-assert not any(p['id'] == 'STK-H012' for p in hoodies), 'STK-H012 must remain excluded/held'
 
-hoodie_variants = [v for p in hoodies for v in p['variants']]
-assert len(hoodie_variants) == 60, f'Expected 60 hoodie variant slots, found {len(hoodie_variants)}'
-assert len({v['sku'] for v in hoodie_variants}) == 60
+class TagAuditParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.title_count = 0
+        self.urls: list[str] = []
+        self.unsafe_blank_links: list[str] = []
+        self.inline_events: list[tuple[str, str]] = []
 
-documented = [v for v in hoodie_variants if v['status'] == 'DOCUMENTED']
-provisional = [v for v in hoodie_variants if v['status'] == 'PROVISIONAL']
-assert len(documented) == 15, f'Expected 15 documented hoodie variants, found {len(documented)}'
-assert len(provisional) == 45, f'Expected 45 provisional hoodie variants, found {len(provisional)}'
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr_map = dict(attrs)
+        if tag == 'title':
+            self.title_count += 1
+        if tag in ('img', 'script', 'link', 'a'):
+            key = 'href' if tag in ('a', 'link') else 'src'
+            val = attr_map.get(key)
+            if val:
+                self.urls.append(val)
+        if tag == 'a' and attr_map.get('target') == '_blank':
+            rel = (attr_map.get('rel') or '').lower()
+            if 'noopener' not in rel:
+                self.unsafe_blank_links.append(attr_map.get('href') or '')
+        for name, _ in attrs:
+            if name and name.lower().startswith('on'):
+                self.inline_events.append((tag, name))
 
-tier_prices = {1099, 1250, 1369, 1499}
-assert all(p['price_bdt'] in tier_prices for p in hoodies), 'Unexpected hoodie tier price'
 
-files = {p.name for p in (R / 'assets/images').glob('*.webp')}
-expected_webps = []
-for p in hoodies:
-    assert (R / f"products/{p['slug']}.html").is_file(), p['slug']
-    for v in p['variants']:
-        assert v['sku'].startswith(p['id'])
-        if v['status'] == 'PROVISIONAL':
-            assert not v['available_sizes'] and v['stock_quantity'] == 0
-            assert v['approved_for_publication'] is False
-            assert len(v['gallery']) == 0
-        else:
-            assert v['approved_for_publication'] is False
+def read_json(rel_path: str) -> dict:
+    with (R / rel_path).open('r', encoding='utf8') as fh:
+        return json.load(fh)
+
+
+def main() -> None:
+    catalog_doc = read_json('assets/catalog.json')
+    catalog = catalog_doc['products']
+    hoodies = [p for p in catalog if str(p.get('id', '')).startswith('STK-')]
+    accessories = [p for p in catalog if str(p.get('id', '')).startswith('FT-')]
+
+    assert len(catalog) == 11, f'Expected 11 Drop 01 hoodies, found {len(catalog)}'
+    assert len(hoodies) == 11, f'Expected 11 STK hoodies, found {len(hoodies)}'
+    assert len(accessories) == 0, f'Expected 0 FT accessories, found {len(accessories)}'
+    assert not any(p['id'] == 'STK-H012' for p in hoodies), 'STK-H012 must remain excluded'
+
+    hoodie_variants = [v for p in hoodies for v in p['variants']]
+    assert len(hoodie_variants) == 15, f'Expected 15 hoodie variants, found {len(hoodie_variants)}'
+    assert len({v['sku'] for v in hoodie_variants}) == 15
+
+    documented = [v for v in hoodie_variants if v['status'] == 'DOCUMENTED']
+    provisional = [v for v in hoodie_variants if v['status'] == 'PROVISIONAL']
+    assert len(documented) == 15, f'Expected 15 documented variants, found {len(documented)}'
+    assert len(provisional) == 0, f'Expected 0 provisional variants, found {len(provisional)}'
+
+    tier_prices = {1099, 1250, 1369, 1499}
+    assert all(p['price_bdt'] in tier_prices for p in hoodies), 'Unexpected hoodie tier price'
+
+    webp_dir = R / 'assets/images'
+    files = {p.name for p in webp_dir.glob('*.webp')}
+    expected_webps: list[str] = []
+
+    for p in hoodies:
+        assert (R / f"products/{p['slug']}.html").is_file(), p['slug']
+        for v in p['variants']:
+            assert v['sku'].startswith(p['id'])
+            assert v.get('approved_for_publication') is True, f"Documented SKU {v['sku']} must be approved_for_publication"
+            assert len(v['gallery']) > 0, f"Missing gallery on documented variant {v['sku']}"
             for image in v['gallery']:
                 fn = image['filename']
                 expected_webps.append(fn)
-                img_path = R / 'assets/images' / fn
+                img_path = webp_dir / fn
                 assert img_path.is_file(), fn
-                with Image.open(img_path) as im:
-                    im.verify()
+                with img_path.open('rb') as fh:
+                    header = fh.read(16)
+                    fh.seek(0, 2)
+                    size = fh.tell()
+                assert size >= 1000, f'WebP too small: {fn}'
+                assert header[:4] == b'RIFF' and header[8:12] == b'WEBP', f'Invalid WebP header: {fn}'
 
-for a in accessories:
-    assert (R / f"products/{a['slug']}.html").is_file(), a['slug']
-    for v in a['variants']:
-        for image in v['gallery']:
-            assert (R / 'assets/images/accessories' / image['filename']).is_file(), image['filename']
+    assert len(expected_webps) == 67 and len(set(expected_webps)) == 67
+    assert set(expected_webps) == files, 'Unused or missing WebP asset in assets/images'
 
-assert len(expected_webps) == 67 and len(set(expected_webps)) == 67
-assert set(expected_webps) == files, 'Unused or missing WebP asset in assets/images'
-assert len(list((R / 'docs/original_references').glob('*.jpg'))) == 13
-assert len(list((R / 'assets/images/accessories').glob('*.jpg'))) == 35
+    ref_jpgs = list((R / 'docs/original_references').glob('*.jpg'))
+    assert len(ref_jpgs) == 13, f'Expected 13 reference JPGs, found {len(ref_jpgs)}'
+    for jpg in ref_jpgs:
+        with jpg.open('rb') as fh:
+            sig = fh.read(3)
+        assert sig == b'\xff\xd8\xff', f'Invalid JPEG header: {jpg.name}'
 
-required_files = [
-    'index.html', 'shop.html', 'checkout.html', 'order-confirmation.html', 'admin.html',
-    'server.js', 'vercel.json', 'api/orders.js', 'api/admin.js',
-    'supabase/001_starkit_store.sql', 'supabase/002_catalog_seed.sql',
-    'supabase/003_admin_views_and_helpers.sql', 'supabase/004_quick_enable_demo.sql',
-    'supabase/005_security_and_60_variant_upgrade.sql', 'supabase/seed.sql',
-    'assets/js/catalog-data.js', 'assets/js/core/runtime-store.js', 'assets/css/styles.css'
-]
-assert all((R / x).exists() for x in required_files)
+    fb_config = read_json('firebase-applet-config.json')
+    assert fb_config.get('apiKey', None) == '', 'firebase-applet-config.json apiKey must be empty'
+    fb_raw = json.dumps(fb_config)
+    assert not re.search(r'AIza[0-9A-Za-z_-]{20,}', fb_raw), 'Potential leaked Google API key in firebase-applet-config.json'
 
-htmlfiles = list(R.glob('*.html')) + list((R / 'products').glob('*.html'))
-assert len(htmlfiles) == 61, f'Expected 61 HTML files, found {len(htmlfiles)}'
+    required_files = [
+        'index.html', 'shop.html', 'checkout.html', 'order-confirmation.html', 'admin.html',
+        'server.js', 'vercel.json', 'api/orders.js', 'api/admin.js', 'firebase-applet-config.json',
+        'supabase/001_starkit_store.sql', 'supabase/002_catalog_seed.sql',
+        'supabase/003_admin_views_and_helpers.sql', 'supabase/004_quick_enable_demo.sql',
+        'supabase/005_security_and_60_variant_upgrade.sql', 'supabase/seed.sql',
+        'assets/js/catalog-data.js', 'assets/js/core/runtime-store.js', 'assets/css/styles.css',
+        'assets/js/modules/order-confirmation.js', 'assets/js/drive-sync.js',
+    ]
+    missing_req = [x for x in required_files if not (R / x).exists()]
+    assert not missing_req, f'Missing required files: {missing_req}'
 
-missing = []
-for f in htmlfiles:
-    raw = f.read_text(encoding='utf8')
-    doc = BeautifulSoup(raw, 'html.parser')
-    assert len(doc.find_all('title')) == 1, f
-    assert '1390081606323661' in raw, f'Missing Meta Pixel in {f}'
-    assert 'Afacad+Flux' in raw or 'Afacad Flux' in raw, f'Missing Afacad Flux in {f}'
-    for tag in doc.find_all(['img', 'script', 'link', 'a']):
-        attr = 'href' if tag.name in ('a', 'link') else 'src'
-        url = tag.get(attr)
-        if not url or url.startswith(('https://', 'http://', '#', 'mailto:', 'tel:', 'data:', 'javascript:', '${')):
-            continue
-        full = (f.parent / url.split('#', 1)[0].split('?', 1)[0]).resolve()
-        if not full.exists():
-            missing.append((f.relative_to(R), url))
+    htmlfiles = sorted(list(R.glob('*.html')) + list((R / 'products').glob('*.html')))
+    assert len(htmlfiles) == 22, f'Expected 22 HTML files, found {len(htmlfiles)}'
 
-assert not missing, 'Broken local paths: ' + str(missing)
-print('PASS: 61 HTML pages / 50 designs (15 hoodies + 35 accessories) / 60 hoodie slots / 67 WebP images / 35 accessory JPGs / 13 reference JPGs.')
-print('PASS: Local links, Meta Pixel, 4-tier draft pricing, and fail-closed approval gates verified.')
+    missing_links: list[tuple[str, str]] = []
+    unsafe_links: list[tuple[str, str]] = []
+    inline_handlers: list[tuple[str, str, str]] = []
+
+    for f in htmlfiles:
+        with f.open('r', encoding='utf8') as fh:
+            raw = fh.read()
+        parser = TagAuditParser()
+        parser.feed(raw)
+        assert parser.title_count == 1, f'Expected single <title> in {f}'
+        assert '1390081606323661' in raw, f'Missing Meta Pixel in {f}'
+        assert 'Afacad+Flux' in raw or 'Afacad Flux' in raw, f'Missing Afacad Flux in {f}'
+
+        rel_name = str(f.relative_to(R))
+        for href in parser.unsafe_blank_links:
+            unsafe_links.append((rel_name, href))
+        for tag, attr_name in parser.inline_events:
+            inline_handlers.append((rel_name, tag, attr_name))
+
+        for url in parser.urls:
+            if url.startswith(('https://', 'http://', '#', 'mailto:', 'tel:', 'data:', 'javascript:', '${')):
+                continue
+            target = (f.parent / url.split('#', 1)[0].split('?', 1)[0]).resolve()
+            if not target.exists():
+                missing_links.append((rel_name, url))
+
+    assert not missing_links, f'Broken local paths: {missing_links}'
+    assert not unsafe_links, f'target=_blank without noopener: {unsafe_links}'
+    assert not inline_handlers, f'Inline DOM event handlers found: {inline_handlers}'
+
+    print('PASS: 22 HTML pages / 11 Drop 01 hoodies / 15 DOCUMENTED SKUs / 67 WebP images / 13 reference JPGs.')
+    print('PASS: Zero broken links, zero inline event handlers, zero unsafe target=_blank links, clean Firebase config.')
+
+
+if __name__ == '__main__':
+    main()

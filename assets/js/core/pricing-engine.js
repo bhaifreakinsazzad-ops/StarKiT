@@ -114,7 +114,12 @@ export function calculateOrderPricing({
     const qty = Number(item.qty ?? item.quantity ?? 0);
     if (!Number.isInteger(qty) || qty <= 0) continue;
 
-    const entry = catalogMap instanceof Map ? catalogMap.get(item.sku) : catalogMap?.[item.sku];
+    const entry =
+      catalogMap instanceof Map
+        ? catalogMap.get(item.sku)
+        : catalogMap && Object.hasOwn(catalogMap, item.sku)
+        ? catalogMap[item.sku]
+        : undefined;
     if (!entry) continue;
 
     const product = entry.product || entry;

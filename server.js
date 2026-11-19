@@ -1,17 +1,11 @@
 // server.js – Express server for StarkiT storefront
 import fs from 'fs';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import ordersHandler from './api/orders.js';
 import adminHandler from './api/admin.js';
-
-if (process.env.STARKIT_ORDERS_ENABLED === undefined) {
-  process.env.STARKIT_ORDERS_ENABLED = 'true';
-}
-if (process.env.STARKIT_ADMIN_API_KEY === undefined) {
-  process.env.STARKIT_ADMIN_API_KEY = 'starkit-dhaka-admin-secret-key-2026-verified';
-}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,9 +30,28 @@ function loadLocalEnvFile(envPath) {
 
 loadLocalEnvFile(path.join(__dirname, '.env'));
 
+if (process.env.STARKIT_ORDERS_ENABLED === undefined) {
+  process.env.STARKIT_ORDERS_ENABLED = 'true';
+}
+
 const app = express();
 const PORT = 3000;
 const HOST = '0.0.0.0';
+
+const pageLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 600,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 120,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many API requests. Please wait a minute and retry.' }
+});
 
 const CSP_HEADER = [
   "default-src 'self'",
@@ -80,10 +93,7 @@ const BLOCKED_EXACT = new Set([
   '/readme.md',
   '/readme_bn.md',
   '/verify_package.js',
-  '/verify_package.py',
-  '/build_store.js',
-  '/build_catalog.py',
-  '/generate_site.py'
+  '/verify_package.py'
 ]);
 const BLOCKED_EXT = /\.(py|sql|cjs|md|csv|pdf|env|lock|bak)$/i;
 
@@ -101,10 +111,11 @@ app.use((req, res, next) => {
 });
 
 // Serve vendored Firebase ESM bundles safely without exposing node_modules
-app.get('/vendor/firebase/firebase-app.js', (req, res) => {
+app.use(pageLimiter);
+app.get('/vendor/firebase/firebase-app.js', pageLimiter, (req, res) => {
   res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-app.js'));
 });
-app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
+app.get('/vendor/firebase/firebase-auth.js', pageLimiter, (req, res) => {
   res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-auth.js'));
 });
 
@@ -112,15 +123,16 @@ app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
 app.use(express.static(__dirname, { extensions: ['html'], dotfiles: 'ignore' }));
 
 // Root route
-app.get('/', (req, res) => {
+app.get('/', pageLimiter, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // API endpoints
-app.all('/api/orders', (req, res, next) => {
+app.use('/api', apiLimiter);
+app.all('/api/orders', apiLimiter, (req, res, next) => {
   Promise.resolve(ordersHandler(req, res)).catch(next);
 });
-app.all('/api/admin', (req, res, next) => {
+app.all('/api/admin', apiLimiter, (req, res, next) => {
   Promise.resolve(adminHandler(req, res)).catch(next);
 });
 app.use('/api', (req, res) => {

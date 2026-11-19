@@ -53,6 +53,11 @@ function recordAuthFailure(ip) {
   const times = (authFailBuckets.get(ip) || []).filter((t) => now - t < AUTH_WINDOW_MS);
   times.push(now);
   authFailBuckets.set(ip, times);
+  if (authFailBuckets.size > 2000) {
+    for (const [key, list] of authFailBuckets) {
+      if (list.every((t) => now - t >= AUTH_WINDOW_MS)) authFailBuckets.delete(key);
+    }
+  }
 }
 
 function send(res, status, payload) {
@@ -152,8 +157,10 @@ async function writeAuditLog(db, { actor, authMethod, action, targetType, target
   }
 }
 
+const SAFE_STORAGE_PATH_RE = /^(variants|drive-imports)\/[A-Za-z0-9_-]+\/[A-Za-z0-9_.-]+$/;
+
 async function uploadBufferToSupabaseStorage(db, { bucket, storagePath, bytes, mimeType, replacePath }) {
-  if (replacePath && typeof replacePath === 'string' && !replacePath.includes('..')) {
+  if (replacePath && typeof replacePath === 'string' && SAFE_STORAGE_PATH_RE.test(replacePath) && !replacePath.includes('..')) {
     try {
       await db.storage.from(bucket).remove([replacePath]);
     } catch {
@@ -350,7 +357,7 @@ async function handleRuntimeAdminRequest(req, res, action, auth) {
       return send(res, 400, { error: 'Invalid settings array.' });
     }
     for (const entry of body.settings) {
-      if (!entry || !(entry.key in settingTypes) || typeof entry.value !== settingTypes[entry.key]) {
+      if (!entry || !Object.hasOwn(settingTypes, entry.key) || typeof entry.value !== settingTypes[entry.key]) {
         return send(res, 400, { error: 'Unknown or invalid setting.' });
       }
       if (typeof entry.value === 'number' && (!Number.isInteger(entry.value) || entry.value < 0 || entry.value > 100000)) {
@@ -814,7 +821,7 @@ export default async function handler(req, res) {
         return send(res, 400, { error: 'Invalid settings array.' });
       }
       for (const entry of body.settings) {
-        if (!entry || !(entry.key in settingTypes) || typeof entry.value !== settingTypes[entry.key]) {
+        if (!entry || !Object.hasOwn(settingTypes, entry.key) || typeof entry.value !== settingTypes[entry.key]) {
           return send(res, 400, { error: 'Unknown or invalid setting.' });
         }
         if (typeof entry.value === 'number' && (!Number.isInteger(entry.value) || entry.value < 0 || entry.value > 100000)) {
