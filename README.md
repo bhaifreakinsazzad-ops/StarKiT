@@ -1,6 +1,6 @@
-# StarkiT — WEAR YOUR WORLD. | DROP 01 (15 Designs / 60 Slots) & DROP 02
+# StarkiT — WEAR YOUR WORLD. | DROP 01 Hoodie Storefront (11 Designs / 15 Studio SKUs)
 
-> **StarkiT** (`ستاركيت`) is an independent Dhaka streetwear and artisan lifestyle brand founded by **Nafe Munawer** on the ethos **"WEAR YOUR WORLD."** This repository contains the interactive Three.js fashion showroom, 50-design collection archive (`15` Drop 01 hoodies / `60` colorway slots + `35` Drop 02 Fariza's Territory artisan pieces), draft four-tier pricing engine, security-hardened order & admin APIs, and Supabase PostgreSQL migrations (`001`–`005`).
+> **StarkiT** (`ستاركيت`) is an independent Dhaka streetwear house founded by **Nafe Munawer** on the ethos **"WEAR YOUR WORLD."** This repository contains the interactive Three.js hoodie showroom, curated Drop 01 Graphic Archive (`11` verified hoodie designs / `15` studio-photographed colorways), four-tier pricing engine, security-hardened order & admin APIs, and Supabase PostgreSQL migrations (`001`–`005`).
 
 ---
 
@@ -13,7 +13,10 @@ npm install
 # 2. Run unit tests, API security tests, DOM integrity, and verification suite
 npm test
 
-# 3. Start local server (http://localhost:3000)
+# 3. Build /sync /public deploy directory and verify everything
+npm run build
+
+# 4. Start local server (http://localhost:3000)
 npm start
 ```
 
@@ -35,44 +38,38 @@ Aligned directly with `docs/source/starkit_brand_book_by_pomelli.pdf`:
 
 ---
 
-## DROP 01 Master Hoodie Catalog (`15` Designs / `60` Colorway Slots)
+## DROP 01 Master Hoodie Catalog (`11` Designs / `15` Studio-Verified Colorway SKUs)
 
-Every Drop 01 hoodie maps cleanly across 4 working colors (`Black`, `Cream`, `Maroon`, `Chocolate Brown` = **60 planned slots**: `15` documented with local WebPs + `45` media-pending slots). Draft four-tier pricing awaits owner approval (`price_approved: false`).
+Every SKU in this release is backed by verified local `.webp` studio photography (`67` WebP files across front, back, detail, and reference composite views). No fake concept designs or unphotographed placeholder SKUs are shipped.
 
-| Product ID | Design Name | Storyline | Tier (Draft Price) | Documented SKUs | Media-Pending |
-|---|---|---|---|---|---|
-| **STK-H001** | **SHINOBI SUNSET** | Anime Archive | Signature (`৳1,369`) | `BLK`, `CRM` (2) | `MRN`, `BRN` (2) |
-| **STK-H002** | **PEACE BRO CLUB** | Playful Street | Core (`৳1,099`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H003** | **FOLK ROUTE** | Bangla Heritage | Core (`৳1,099`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H004** | **THE RIDER CODE** | Moto Culture | Premium (`৳1,499`) | `MRN` (1) | `BLK`, `CRM`, `BRN` (3) |
-| **STK-H005** | **MOONLIT HERO** | Anime Archive | Signature (`৳1,369`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H006** | **CELLULOID NIGHTS** | Bangla Heritage | Select (`৳1,250`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H007** | **DHAKA AFTERGLOW** | City Stories | Select (`৳1,250`) | `BRN` (1) | `BLK`, `CRM`, `MRN` (3) |
-| **STK-H008** | **COLLECTIVE VOICE** | Statement Graphics | Core (`৳1,099`) | `BLK`, `CRM`, `MRN`, `BRN` (4) | *(0)* |
-| **STK-H009** | **RICKSHAW BLOOM** | Bangla Heritage | Select (`৳1,250`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H010** | **CHEESE CHASE** | Playful Street | Core (`৳1,099`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H011** | **NIGHT CIRCUIT** | Moto Culture | Signature (`৳1,369`) | `BLK` (1) | `CRM`, `MRN`, `BRN` (3) |
-| **STK-H013** | **SHADOW SHINOBI** *(Concept)* | Anime Archive | Signature (`৳1,369`) | *(0)* | `BLK`, `CRM`, `MRN`, `BRN` (4) |
-| **STK-H014** | **URBAN HERITAGE** *(Concept)* | Bangla Heritage | Select (`৳1,250`) | *(0)* | `BLK`, `CRM`, `MRN`, `BRN` (4) |
-| **STK-H015** | **HERITAGE STATIC** *(Concept)* | City Stories | Premium (`৳1,499`) | *(0)* | `BLK`, `CRM`, `MRN`, `BRN` (4) |
-| **STK-H016** | **MIDNIGHT SIGNAL** *(Concept)* | Moto Culture | Premium (`৳1,499`) | *(0)* | `BLK`, `CRM`, `MRN`, `BRN` (4) |
+| Product ID | Design Name | Storyline | Tier (BDT Price) | Verified Colorways (`15` Total) |
+|---|---|---|---|---|
+| **STK-H001** | **SHINOBI SUNSET** | Anime Archive | Signature (`৳1,369`) | `BLK`, `CRM` (2) |
+| **STK-H002** | **PEACE BRO CLUB** | Playful Street | Core (`৳1,099`) | `BLK` (1) |
+| **STK-H003** | **FOLK ROUTE** | Bangla Heritage | Core (`৳1,099`) | `BLK` (1) |
+| **STK-H004** | **THE RIDER CODE** | Moto Culture | Premium (`৳1,499`) | `MRN` (1) |
+| **STK-H005** | **MOONLIT HERO** | Anime Archive | Signature (`৳1,369`) | `BLK` (1) |
+| **STK-H006** | **CELLULOID NIGHTS** | Bangla Heritage | Select (`৳1,250`) | `BLK` (1) |
+| **STK-H007** | **DHAKA AFTERGLOW** | City Stories | Select (`৳1,250`) | `BRN` (1) |
+| **STK-H008** | **COLLECTIVE VOICE** | Statement Graphics | Core (`৳1,099`) | `BLK`, `CRM`, `MRN`, `BRN` (4) |
+| **STK-H009** | **RICKSHAW BLOOM** | Bangla Heritage | Select (`৳1,250`) | `BLK` (1) |
+| **STK-H010** | **CHEESE CHASE** | Playful Street | Core (`৳1,099`) | `BLK` (1) |
+| **STK-H011** | **NIGHT CIRCUIT** | Moto Culture | Signature (`৳1,369`) | `BLK` (1) |
 
-- **IP Exclusion Note:** `STK-H012` (*Kinetic Stage — Marshmello Edition*) is excluded from the 15-design / 60-slot Drop 01 master and held separately in `discrepancy_reconciliation`.
-- **Drop 02 (Fariza's Territory):** `35` handcrafted pieces (`5` Mirrors, `19` Wearable Art jewelry pieces, `11` Bangles & Accents) — total **50 master designs** across **61 generated HTML pages**.
+- **IP Exclusion Note:** `STK-H012` (*Kinetic Stage — Marshmello Edition*) is excluded from the Drop 01 master and held separately in `discrepancy_reconciliation`.
 
 ---
 
 ## System Architecture & Security
 
 ```
-  STOREFRONT (61 Static HTML + Modular ES Modules + Three.js Showroom)
-     │  - Storefront mode: 'public' (Drop 02 ready; Drop 01 hoodies gated behind 7-Gate sign-off)
-     │  - Live hydration via GET /api/admin?action=public_storefront_state + assets/promotions.json
+  STOREFRONT (22 Static HTML + Modular ES Modules + Three.js Showroom)
+     │  - Live hydration via GET /api/admin?action=public_storefront_state + catalog/promotions.json
      ▼
   SERVERLESS / NODE APIs (api/orders.js · api/admin.js · server.js · runtime-store.js)
      │  - Strict CSP + Directory traversal & private folder blocklist (/catalog, /supabase, /docs, /tests)
      │  - Order API: fail-closed unless STARKIT_ORDERS_ENABLED=true, BD phone & UUID v4 validation,
-     │    IP/phone rate limit, server-side promo/shipping calculation, blocks provisional/unapproved SKUs
+     │    IP/phone rate limit, server-side promo/shipping calculation, validates approved live SKUs
      │  - Admin API: timing-safe X-Admin-Key OR Supabase JWT + RBAC (store_admin_users),
      │    7-gate submit_approval_evidence workflow, binary magic-byte upload guard, immutable audit logs
      │  - Runtime fallback when Supabase env vars are absent so local/preview reviews work end-to-end
@@ -85,7 +82,7 @@ Every Drop 01 hoodie maps cleanly across 4 working colors (`Black`, `Cream`, `Ma
 
 ## Documentation Index
 
-- `docs/AUDIT_AND_MIGRATION_REPORT.md` — Architecture before/after & security remediations
+- `docs/AUDIT_AND_MIGRATION_REPORT.md` — Architecture & security remediations
 - `docs/ADMIN_AND_APPROVAL_GUIDE.md` — Admin Portal usage, RBAC roles, 7-gate approvals, & Supabase Storage upload guide
-- `docs/OUTSTANDING_APPROVALS_REGISTER.md` — Open IP flags, 45 media-pending SKUs, and draft tier/promo sign-off register
+- `docs/OUTSTANDING_APPROVALS_REGISTER.md` — IP/licensing checklist & owner sign-off register
 - `docs/PRODUCT_IMPORT_REPORT.md` · `docs/COLORWAY_STATUS_REPORT.md` · `docs/MEDIA_QA_REPORT.md` · `docs/QA_REPORT.md` · `docs/LAUNCH_CHECKLIST.md`

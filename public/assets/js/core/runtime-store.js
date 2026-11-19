@@ -27,47 +27,41 @@ function buildInitialStore() {
       : DEFAULT_PROMOTIONS;
 
   const products = clone(rawCatalog).map((p) => {
-    const isHoodie = String(p.id).startsWith('STK-');
     const variantsList = Array.isArray(p.variants) ? p.variants : [];
     const hasDocumented = variantsList.some(
       (v) => v.status === 'DOCUMENTED' || (Array.isArray(v.gallery) && v.gallery.length > 0)
     );
-    const isLiveDocumented = !isHoodie || hasDocumented;
 
     const normalized = {
       ...p,
-      drop_code: isHoodie ? 'DROP_01' : 'DROP_02',
-      price_tier: p.price_tier || (isHoodie ? 'CORE' : 'ACCESSORY'),
+      drop_code: 'DROP_01',
+      price_tier: p.price_tier || 'CORE',
       draft_price_bdt: Number(p.draft_price_bdt ?? p.price_bdt ?? 0),
-      approved_price_bdt: isLiveDocumented ? Number(p.draft_price_bdt ?? p.price_bdt ?? 0) : null,
-      price_approved: isLiveDocumented,
-      approval_status: isLiveDocumented ? 'PUBLISHED' : p.approval_status || 'MEDIA_PENDING',
-      publication_status: isLiveDocumented ? 'PUBLISHED' : p.publication_status || 'HOLD / NOT FOR PUBLIC SALES',
-      rights_verified: isLiveDocumented,
-      specifications_verified: isLiveDocumented,
-      stock_verified: isLiveDocumented,
-      commercial_terms_verified: isLiveDocumented,
+      approved_price_bdt: hasDocumented ? Number(p.draft_price_bdt ?? p.price_bdt ?? 0) : null,
+      price_approved: hasDocumented,
+      approval_status: hasDocumented ? 'PUBLISHED' : p.approval_status || 'MEDIA_PENDING',
+      publication_status: hasDocumented ? 'PUBLISHED' : p.publication_status || 'HOLD / NOT FOR PUBLIC SALES',
+      rights_verified: hasDocumented,
+      specifications_verified: hasDocumented,
+      stock_verified: hasDocumented,
+      commercial_terms_verified: hasDocumented,
       variants: variantsList.map((v) => {
-        const isDocVariant = !isHoodie || v.status === 'DOCUMENTED' || (Array.isArray(v.gallery) && v.gallery.length > 0);
+        const isDocVariant = v.status === 'DOCUMENTED' || (Array.isArray(v.gallery) && v.gallery.length > 0);
         const resolvedSizes =
           Array.isArray(v.available_sizes) && v.available_sizes.length > 0
             ? v.available_sizes
             : isDocVariant
-            ? isHoodie
-              ? ['M', 'L', 'XL', 'XXL']
-              : ['Standard']
+            ? ['M', 'L', 'XL', 'XXL']
             : [];
         const resolvedStock = isDocVariant
           ? Number.isInteger(v.stock_quantity) && v.stock_quantity > 0
             ? v.stock_quantity
-            : isHoodie
-            ? 25
-            : 50
+            : 25
           : 0;
         return {
           ...v,
           status: v.status || (isDocVariant ? 'DOCUMENTED' : 'PROVISIONAL'),
-          price_tier: v.price_tier || p.price_tier || (isHoodie ? 'CORE' : 'ACCESSORY'),
+          price_tier: v.price_tier || p.price_tier || 'CORE',
           price_bdt: Number(v.price_bdt ?? p.price_bdt ?? 0),
           draft_price_bdt: Number(v.draft_price_bdt ?? p.price_bdt ?? 0),
           price_approved: isDocVariant,
@@ -99,10 +93,8 @@ function buildInitialStore() {
         stock_count_ok: Boolean(product.stock_verified),
         pricing_approved_ok: Boolean(product.price_approved),
         commercial_terms_ok: Boolean(product.commercial_terms_verified),
-        evidence_notes: String(product.id).startsWith('FT-')
-          ? "Verified Fariza's Territory artisan release."
-          : 'Verified Drop 01 documented colorway release.',
-        reviewed_by: String(product.id).startsWith('FT-') ? 'system_seed' : 'Nafe Munawer',
+        evidence_notes: 'Verified Drop 01 documented colorway release.',
+        reviewed_by: 'Nafe Munawer',
         reviewed_at: null
       });
     }
@@ -151,7 +143,7 @@ export function getCanonicalProductSeed(productId) {
     slug: p.slug,
     category: p.category || 'Streetwear',
     collection: p.collection || p.category || 'Drop 01',
-    drop_code: p.drop_code || (String(p.id).startsWith('STK-') ? 'DROP_01' : 'DROP_02'),
+    drop_code: p.drop_code || 'DROP_01',
     price_tier: p.price_tier || 'CORE',
     draft_price_bdt: Number(p.draft_price_bdt ?? p.price_bdt ?? 1099),
     approved_price_bdt: p.price_approved ? Number(p.price_bdt) : null,
@@ -374,7 +366,7 @@ export function runtimeUpdateStock({ sku, stock_quantity, sizes, price_bdt, appr
 
 export function runtimeSubmitApprovalEvidence({ product_id, evidence, next_status, approve_tier_price, actor, authMethod }) {
   const store = getRuntimeStore();
-  if (typeof product_id !== 'string' || !/^(?:STK-H\d{3}|FT-(?:HM|JWL|BA)-\d{3})$/.test(product_id)) {
+  if (typeof product_id !== 'string' || !/^STK-H\d{3}$/.test(product_id)) {
     return { ok: false, status: 400, error: 'Invalid product_id.' };
   }
   if (product_id === 'STK-H012') {
@@ -425,7 +417,7 @@ export function runtimeSubmitApprovalEvidence({ product_id, evidence, next_statu
   prod.stock_verified = ev.stock_count_ok;
   prod.commercial_terms_verified = ev.commercial_terms_ok;
 
-  if (approve_tier_price === true && (PRICE_TIERS[prod.price_tier] || prod.price_tier === 'ACCESSORY')) {
+  if (approve_tier_price === true && PRICE_TIERS[prod.price_tier]) {
     prod.approved_price_bdt = prod.draft_price_bdt || prod.price_bdt;
     prod.price_approved = true;
   }
@@ -546,7 +538,7 @@ export function runtimeSaveMediaAsset({ sku, design_id, view_type, bytes, mimeTy
     if (variant.status === 'PROVISIONAL') {
       variant.status = 'DOCUMENTED';
       if (!Array.isArray(variant.available_sizes) || variant.available_sizes.length === 0) {
-        variant.available_sizes = targetSku.startsWith('FT-') ? ['Standard'] : ['M', 'L', 'XL', 'XXL'];
+        variant.available_sizes = ['M', 'L', 'XL', 'XXL'];
       }
     }
   }

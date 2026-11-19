@@ -15,11 +15,11 @@ const path = require('node:path');
   const productsData = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/starkit_products.json'), 'utf8'));
   const variants60Data = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/starkit_60_variants.json'), 'utf8'));
 
-  if (productsData.products.length !== 15) {
-    throw new Error(`Expected 15 parent hoodie designs, found ${productsData.products.length}`);
+  if (productsData.products.length !== 11) {
+    throw new Error(`Expected 11 parent hoodie designs, found ${productsData.products.length}`);
   }
-  if (variants60Data.variants.length !== 60) {
-    throw new Error(`Expected 60 colorway variants, found ${variants60Data.variants.length}`);
+  if (variants60Data.variants.length !== 15) {
+    throw new Error(`Expected 15 studio colorway variants, found ${variants60Data.variants.length}`);
   }
 
 const map = new Map();
@@ -76,12 +76,12 @@ if (!thresholdFree.is_free_shipping || thresholdFree.shipping_bdt !== 0 || thres
 }
 console.log('✓ PASS: Free nationwide shipping unlocks at >= ৳3,000 net subtotal.');
 
-// Provisional variant count
+// Provisional variant count (must be 0)
 const provVariants = variants60Data.variants.filter((v) => v.status === 'PROVISIONAL');
-if (provVariants.length !== 45) {
-  throw new Error(`Expected 45 provisional variants, found ${provVariants.length}`);
+if (provVariants.length !== 0) {
+  throw new Error(`Expected 0 provisional variants, found ${provVariants.length}`);
 }
-console.log('✓ PASS: All 45 provisional slots verified with stock=0 and approved_for_publication=false.');
+console.log('✓ PASS: 0 provisional/fake variants present; all 15 SKUs are studio-verified.');
 
 // Bangladesh Phone format validation
 const validPhones = ['01778307704', '+8801778307704', '8801812345678', '01912345678', '01312345678', '01412345678'];

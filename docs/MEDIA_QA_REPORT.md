@@ -1,11 +1,10 @@
 # StarkiT — Media QA & Asset Verification Report
-## DROP 01 (67 Verified WebPs) & DROP 02 (35 Artisan JPEGs)
+## DROP 01 (67 Verified WebPs across 15 Documented SKUs)
 
 ### 1. Asset Inventory Summary
-- **Verified Drop 01 WebP Assets:** `67` files mapped cleanly across the `15` documented SKUs (`assets/images/*.webp`)
-- **Provisional / Media-Pending Slots:** `45` colorway slots (`media_count: 0`, guarded by hex-matched studio preview cards)
+- **Verified Drop 01 WebP Assets:** `67` files mapped cleanly across the `15` studio-documented hoodie SKUs (`assets/images/*.webp`)
+- **Unphotographed / Fake Placeholder Slots:** `0` (all concept placeholders and accessory lines removed for client handover)
 - **Original Studio Camera JPEGs:** `13` files preserved in `docs/original_references/`
-- **Drop 02 Artisan Accessories:** `35` files verified in `assets/images/accessories/*.jpg`
 - **External CDN Dependencies:** `0` at runtime (100% locally staged, with optional Supabase Storage upload in `/admin.html`)
 
 ---

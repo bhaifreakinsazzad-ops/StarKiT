@@ -73,7 +73,8 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
     const list = (products || []).filter((p) => {
       if (state.category === 'Streetwear' && !String(p.id).startsWith('STK-')) return false;
       if (state.category !== 'All' && state.category !== 'Streetwear') {
-        if (String(p.collection || '').toLowerCase() !== state.category.toLowerCase()) return false;
+        const prodCategory = String(p.category || p.collection || '').toLowerCase();
+        if (prodCategory !== state.category.toLowerCase()) return false;
       }
       if (state.tier !== 'All') {
         const tierCode = String(p.price_tier || p.tier || '').toUpperCase();
@@ -292,7 +293,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             <tr><td><strong>Collection</strong></td>${items.map((p) => `<td>${escapeHtml(p.collection || p.category || 'Drop 01')}</td>`).join('')}</tr>
             <tr><td><strong>Tier &amp; Price</strong></td>${items.map((p) => `<td>${escapeHtml(PRICE_TIERS[p.price_tier]?.label || 'Standard')} · ${formatBdt(p.price_bdt)}</td>`).join('')}</tr>
             <tr><td><strong>Fabric</strong></td>${items.map((p) => `<td>${escapeHtml(p.fabric_claim || '—')}</td>`).join('')}</tr>
-            <tr><td><strong>Colorways</strong></td>${items.map((p) => `<td>${(p.variants || []).map((v) => `${escapeHtml(v.color)} (${v.status === 'DOCUMENTED' || !String(p.id).startsWith('STK-') ? 'Photo' : 'Pending'})`).join(', ')}</td>`).join('')}</tr>
+            <tr><td><strong>Colorways</strong></td>${items.map((p) => `<td>${(p.variants || []).map((v) => `${escapeHtml(v.color)} (Studio Ready)`).join(', ')}</td>`).join('')}</tr>
             <tr><td><strong>Detail View</strong></td>${items.map((p) => `<td><a class="link-arrow" href="${base}products/${escapeHtml(p.slug)}.html">Inspect Page ↗</a></td>`).join('')}</tr>
           </tbody>
         </table>
@@ -307,9 +308,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
       state.category !== 'All' || state.tier !== 'All' || state.color !== 'All' || state.query.trim() !== '';
 
     if (countEl) {
-      const hoodieTotal = items.filter((p) => String(p.id).startsWith('STK-')).length;
-      const accTotal = items.filter((p) => String(p.id).startsWith('FT-')).length;
-      countEl.innerHTML = `${items.length} designs (${hoodieTotal} hoodies · ${accTotal} accessories)${
+      countEl.innerHTML = `${items.length} ${items.length === 1 ? 'hoodie' : 'hoodies'}${
         hasActiveFilters
           ? `<button type="button" class="filter-reset-inline" id="inlineResetFiltersBtn" aria-label="Clear active filters">Reset ×</button>`
           : ''
@@ -343,10 +342,9 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
         const pdpHref = `${base}products/${escapeHtml(p.slug)}.html`;
         const isFav = state.wishlist.has(p.id);
         const isComp = state.compareIds.includes(p.id);
-        const isHoodie = String(p.id).startsWith('STK-');
-        const docCount = (p.variants || []).filter((v) => v.status === 'DOCUMENTED').length;
+        const docCount = (p.variants || []).length;
         const tierLabel = PRICE_TIERS[p.price_tier]?.label || '';
-        const kickerText = isHoodie ? `${p.category || 'Drop 01'}${tierLabel ? ` · ${tierLabel}` : ''}` : `Fariza's Territory · ${p.collection || p.category}`;
+        const kickerText = `${p.category || 'Drop 01'}${tierLabel ? ` · ${tierLabel}` : ''}`;
 
         let mediaContent = '';
         if (frontPath) {
@@ -360,19 +358,16 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             <a href="${pdpHref}" class="concept-slate" aria-label="Inspect ${escapeHtml(p.name)}">
               <div class="stage-swatch-disc" style="width:52px;height:52px;margin-bottom:10px;background:${escapeHtml(activeVariant?.hex || '#170000')};"></div>
               <strong>${escapeHtml(p.name)}</strong>
-              <small>${p.is_concept || p.concept_stage ? 'Concept Design' : escapeHtml(activeVariant?.color || '')} · Media Pending</small>
+              <small>${escapeHtml(activeVariant?.color || '')}</small>
             </a>`;
         }
 
-        const swatchesHtml = isHoodie
-          ? (p.variants || [])
-              .map((v) => {
-                const active = activeVariant && v.sku === activeVariant.sku;
-                const prov = v.status !== 'DOCUMENTED';
-                return `<button type="button" class="swatch ${active ? 'active' : ''} ${prov ? 'is-provisional' : ''}" data-card-product="${escapeHtml(p.id)}" data-card-sku="${escapeHtml(v.sku)}" style="background:${escapeHtml(v.hex)};" aria-label="${escapeHtml(v.color)} (${prov ? 'Media Pending' : 'Studio Ready'})" title="${escapeHtml(v.color)}${prov ? ' (Media Pending)' : ''}"></button>`;
-              })
-              .join('')
-          : `<span class="craft-note">Handcrafted in Dhaka</span>`;
+        const swatchesHtml = (p.variants || [])
+          .map((v) => {
+            const active = activeVariant && v.sku === activeVariant.sku;
+            return `<button type="button" class="swatch ${active ? 'active' : ''}" data-card-product="${escapeHtml(p.id)}" data-card-sku="${escapeHtml(v.sku)}" style="background:${escapeHtml(v.hex)};" aria-label="${escapeHtml(v.color)} (Studio Ready)" title="${escapeHtml(v.color)}"></button>`;
+          })
+          .join('');
 
         return `
           <article class="card" data-product-id="${escapeHtml(p.id)}">
@@ -397,7 +392,7 @@ export function initProductGrid({ products, base, storeConfig, onAddToCart }) {
             </div>
             <div class="swatches">
               ${swatchesHtml}
-              ${isHoodie ? `<span class="craft-note" style="margin-left:auto;">${docCount}/4 Ready</span>` : ''}
+              <span class="craft-note" style="margin-left:auto;">${docCount} ${docCount === 1 ? 'Colorway' : 'Colorways'}</span>
             </div>
             <a href="${pdpHref}" class="card-cta-mobile">Inspect Design ↗</a>
           </article>`;

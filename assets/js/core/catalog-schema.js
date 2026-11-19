@@ -142,11 +142,11 @@ export function isProductVisibleOnStorefront(product, storeConfig = {}) {
 
 export function validateCatalogArchitecture(products, expected = {}) {
   const {
-    expectedHoodies = 15,
-    expectedVariants = 60,
+    expectedHoodies = 11,
+    expectedVariants = 15,
     expectedDocumented = 15,
-    expectedProvisional = 45,
-    expectedAccessories = 35
+    expectedProvisional = 0,
+    expectedAccessories = 0
   } = expected;
 
   const errors = [];
@@ -156,15 +156,16 @@ export function validateCatalogArchitecture(products, expected = {}) {
 
   const hoodies = products.filter((p) => String(p.id).startsWith('STK-'));
   const accessories = products.filter((p) => String(p.id).startsWith('FT-'));
+  const nonHoodies = products.filter((p) => !String(p.id).startsWith('STK-'));
 
   if (hoodies.length !== expectedHoodies) {
     errors.push(`Expected ${expectedHoodies} hoodie designs, found ${hoodies.length}.`);
   }
-  if (accessories.length !== expectedAccessories) {
-    errors.push(`Expected ${expectedAccessories} accessories, found ${accessories.length}.`);
+  if (accessories.length !== expectedAccessories || nonHoodies.length > 0) {
+    errors.push(`Expected ${expectedAccessories} accessories and 0 non-hoodie products, found ${nonHoodies.length}.`);
   }
-  if (hoodies.some((p) => p.id === 'STK-H012')) {
-    errors.push('STK-H012 must remain excluded/on-hold and must not be reused in Drop 01 master.');
+  if (hoodies.some((p) => p.id === 'STK-H012' || Number(String(p.id).replace('STK-H', '')) > 11)) {
+    errors.push('Catalog must only contain the 11 verified Drop 01 hoodie designs (STK-H001 through STK-H011).');
   }
 
   const seenSkus = new Set();
@@ -180,8 +181,8 @@ export function validateCatalogArchitecture(products, expected = {}) {
       errors.push(`Hoodie ${h.id} price ${h.price_bdt} mismatches tier ${h.price_tier} (${PRICE_TIERS[h.price_tier].price_bdt}).`);
     }
 
-    if (!Array.isArray(h.variants) || h.variants.length !== 4) {
-      errors.push(`Hoodie ${h.id} must have 4 color variants, found ${h.variants?.length ?? 0}.`);
+    if (!Array.isArray(h.variants) || h.variants.length < 1) {
+      errors.push(`Hoodie ${h.id} must have at least 1 documented color variant, found ${h.variants?.length ?? 0}.`);
       continue;
     }
 
@@ -202,12 +203,7 @@ export function validateCatalogArchitecture(products, expected = {}) {
         }
       } else if (v.status === 'PROVISIONAL') {
         provisionalCount++;
-        if (v.approved_for_publication === true) {
-          errors.push(`Provisional variant ${v.sku} cannot be approved_for_publication.`);
-        }
-        if (Number(v.stock_quantity) > 0) {
-          errors.push(`Provisional variant ${v.sku} cannot carry live stock_quantity.`);
-        }
+        errors.push(`Provisional variant ${v.sku} is not permitted in the handover catalog.`);
       } else {
         errors.push(`Invalid status on ${v.sku}: ${v.status}`);
       }

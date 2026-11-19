@@ -1,6 +1,6 @@
 /**
  * StarkiT Headless DOM & Catalog Architecture Simulation Test
- * Validates 15 hoodie designs / 60 colorway slots (15 documented / 45 provisional),
+ * Validates 11 Drop 01 hoodie designs / 15 documented studio colorways (0 provisional, 0 accessories),
  * 67 WebP media manifest records, and core HTML storefront routes.
  */
 const fs = require('fs');
@@ -12,8 +12,8 @@ const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/catalog.json'
 console.log('--- RUNNING STOREFRONT DOM & CATALOG ARCHITECTURE SIMULATION ---');
 
 const hoodies = catalog.products.filter((p) => p.id.startsWith('STK-'));
-if (hoodies.length !== 15) {
-  throw new Error(`Expected 15 Drop 01 hoodie designs, found ${hoodies.length}`);
+if (hoodies.length !== 11 || catalog.products.length !== 11) {
+  throw new Error(`Expected 11 Drop 01 hoodie designs, found ${hoodies.length} (${catalog.products.length} total)`);
 }
 if (hoodies.some((h) => h.id === 'STK-H012')) {
   throw new Error('STK-H012 must remain excluded/on hold');
@@ -24,8 +24,8 @@ let documentedVariants = 0;
 let provisionalVariants = 0;
 
 hoodies.forEach((h) => {
-  if (!Array.isArray(h.variants) || h.variants.length !== 4) {
-    throw new Error(`Design ${h.id} (${h.name}) has ${h.variants?.length ?? 0} variants, expected 4`);
+  if (!Array.isArray(h.variants) || h.variants.length < 1) {
+    throw new Error(`Design ${h.id} (${h.name}) has no variants`);
   }
   totalVariants += h.variants.length;
   h.variants.forEach((v) => {
@@ -40,25 +40,18 @@ hoodies.forEach((h) => {
       if (v.approved_for_publication !== true || Number(v.stock_quantity) <= 0) {
         throw new Error(`Documented SKU ${v.sku} must be approved_for_publication=true with positive stock for live advertising`);
       }
-    } else if (v.status === 'PROVISIONAL') {
-      provisionalVariants++;
-      if (v.gallery.length > 0) {
-        throw new Error(`Provisional SKU ${v.sku} must not have gallery mockups`);
-      }
-      if (v.approved_for_publication === true || Number(v.stock_quantity) > 0) {
-        throw new Error(`Provisional SKU ${v.sku} must have 0 stock and approved_for_publication=false`);
-      }
     } else {
-      throw new Error(`Unknown status for ${v.sku}: ${v.status}`);
+      provisionalVariants++;
+      throw new Error(`Provisional or unknown status disallowed for ${v.sku}: ${v.status}`);
     }
   });
 });
 
-if (totalVariants !== 60 || documentedVariants !== 15 || provisionalVariants !== 45) {
-  throw new Error(`Expected 60 total / 15 doc / 45 prov, got ${totalVariants} / ${documentedVariants} / ${provisionalVariants}`);
+if (totalVariants !== 15 || documentedVariants !== 15 || provisionalVariants !== 0) {
+  throw new Error(`Expected 15 total / 15 documented / 0 provisional, got ${totalVariants} / ${documentedVariants} / ${provisionalVariants}`);
 }
 
-console.log(`✓ PASS: 15 designs × 4 colors = ${totalVariants} canonical slots (${documentedVariants} documented / ${provisionalVariants} provisional).`);
+console.log(`✓ PASS: 11 hoodie designs across ${totalVariants} documented studio variants (0 provisional, 0 accessories).`);
 
 const mediaManifest = fs
   .readFileSync(path.join(ROOT, 'catalog/starkit_media_manifest.csv'), 'utf8')

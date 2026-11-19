@@ -47,10 +47,10 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       galleryEl.innerHTML = `
         <div class="stage-provisional-slate">
           <div class="stage-swatch-disc" style="background:${escapeHtml(activeVariant.hex)};"></div>
-          <div class="eyebrow" style="margin-bottom:8px;">${product.is_concept || product.concept_stage ? 'Concept Design · Archive Slot' : 'Colorway Slot · Archive Edition'}</div>
+          <div class="eyebrow" style="margin-bottom:8px;">Drop 01 Archive</div>
           <h3 style="margin:0 0 8px;">${escapeHtml(product.name)} · ${escapeHtml(activeVariant.color)}</h3>
           <p style="margin:0;color:var(--mute);max-width:34ch;font-size:0.9rem;">
-            SKU <strong>${escapeHtml(activeVariant.sku)}</strong> is part of the 60-variant Drop 01 colorway matrix. Select an available studio colorway above or reserve this colorway via WhatsApp.
+            SKU <strong>${escapeHtml(activeVariant.sku)}</strong> studio image unavailable. Select an available colorway above or inquire via WhatsApp.
           </p>
         </div>`;
       thumbsEl.innerHTML = '';
@@ -107,7 +107,6 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
     if (!colorsEl) return;
     colorsEl.innerHTML = (product.variants || [])
       .map((v) => {
-        const isProv = isHoodieProduct && v.status !== 'DOCUMENTED';
         const selected = activeVariant && v.sku === activeVariant.sku;
         return `
           <button
@@ -116,7 +115,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
             data-variant="${escapeHtml(v.sku)}"
           >
             <span class="color-dot" style="background:${escapeHtml(v.hex)}"></span>
-            <span>${escapeHtml(v.color)}${isProv ? ' · Pending' : ''}</span>
+            <span>${escapeHtml(v.color)}</span>
           </button>`;
       })
       .join('');
@@ -223,13 +222,13 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       }
     } else if (isHoodieProduct && activeVariant.status !== 'DOCUMENTED') {
       purchaseBtn.disabled = true;
-      purchaseBtn.textContent = 'Media Pending · Unavailable for Order';
+      purchaseBtn.textContent = 'Unavailable for Order';
       if (mobileStickyBtn) {
         mobileStickyBtn.disabled = true;
-        mobileStickyBtn.textContent = 'Media Pending';
+        mobileStickyBtn.textContent = 'Unavailable';
       }
       if (purchaseStatus) {
-        purchaseStatus.textContent = `${activeVariant.sku} is a provisional colorway slot awaiting verified photography and stock.`;
+        purchaseStatus.textContent = `${activeVariant.sku} is currently unavailable for online checkout.`;
       }
     } else {
       purchaseBtn.disabled = true;
@@ -279,9 +278,9 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
       <div class="section-head" style="margin-bottom:18px;">
         <div>
           <div class="eyebrow">Continue Exploring</div>
-          <h2 style="margin:4px 0 0;font-size:clamp(1.45rem,2.6vw,2rem);font-weight:800;">More From ${escapeHtml(isHoodie ? 'Drop 01 · The Graphic Archive' : product.collection || "Fariza's Territory")}</h2>
+          <h2 style="margin:4px 0 0;font-size:clamp(1.45rem,2.6vw,2rem);font-weight:800;">More From Drop 01 · The Graphic Archive</h2>
         </div>
-        <a href="${base}shop.html${isHoodie ? '?category=Streetwear' : `?category=${encodeURIComponent(product.collection || 'All')}`}" class="btn btn-outline btn-sm">View Full Collection ↗</a>
+        <a href="${base}shop.html?category=${encodeURIComponent(product.category || 'All')}" class="btn btn-outline btn-sm">View Full Collection ↗</a>
       </div>
       <div class="related-archive-grid">
         ${picks

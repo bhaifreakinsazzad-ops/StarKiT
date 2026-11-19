@@ -540,15 +540,26 @@ export default async function handler(req, res) {
         db.from('store_audit_logs').select('*').order('created_at', { ascending: false }).limit(50)
       ]);
 
+      const CANONICAL_HOODIE_RE = /^STK-H0(0[1-9]|1[01])$/;
+      const filteredVariants = (variantsResult.data || []).filter(
+        (v) => CANONICAL_HOODIE_RE.test(String(v.product_id || '')) && v.status === 'DOCUMENTED'
+      );
+      const filteredProducts = (productsRes.error ? [] : productsRes.data || []).filter((p) =>
+        CANONICAL_HOODIE_RE.test(String(p.id || ''))
+      );
+      const filteredApprovals = (approvalsRes.error ? [] : approvalsRes.data || []).filter((a) =>
+        CANONICAL_HOODIE_RE.test(String(a.product_id || ''))
+      );
+
       return send(res, 200, {
         mode: 'supabase_live',
         actor: auth.actor,
         role: auth.role,
         orders: ordersResult.data || [],
-        variants: variantsResult.data || [],
+        variants: filteredVariants,
         settings: settingsResult.data || [],
-        products: productsRes.error ? [] : productsRes.data || [],
-        approvals: approvalsRes.error ? [] : approvalsRes.data || [],
+        products: filteredProducts,
+        approvals: filteredApprovals,
         promotions: promosRes.error ? [] : promosRes.data || [],
         media_assets: mediaRes.error ? [] : mediaRes.data || [],
         audit_logs: auditRes.error ? [] : auditRes.data || []
@@ -634,7 +645,7 @@ export default async function handler(req, res) {
         return send(res, 403, { error: 'Only owner or admin role may approve product publication.' });
       }
       const { product_id, evidence, next_status, approve_tier_price } = body;
-      if (typeof product_id !== 'string' || !/^(?:STK-H\d{3}|FT-(?:HM|JWL|BA)-\d{3})$/.test(product_id)) {
+      if (typeof product_id !== 'string' || !/^STK-H\d{3}$/.test(product_id)) {
         return send(res, 400, { error: 'Invalid product_id.' });
       }
       if (product_id === 'STK-H012') {
@@ -704,7 +715,7 @@ export default async function handler(req, res) {
         updated_at: new Date().toISOString()
       };
 
-      if (approve_tier_price === true && (PRICE_TIERS[currentProd.price_tier] || currentProd.price_tier === 'ACCESSORY')) {
+      if (approve_tier_price === true && PRICE_TIERS[currentProd.price_tier]) {
         prodUpdate.approved_price_bdt = currentProd.draft_price_bdt;
         prodUpdate.price_approved = true;
       }

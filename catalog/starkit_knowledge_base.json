@@ -64,14 +64,10 @@
   "collection_architecture": {
     "drop_01": {
       "name": "DROP 01 — THE GRAPHIC ARCHIVE",
-      "parent_designs": 15,
-      "existing_designs": 11,
-      "new_concept_designs": 4,
+      "parent_designs": 11,
       "held_excluded_design": "STK-H012",
-      "target_colorways_per_design": 4,
-      "total_planned_slots": 60,
       "documented_colorways": 15,
-      "provisional_colorways": 45,
+      "provisional_colorways": 0,
       "verified_media_assets": 67,
       "price_tiers": {
         "CORE": {
@@ -95,16 +91,6 @@
           "price_bdt": 1499
         }
       }
-    },
-    "drop_02": {
-      "name": "DROP 02 — ARTISAN ACCENTS & JEWELRY",
-      "brand": "Fariza's Territory",
-      "categories": [
-        "Decorative Mirrors",
-        "Wearable Art",
-        "Bangles & Accents"
-      ],
-      "total_handcrafted_skus": 35
     }
   },
   "designs": [
@@ -151,28 +137,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 6
-        },
-        {
-          "slot_id": "STK-H001-C03",
-          "sku": "STK-H001-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H001-C04",
-          "sku": "STK-H001-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -203,39 +167,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 3
-        },
-        {
-          "slot_id": "STK-H002-C02",
-          "sku": "STK-H002-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H002-C03",
-          "sku": "STK-H002-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H002-C04",
-          "sku": "STK-H002-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -266,39 +197,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 5
-        },
-        {
-          "slot_id": "STK-H003-C02",
-          "sku": "STK-H003-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H003-C03",
-          "sku": "STK-H003-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H003-C04",
-          "sku": "STK-H003-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -316,28 +214,6 @@
       "variants": [
         {
           "slot_id": "STK-H004-C01",
-          "sku": "STK-H004-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H004-C02",
-          "sku": "STK-H004-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H004-C03",
           "sku": "STK-H004-MRN",
           "color": "Maroon",
           "hex": "#5B1A24",
@@ -351,17 +227,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 6
-        },
-        {
-          "slot_id": "STK-H004-C04",
-          "sku": "STK-H004-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -392,39 +257,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 6
-        },
-        {
-          "slot_id": "STK-H005-C02",
-          "sku": "STK-H005-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H005-C03",
-          "sku": "STK-H005-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H005-C04",
-          "sku": "STK-H005-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -455,39 +287,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 5
-        },
-        {
-          "slot_id": "STK-H006-C02",
-          "sku": "STK-H006-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H006-C03",
-          "sku": "STK-H006-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H006-C04",
-          "sku": "STK-H006-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -505,39 +304,6 @@
       "variants": [
         {
           "slot_id": "STK-H007-C01",
-          "sku": "STK-H007-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H007-C02",
-          "sku": "STK-H007-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H007-C03",
-          "sku": "STK-H007-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H007-C04",
           "sku": "STK-H007-BRN",
           "color": "Chocolate Brown",
           "hex": "#4B2E24",
@@ -659,39 +425,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 5
-        },
-        {
-          "slot_id": "STK-H009-C02",
-          "sku": "STK-H009-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H009-C03",
-          "sku": "STK-H009-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H009-C04",
-          "sku": "STK-H009-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -722,39 +455,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 4
-        },
-        {
-          "slot_id": "STK-H010-C02",
-          "sku": "STK-H010-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H010-C03",
-          "sku": "STK-H010-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H010-C04",
-          "sku": "STK-H010-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     },
@@ -785,271 +485,6 @@
           ],
           "approved_for_publication": true,
           "media_count": 6
-        },
-        {
-          "slot_id": "STK-H011-C02",
-          "sku": "STK-H011-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H011-C03",
-          "sku": "STK-H011-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H011-C04",
-          "sku": "STK-H011-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        }
-      ]
-    },
-    {
-      "id": "STK-H013",
-      "name": "SHADOW SHINOBI",
-      "category": "Anime Archive",
-      "price_tier": "SIGNATURE",
-      "price_bdt": 1369,
-      "legacy_price_bdt": null,
-      "price_approved": false,
-      "approval_status": "MEDIA_PENDING",
-      "copy_en": "Concept-stage nocturnal stealth graphic exploring layered ink textures and crimson emblems across all four base palettes.",
-      "copy_bn": "কনসেপ্ট স্টেজ ডিজাইন—গভীর কালি ও ক্রিমসন অ্যাকসেন্টে শ্যাডো শিনোবি এডিশন।",
-      "variants": [
-        {
-          "slot_id": "STK-H013-C01",
-          "sku": "STK-H013-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H013-C02",
-          "sku": "STK-H013-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H013-C03",
-          "sku": "STK-H013-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H013-C04",
-          "sku": "STK-H013-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        }
-      ]
-    },
-    {
-      "id": "STK-H014",
-      "name": "URBAN HERITAGE",
-      "category": "Bangla Heritage",
-      "price_tier": "SELECT",
-      "price_bdt": 1250,
-      "legacy_price_bdt": null,
-      "price_approved": false,
-      "approval_status": "MEDIA_PENDING",
-      "copy_en": "Concept-stage fusion of Bengali typographic geometry and contemporary urban minimalism.",
-      "copy_bn": "কনসেপ্ট স্টেজ ডিজাইন—বাংলার স্থাপত্য ও আরবান টাইপোগ্রাফির আধুনিক রূপ।",
-      "variants": [
-        {
-          "slot_id": "STK-H014-C01",
-          "sku": "STK-H014-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H014-C02",
-          "sku": "STK-H014-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H014-C03",
-          "sku": "STK-H014-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H014-C04",
-          "sku": "STK-H014-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        }
-      ]
-    },
-    {
-      "id": "STK-H015",
-      "name": "HERITAGE STATIC",
-      "category": "Statement Graphics",
-      "price_tier": "PREMIUM",
-      "price_bdt": 1499,
-      "legacy_price_bdt": null,
-      "price_approved": false,
-      "approval_status": "MEDIA_PENDING",
-      "copy_en": "Concept-stage collector edition pairing distressed analog halftone frequencies with Dhaka street motifs.",
-      "copy_bn": "কনসেপ্ট স্টেজ প্রিমিয়াম এডিশন—অ্যানালগ স্ট্যাটিক টেক্সচার ও হেরিটেজ গ্রাফিক্স।",
-      "variants": [
-        {
-          "slot_id": "STK-H015-C01",
-          "sku": "STK-H015-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H015-C02",
-          "sku": "STK-H015-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H015-C03",
-          "sku": "STK-H015-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H015-C04",
-          "sku": "STK-H015-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        }
-      ]
-    },
-    {
-      "id": "STK-H016",
-      "name": "MIDNIGHT SIGNAL",
-      "category": "City Stories",
-      "price_tier": "PREMIUM",
-      "price_bdt": 1499,
-      "legacy_price_bdt": null,
-      "price_approved": false,
-      "approval_status": "MEDIA_PENDING",
-      "copy_en": "Concept-stage flagship nocturnal graphic inspired by late-night Dhaka neon reflections and radio wave geometry.",
-      "copy_bn": "কনসেপ্ট স্টেজ প্রিমিয়াম এডিশন—ঢাকার মধ্যরাতের লাইট ও সিগন্যাল গ্রাফিক্স।",
-      "variants": [
-        {
-          "slot_id": "STK-H016-C01",
-          "sku": "STK-H016-BLK",
-          "color": "Black",
-          "hex": "#170000",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H016-C02",
-          "sku": "STK-H016-CRM",
-          "color": "Cream",
-          "hex": "#F3EFE6",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H016-C03",
-          "sku": "STK-H016-MRN",
-          "color": "Maroon",
-          "hex": "#5B1A24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
-        },
-        {
-          "slot_id": "STK-H016-C04",
-          "sku": "STK-H016-BRN",
-          "color": "Chocolate Brown",
-          "hex": "#4B2E24",
-          "status": "PROVISIONAL",
-          "stock_quantity": 0,
-          "available_sizes": [],
-          "approved_for_publication": false,
-          "media_count": 0
         }
       ]
     }

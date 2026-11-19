@@ -7,7 +7,6 @@ window.STARKIT_CONFIG = {
   tagline: 'WEAR YOUR WORLD.',
   founder: 'Nafe Munawer',
   collection: 'DROP 01 / THE GRAPHIC ARCHIVE',
-  secondary_collection: "DROP 02 / FARIZA'S TERRITORY",
   support_phone: '01778307704',
   support_whatsapp: '+8801778307704',
   contact_verified: true,
@@ -15,8 +14,8 @@ window.STARKIT_CONFIG = {
   delivery_dhaka: 80,
   delivery_outside: 150,
   free_shipping_threshold: 3000,
-  hoodie_design_target: 15,
-  hoodie_variant_target: 60,
+  hoodie_design_target: 11,
+  hoodie_variant_target: 15,
   price_tiers: {
     CORE: 1099,
     SELECT: 1250,

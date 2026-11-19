@@ -22,12 +22,12 @@ on conflict (key) do nothing;
 
 -- 2. Store Products & SKU Variants Inventory (safe unapproved defaults)
 create table if not exists public.store_variants (
-  sku text primary key check(sku ~ '^(STK-H[0-9]{3}-(BLK|MRN|BRN|CRM)|FT-(HM|JWL|BA)-[0-9]{3})$'),
+  sku text primary key check(sku ~ '^STK-H[0-9]{3}-(BLK|MRN|BRN|CRM)$'),
   slot_id text,
   product_id text not null,
   product_name text not null,
   color text not null,
-  status text not null default 'PROVISIONAL' check(status in ('DOCUMENTED', 'PROVISIONAL')),
+  status text not null default 'DOCUMENTED' check(status in ('DOCUMENTED')),
   price_bdt integer not null check(price_bdt > 0),
   sizes jsonb not null default '[]'::jsonb check(jsonb_typeof(sizes) = 'array'),
   stock_quantity integer not null default 0 check(stock_quantity >= 0),

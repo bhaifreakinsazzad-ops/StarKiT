@@ -101,7 +101,7 @@ export function initCartDrawer({ products, base, storeConfig }) {
       itemsEl.innerHTML = `
         <div class="empty-cart">
           <h3>Your Bag is Empty</h3>
-          <p class="muted">Explore Drop 01 graphic hoodies or Fariza's Territory artisan pieces to build your bag.</p>
+          <p class="muted">Explore Drop 01 graphic hoodies to build your bag.</p>
           <a href="${base}shop.html" class="btn btn-outline">Browse Collection ↗</a>
         </div>`;
       return;

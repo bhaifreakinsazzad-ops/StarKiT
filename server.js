@@ -148,7 +148,7 @@ const NOT_FOUND_HTML = `<!DOCTYPE html>
     </a>
     <p class="eyebrow" style="justify-content:center;color:#5B1A24;margin-bottom:10px;">StarkiT Archive</p>
     <h1 style="font-size:clamp(3.2rem,9vw,4.8rem);font-weight:800;line-height:0.95;margin:0 0 14px;font-variant-numeric:tabular-nums;">404</h1>
-    <p style="font-size:1rem;color:#5c5654;line-height:1.65;margin:0 0 28px;">This page could not be found in the StarkiT archive. Return to the showroom to explore Drop 01 hoodies and Fariza's Territory artisan pieces.</p>
+    <p style="font-size:1rem;color:#5c5654;line-height:1.65;margin:0 0 28px;">This page could not be found in the StarkiT archive. Return to the showroom to explore our Drop 01 graphic hoodies.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="/shop.html" class="btn">Explore Collection</a>
       <a href="/index.html" class="btn btn-outline">Back to Showroom</a>

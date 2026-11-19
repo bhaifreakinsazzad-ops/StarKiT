@@ -162,10 +162,10 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
       ? `<img id="showroomHeroImg" src="${escapeHtml(fullImgUrl)}" alt="${escapeHtml(p.name)} — ${escapeHtml(v.color)} (${escapeHtml(state.viewMode)} view)" referrerpolicy="no-referrer">`
       : `<div class="stage-provisional-slate">
            <div class="stage-swatch-disc" style="background:${escapeHtml(v.hex)};" aria-hidden="true"></div>
-           <div class="eyebrow" style="margin-bottom:8px;">${p.is_concept || p.concept_stage ? 'Concept Design · Media Pending' : 'Colorway Slot · Media Pending'}</div>
+           <div class="eyebrow" style="margin-bottom:8px;">Drop 01 Studio Preview</div>
            <h3 style="margin:0 0 6px;font-size:1.35rem;font-weight:800;">${escapeHtml(p.name)}</h3>
            <p style="margin:0;color:var(--mute);font-size:0.88rem;max-width:30ch;">
-             ${escapeHtml(v.color)} (${escapeHtml(v.sku)}) is registered in the 60-variant catalog architecture. Photography upload is pending in Admin.
+             ${escapeHtml(v.color)} (${escapeHtml(v.sku)}) in the Drop 01 hoodie archive.
            </p>
          </div>`;
 
@@ -212,18 +212,6 @@ export function initShowroomHero({ products, base, spatialScene, onAddToCart, on
           aria-label="Fabric and print detail view — ${escapeHtml(p.name)} (${escapeHtml(v.color)})${!hasDetail ? ' (Unavailable)' : ''}"
           ${!hasDetail ? 'disabled aria-disabled="true"' : ''}
         >Detail</button>
-        <button
-          type="button"
-          role="tab"
-          id="stage-tab-model"
-          class="stage-view-tab"
-          disabled
-          aria-selected="false"
-          aria-disabled="true"
-          aria-controls="heroPicture"
-          aria-label="Model lookbook view (Model shoot pending)"
-          title="Model photography pending studio shoot"
-        >Model Shoot Pending</button>
       </div>`;
 
     const frameEl = stageEl.querySelector('#heroPicture');

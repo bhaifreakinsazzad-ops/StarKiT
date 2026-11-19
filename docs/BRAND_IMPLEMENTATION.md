@@ -1,5 +1,5 @@
 # StarkiT — Official Brand Implementation Guide
-## DROP 01 / THE GRAPHIC ARCHIVE & DROP 02 / ARTISAN EDIT
+## DROP 01 / THE GRAPHIC HOODIE ARCHIVE
 
 ### 1. Brand Identity Overview
 * **Brand Name**: StarkiT
@@ -31,7 +31,7 @@
   - Headers: Uppercase, tracking `0.12em` to `0.18em`, confident scale.
   - Body: High legibility, clean geometric sans-serif modernism.
 * **Bengali Typography**: `Hind Siliguri` (Weights: 400, 500, 600, 700)
-  - Native Bengali translations for every hoodie storyline and artisan accessory.
+  - Native Bengali translations for every hoodie storyline.
   - Native numbers and currency presentation (`৳` / BDT).
 * **Arabic Brand Mark**: `Amiri` (Weights: 400, 700)
   - Classical Arabic calligraphic letterforms rendering the authentic mark `ستاركيت`.

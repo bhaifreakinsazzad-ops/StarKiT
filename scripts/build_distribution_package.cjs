@@ -65,7 +65,7 @@ fs.mkdirSync(databaseDir, { recursive: true });
 fs.mkdirSync(docsDir, { recursive: true });
 
 // A. Populate website/ (deployable root for Vercel / Node.js)
-console.log('Packaging website source code (61 HTML pages, ES modules, APIs, tests, scripts)...');
+console.log('Packaging website source code (22 HTML pages, ES modules, APIs, tests, scripts)...');
 const htmlPages = fs.readdirSync(ROOT).filter((f) => f.endsWith('.html'));
 htmlPages.forEach((f) => fs.copyFileSync(path.join(ROOT, f), path.join(websiteDir, f)));
 
@@ -98,14 +98,14 @@ rootConfigs.forEach((f) => {
 });
 
 // B. Populate media/
-console.log('Packaging all media assets (67 WebPs + 35 Drop 02 JPGs + 13 reference JPGs)...');
+console.log('Packaging all media assets (67 WebPs + 13 reference JPGs)...');
 copyDirSync(path.join(ROOT, 'assets/images'), mediaDir);
 if (fs.existsSync(path.join(ROOT, 'docs/original_references'))) {
   copyDirSync(path.join(ROOT, 'docs/original_references'), path.join(mediaDir, 'original_references'));
 }
 
 // C. Populate catalog/
-console.log('Packaging canonical 15-design / 60-slot + Drop 02 catalog files...');
+console.log('Packaging canonical 11-design / 15-variant Drop 01 catalog files...');
 const catalogFiles = [
   'starkit_products.json',
   'starkit_60_variants.json',
@@ -113,7 +113,6 @@ const catalogFiles = [
   'starkit_variants.csv',
   'starkit_media_manifest.csv',
   'starkit_knowledge_base.json',
-  'accessories_drop02.json',
   'promotions.json'
 ];
 catalogFiles.forEach((f) => {

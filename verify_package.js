@@ -1,7 +1,7 @@
 /**
- * Offline integrity and asset resolution verification for StarkiT 15-Design / 60-Variant Architecture.
- * Validates 50 master designs (15 Drop 01 hoodies / 60 variant slots + 35 Drop 02 accessories),
- * 67 WebP images, 13 original JPGs, 35 accessory JPGs, all HTML pages, Meta Pixel ID, and Supabase seeds.
+ * Offline integrity and asset resolution verification for StarkiT 11-Design / 15-Variant Hoodie Architecture.
+ * Validates 11 master Drop 01 hoodie designs (15 studio-verified DOCUMENTED variants),
+ * 67 WebP images, 13 original JPGs, all HTML pages, Meta Pixel ID, and Supabase seeds.
  */
 import fs from 'fs';
 import path from 'path';
@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = __dirname;
 
-console.log('--- RUNNING STARKIT DROP 01 60-VARIANT CANONICAL VERIFICATION ---');
+console.log('--- RUNNING STARKIT DROP 01 11-HOODIE / 15-VARIANT VERIFICATION ---');
 
 // 1. Verify Catalog JSON
 const catalogPath = path.join(ROOT, 'assets/catalog.json');
@@ -21,8 +21,8 @@ if (!fs.existsSync(catalogPath)) {
 }
 const catalogData = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 const fullCatalog = catalogData.products;
-if (!Array.isArray(fullCatalog) || fullCatalog.length !== 50) {
-  throw new Error(`Expected 50 master designs (15 hoodies + 35 accessories), found ${fullCatalog ? fullCatalog.length : 0}`);
+if (!Array.isArray(fullCatalog) || fullCatalog.length !== 11) {
+  throw new Error(`Expected 11 Drop 01 hoodie designs, found ${fullCatalog ? fullCatalog.length : 0}`);
 }
 
 const arch = validateCatalogArchitecture(fullCatalog);
@@ -106,11 +106,6 @@ if (expectedImages.length !== 67) {
 const refJpgs = fs.readdirSync(path.join(ROOT, 'docs/original_references')).filter((f) => f.endsWith('.jpg'));
 if (refJpgs.length !== 13) {
   throw new Error(`Expected 13 original JPG reference files, found ${refJpgs.length}`);
-}
-
-const accessoryJpgs = fs.readdirSync(path.join(ROOT, 'assets/images/accessories')).filter((f) => f.endsWith('.jpg'));
-if (accessoryJpgs.length !== 35) {
-  throw new Error(`Expected 35 accessory JPG files, found ${accessoryJpgs.length}`);
 }
 
 // 5. Verify Essential Deployable Files
@@ -230,9 +225,7 @@ if (brokenLinks.length > 0) {
   throw new Error(`Found ${brokenLinks.length} broken link(s)!`);
 }
 
-console.log('✓ PASS: 15 Drop 01 hoodies configured with canonical 4-color architecture (60 slots).');
-console.log('✓ PASS: Exactly 15 documented variants and 45 provisional media-pending slots verified.');
-console.log('✓ PASS: 35 Drop 02 Fariza\'s Territory accessories validated.');
-console.log('✓ PASS: Full catalog verified at 50 master designs + STK-H012 preserved in hold register.');
-console.log('✓ PASS: All 67 WebP images, 35 accessory JPGs, and 13 reference JPGs verified on disk.');
+console.log('✓ PASS: 11 Drop 01 hoodies configured with 15 studio-verified colorway variants (0 provisional, 0 accessories).');
+console.log('✓ PASS: STK-H012 preserved in IP hold register and excluded from storefront.');
+console.log('✓ PASS: All 67 WebP studio images and 13 reference JPGs verified on disk.');
 console.log(`✓ PASS: All ${htmlFiles.length} HTML pages audited with zero broken links, Afacad Flux font, and Meta Pixel 1390081606323661.`);

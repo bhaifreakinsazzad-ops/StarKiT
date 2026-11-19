@@ -1,8 +1,7 @@
 /**
  * StarkiT Static Storefront Page Generator
  * Builds informational pages (about, shipping, returns, contact, privacy, terms),
- * all 15 Drop 01 Hoodie PDPs (including STK-H013..STK-H016 concepts),
- * all 35 Drop 02 Fariza's Territory Artisan Accessory PDPs,
+ * all 11 Drop 01 Hoodie PDPs,
  * plus /sitemap.xml and /robots.txt.
  */
 const fs = require('fs');
@@ -78,7 +77,7 @@ function renderHead({ base, title, description, ogImage, ogType = 'website', jso
 }
 
 function renderHeader({ base, activeNav }) {
-  return `<div class="announcement"><span>StarkiT</span> &middot; Drop 01 Graphic Archive (15 Designs / 60 Slots) &middot; Cash on Delivery across 64 districts &middot; Support <a href="tel:01778307704">01778307704</a></div>
+  return `<div class="announcement"><span>StarkiT</span> &middot; Drop 01 Graphic Archive (11 Designs · 15 Studio Colorways) &middot; Cash on Delivery across 64 districts &middot; Support <a href="tel:01778307704">01778307704</a></div>
 
   <header class="header">
     <div class="shell nav-inner">
@@ -108,15 +107,15 @@ function renderFooter({ base }) {
             <img class="footer-logo" src="${base}assets/images/starkit-logo-transparent.png" alt="StarkiT ستاركيت">
           </a>
           <p class="footer-slogan">Wear your world.</p>
-          <p style="max-width:380px;color:rgba(243,239,230,0.72);line-height:1.65;">Dhaka-based streetwear and artisan house founded by Nafe Munawer. Drop 01 The Graphic Archive &amp; Drop 02 Fariza&#39;s Territory.</p>
+          <p style="max-width:380px;color:rgba(243,239,230,0.72);line-height:1.65;">Dhaka-based streetwear house founded by Nafe Munawer. Drop 01: The Graphic Archive — 11 studio-verified hoodie editions crafted on heavyweight 330–350 GSM fleece.</p>
         </div>
         <div>
           <h4>Discover</h4>
           <nav>
-            <a href="${base}shop.html">All 50 Designs</a>
+            <a href="${base}shop.html">All 11 Hoodies</a>
             <a href="${base}index.html#lookbook">Interactive Lookbook</a>
             <a href="${base}about.html">Our World</a>
-            <a href="${base}index.html#collection">Drop 01 &amp; 02</a>
+            <a href="${base}index.html#collection">Drop 01 Archive</a>
           </nav>
         </div>
         <div>
@@ -169,36 +168,34 @@ const INFO_PAGES = [
     activeNav: 'about',
     title: 'Our World | StarkiT',
     description:
-      'StarkiT is an independent Dhaka streetwear and luxury artisan house founded by Nafe Munawer featuring 15 Drop 01 hoodie designs (60 planned colorways) and 35 Drop 02 Fariza\'s Territory pieces.',
+      'StarkiT is an independent Dhaka streetwear house founded by Nafe Munawer featuring 11 Drop 01 heavyweight hoodie designs across 15 studio-verified colorways.',
     body: `
     <div class="eyebrow">StarkiT / Brand Heritage</div>
     <h1>Our World.</h1>
-    <p style="font-size:1.12rem;color:var(--crimson);font-weight:600;">StarkiT is an independent Dhaka streetwear and artisan house founded by Nafe Munawer.</p>
+    <p style="font-size:1.12rem;color:var(--crimson);font-weight:600;">StarkiT is an independent Dhaka streetwear house founded by Nafe Munawer.</p>
     <h2>Wear your world.</h2>
-    <p>Founded by <strong>Nafe Munawer</strong> in Dhaka, Bangladesh, StarkiT bridges local cultural roots with contemporary graphic streetwear silhouettes and living Bangladeshi craft traditions. Our identity centers on considered storytelling, community, style, and authenticity.</p>
+    <p>Founded by <strong>Nafe Munawer</strong> in Dhaka, Bangladesh, StarkiT bridges local cultural roots with contemporary graphic streetwear silhouettes. Our identity centers on considered storytelling, community, style, and authenticity.</p>
     <div style="margin:28px 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);">
-      <img src="assets/images/editorial/fariza-drop02-editorial-banner.jpg" alt="Drop 02 Fariza's Territory Dhaka Atelier Campaign" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
+      <img src="assets/images/STK-H009-BLK__90_reference_composite.webp" alt="StarkiT Drop 01 Graphic Hoodie Editorial Showcase" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#f7f4ee;">
     </div>
-    <h3>Drop 01: The Graphic Archive (15 Designs / 60 Colorway Slots)</h3>
-    <p>Fifteen hoodie designs engineered in 330–350 GSM combed compact fleece across our four signature brand palettes — Black (#170000), Cream (#F3EFE6), Maroon (#5B1A24), and Chocolate Brown (#4B2E24) — yielding 60 colorway slots across four structured retail pricing tiers (Core ৳1,099, Select ৳1,250, Signature ৳1,369, and Premium ৳1,499). Eleven archive releases feature 15 documented studio colorway galleries available for immediate Cash on Delivery, while four concept editions (STK-H013 through STK-H016) expand the archive.</p>
-    <h3>Drop 02: The Artisan Edit · Fariza&#39;s Territory</h3>
-    <p>In partnership with <strong>Fariza&#39;s Territory</strong>, StarkiT presents thirty-five handcrafted Dhaka artisan pieces celebrating Bangladeshi folk craft: 5 hand-sculpted botanical &amp; folk decorative mirrors, 19 wearable art jewelry sets, and 11 silk-thread &amp; micro-bead embroidered bangles.</p>
+    <h3>Drop 01: The Graphic Archive (11 Hoodie Designs · 15 Studio Colorways)</h3>
+    <p>Eleven heavyweight graphic hoodie designs engineered in 330–350 GSM combed compact fleece across our signature palette — Black (#170000), Cream (#F3EFE6), Maroon (#5B1A24), and Chocolate Brown (#4B2E24) — yielding 15 studio-photographed colorway editions across four structured retail pricing tiers (Core ৳1,099, Select ৳1,250, Signature ৳1,369, and Premium ৳1,499). Every piece ships ready for Cash on Delivery nationwide across Bangladesh.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0;">
       <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
-        <img src="assets/images/editorial/fariza-mirror-lifestyle.jpg" alt="Fariza's Territory Sculpted Botanical Wooden Mirror" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
-        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Decorative Mirrors · Hand-Sculpted Floral Relief</figcaption>
+        <img src="assets/images/STK-H001-BLK__01_front.webp" alt="Shinobi Sunset Drop 01 Hoodie" style="width:100%;aspect-ratio:4/3;object-fit:contain;display:block;padding:12px;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Signature Drop · Shinobi Sunset</figcaption>
       </figure>
       <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
-        <img src="assets/images/editorial/fariza-jewelry-indigo-lifestyle.jpg" alt="Fariza's Territory Indigo & Saffron Wearable Art Set" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
-        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Wearable Art · Indigo &amp; Kalka Folk Pendants</figcaption>
+        <img src="assets/images/STK-H004-MRN__02_back.webp" alt="The Rider Code Maroon Hoodie" style="width:100%;aspect-ratio:4/3;object-fit:contain;display:block;padding:12px;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Premium Collector · The Rider Code</figcaption>
       </figure>
       <figure style="margin:0;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--cream);">
-        <img src="assets/images/editorial/fariza-bangles-lifestyle.jpg" alt="Fariza's Territory Silk-Thread Embroidered Bangles" style="width:100%;aspect-ratio:4/3;object-fit:cover;display:block;">
-        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Bangles &amp; Accents · Silk-Thread &amp; Beadwork</figcaption>
+        <img src="assets/images/STK-H008-CRM__01_front.webp" alt="Collective Voice Cream Hoodie" style="width:100%;aspect-ratio:4/3;object-fit:contain;display:block;padding:12px;">
+        <figcaption style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:var(--ink);">Core Archive · Collective Voice</figcaption>
       </figure>
     </div>
     <p>From the streets of Dhaka to all 64 districts across Bangladesh, wear your world with quiet confidence.</p>
-    <p style="margin-top:36px;"><a href="shop.html" class="btn btn-outline">Explore All 50 Designs ↗</a></p>`
+    <p style="margin-top:36px;"><a href="shop.html" class="btn btn-outline">Explore All 11 Hoodies ↗</a></p>`
   },
   {
     filename: 'shipping.html',
@@ -249,7 +246,7 @@ const INFO_PAGES = [
     <h1>Customer Care.</h1>
     <p style="font-size:1.12rem;color:var(--crimson);font-weight:600;">Direct Dhaka studio support for sizing, delivery, and wholesale inquiries.</p>
     <h2>Get in touch</h2>
-    <p>Questions about Drop 01 hoodie sizing, provisional colorway release dates, or Fariza&#39;s Territory artisan pieces? Reach our team directly.</p>
+    <p>Questions about Drop 01 hoodie sizing, fabric weight, or nationwide Cash on Delivery? Reach our Dhaka team directly.</p>
     <div class="summary-panel" style="margin:24px 0;">
       <p style="margin-bottom:10px;"><strong>Direct Phone &amp; WhatsApp:</strong> <a href="tel:01778307704" style="text-decoration:underline;">01778307704</a> &middot; <a href="https://wa.me/8801778307704" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;color:#15803d;font-weight:600;">WhatsApp Chat ↗</a></p>
       <p style="margin-bottom:10px;"><strong>Founder &amp; Creative Direction:</strong> Nafe Munawer · StarkiT Dhaka</p>
@@ -282,8 +279,8 @@ const INFO_PAGES = [
     <h1>Terms of Service.</h1>
     <p style="font-size:1.12rem;color:var(--crimson);font-weight:600;">Standard commercial and ordering terms for StarkiT.</p>
     <h2>Terms &amp; conditions</h2>
-    <p>All listed storefront prices are in Bangladeshi Taka (BDT). Draft tier pricing on preview or provisional SKUs remains non-binding until approved for public sale by StarkiT administration. Delivery fees (৳80 inside Dhaka, ৳150 nationwide) are confirmed on checkout.</p>
-    <p>All StarkiT trademarks, typography, garment photography, and branding remain the property of StarkiT and founder Nafe Munawer. Designs incorporating third-party IP remain paused under internal rights clearance until licensed.</p>
+    <p>All listed storefront prices are in Bangladeshi Taka (BDT). Delivery fees (৳80 inside Dhaka, ৳150 nationwide) are confirmed on checkout.</p>
+    <p>All StarkiT trademarks, typography, garment photography, and branding remain the property of StarkiT and founder Nafe Munawer.</p>
     <p style="margin-top:36px;"><a href="shop.html" class="btn btn-outline">Browse Collection ↗</a></p>`
   }
 ];
@@ -308,12 +305,17 @@ ${renderHead({
   fs.writeFileSync(path.join(ROOT, page.filename), html, 'utf8');
 }
 
-// 2. Generate all 50 Product Detail Pages (15 Hoodies + 35 Artisan Accessories)
+// 2. Prune stale product pages and generate all 11 Drop 01 Hoodie PDPs
+const validSlugs = new Set(products.map((p) => `${p.slug}.html`));
+for (const existing of fs.readdirSync(PRODUCTS_DIR)) {
+  if (existing.endsWith('.html') && !validSlugs.has(existing)) {
+    fs.unlinkSync(path.join(PRODUCTS_DIR, existing));
+  }
+}
+
 let hoodiePages = 0;
-let accessoryPages = 0;
 
 for (const p of products) {
-  const isHoodie = String(p.id).startsWith('STK-');
   const firstDocVariant =
     (p.variants || []).find((v) => v.status === 'DOCUMENTED' && Array.isArray(v.gallery) && v.gallery.length > 0) ||
     (p.variants || [])[0];
@@ -322,10 +324,9 @@ for (const p of products) {
     (firstDocVariant?.gallery || [])[0] ||
     null;
   const ogImg = firstImgObj ? String(firstImgObj.url).replace(/^\//, '') : 'assets/images/starkit-logo-brand-original.png';
-  const tierLabel = p.price_tier ? `${p.price_tier} TIER` : p.collection || 'Artisan Craft';
-  const collectionCrumb = isHoodie ? p.category || 'Drop 01 Hoodies' : p.collection || 'Artisan Accessories';
-  const categoryShopHref = `../shop.html?category=${isHoodie ? 'Streetwear' : encodeURIComponent(collectionCrumb)}`;
-  const priceMetaPrefix = isHoodie && p.price_approved !== true ? 'Draft tier price' : 'Price';
+  const tierLabel = p.price_tier ? `${p.price_tier} TIER` : 'Drop 01';
+  const collectionCrumb = p.category || 'Drop 01 Hoodies';
+  const categoryShopHref = `../shop.html?category=${encodeURIComponent(collectionCrumb)}`;
   const slotCount = (p.variants || []).length;
 
   const productSchema = [
@@ -342,7 +343,7 @@ for (const p of products) {
         '@type': 'Offer',
         priceCurrency: 'BDT',
         price: Number(p.price_bdt),
-        availability: p.publication_status === 'PUBLISHED' ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder'
+        availability: 'https://schema.org/InStock'
       }
     },
     {
@@ -358,42 +359,27 @@ for (const p of products) {
 
   const initialStageHtml = firstImgObj
     ? `<img src="../${esc(String(firstImgObj.url).replace(/^\//, ''))}" alt="${esc(p.name)}" referrerpolicy="no-referrer">
-       <span class="view-tag">${isHoodie ? 'Front View' : 'Handcrafted Studio Piece'}</span>`
-    : `<div class="stage-provisional-slate">
-         <div class="stage-swatch-disc" style="background:${esc(firstDocVariant?.hex || '#170000')};"></div>
-         <div class="eyebrow" style="margin-bottom:8px;">Concept Design · Media Pending</div>
-         <h3 style="margin:0 0 8px;">${esc(p.name)}</h3>
-         <p style="margin:0;color:var(--mute);max-width:34ch;font-size:0.9rem;">
-           ${esc(p.id)} studio photography is awaiting upload across 4 colorway slots.
-         </p>
-       </div>`;
+       <span class="view-tag">Front View</span>`
+    : `<img src="../assets/images/starkit-logo-brand-original.png" alt="${esc(p.name)}">
+       <span class="view-tag">Studio View</span>`;
 
   const isPublishedLive = p.publication_status === 'PUBLISHED' && firstDocVariant?.approved_for_publication === true;
 
-  const specsHtml = isHoodie
-    ? `
+  const specsHtml = `
       <div class="spec"><strong>The Design</strong><span>${esc(p.front_back_detail || p.editorial)}</span></div>
-      <div class="spec"><strong>Price Tier</strong><span>${esc(p.price_tier)} · ৳${Number(p.price_bdt).toLocaleString('en-BD')} (${p.price_approved ? 'Verified Archive Price' : 'Pending Sign-Off'})</span></div>
+      <div class="spec"><strong>Price Tier</strong><span>${esc(p.price_tier)} · ৳${Number(p.price_bdt).toLocaleString('en-BD')}</span></div>
       <div class="spec"><strong>Fabric Spec</strong><span>${esc(p.fabric_claim || 'Heavyweight 330–350 GSM fleece')}</span></div>
       <div class="spec"><strong>Size Chart</strong><span>${esc(p.size_chart || 'M, L, XL, XXL')}</span></div>
-      <div class="spec"><strong>Authenticity</strong><span>${esc(p.publication_status === 'PUBLISHED' ? 'Official StarkiT Drop 01 Studio Edition' : (p.rights_assessment || 'Pending verification'))}</span></div>
+      <div class="spec"><strong>Authenticity</strong><span>Official StarkiT Drop 01 Studio Edition</span></div>
       <div class="spec"><strong>Delivery</strong><span>Dhaka: ৳80 (2–3 Days) · Nationwide: ৳150 (3–5 Days). Free over ৳3,000.</span></div>
-      <div class="spec"><strong>Design ID</strong><span>${esc(p.id)} · ${esc(p.publication_status === 'PUBLISHED' ? 'LIVE / IN STOCK' : (p.approval_status || 'MEDIA_PENDING'))}</span></div>`
-    : `
-      <div class="spec"><strong>The Design</strong><span>${esc(p.front_back_detail || p.editorial)}</span></div>
-      <div class="spec"><strong>Materials &amp; Craft</strong><span>${esc(p.fabric_claim || 'Handcrafted in Dhaka')}</span></div>
-      <div class="spec"><strong>Sizing &amp; Fit</strong><span>${esc(p.size_chart || 'Standard Artisan Fit')}</span></div>
-      <div class="spec"><strong>Origin</strong><span>Dhaka, Bangladesh · Fariza&#39;s Territory Studio</span></div>
-      <div class="spec"><strong>Delivery</strong><span>Dhaka: ৳80 (2–3 Days) · Nationwide: ৳150 (3–5 Days). Free over ৳3,000.</span></div>
-      <div class="spec"><strong>Exchange</strong><span>Hassle-free 7-day exchange guarantee.</span></div>
-      <div class="spec"><strong>Design ID</strong><span>${esc(p.id)}</span></div>`;
+      <div class="spec"><strong>Design ID</strong><span>${esc(p.id)} · LIVE / IN STOCK</span></div>`;
 
   const pdpHtml = `<!DOCTYPE html>
 <html lang="en">
 ${renderHead({
   base: '../',
-  title: `${p.name} | StarkiT ${isHoodie ? 'Drop 01 Hoodie' : 'Artisan Accessories'}`,
-  description: `${p.copy_en} ${priceMetaPrefix} ৳${Number(p.price_bdt).toLocaleString('en-BD')}. Cash on Delivery nationwide in Bangladesh.`,
+  title: `${p.name} | StarkiT Drop 01 Hoodie`,
+  description: `${p.copy_en} Price ৳${Number(p.price_bdt).toLocaleString('en-BD')}. Cash on Delivery nationwide in Bangladesh.`,
   ogImage: ogImg,
   ogType: 'product',
   jsonLd: productSchema
@@ -409,24 +395,23 @@ ${renderHead({
             ${initialStageHtml}
           </div>
           <div id="detailThumbs" class="thumbs"></div>
-          <p class="hint">${isHoodie ? 'Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.' : 'Tap main photo to enlarge · Select thumbnails to explore studio lifestyle styling and Dhaka atelier views.'}</p>
+          <p class="hint">Tap main studio image to enlarge · Select thumbnails to inspect back and garment craft details.</p>
         </div>
 
         <div class="detail-info">
-          <div class="eyebrow">${isHoodie ? `Drop 01 · ${esc(tierLabel)}` : `Fariza&#39;s Territory · ${esc(collectionCrumb)}`}</div>
+          <div class="eyebrow">Drop 01 · ${esc(tierLabel)}</div>
           <h1>${esc(p.name)}</h1>
-          ${p.bengali_name ? `<h2 class="bn" style="font-size:1.1rem;color:var(--mute);margin:4px 0 10px;font-weight:600;">${esc(p.bengali_name)}</h2>` : ''}
           <span class="smallcaps muted">SKU · <span id="detailSku">${esc(firstDocVariant?.sku || p.id)}</span></span>
           <div class="detail-price" style="margin:14px 0;">৳${Number(p.price_bdt).toLocaleString('en-BD')}</div>
           <div class="separator"></div>
-          <div class="detail-choice"><strong>${isHoodie ? '4-Color Working Palette' : 'Artisan Finish'}</strong><span class="smallcaps muted">${slotCount} Colorway ${slotCount === 1 ? 'Edition' : 'Slots'}</span></div>
+          <div class="detail-choice"><strong>Available Colorways</strong><span class="smallcaps muted">${slotCount} ${slotCount === 1 ? 'Colorway' : 'Colorways'}</span></div>
           <div id="detailColors" class="variant-buttons"></div>
           <p class="description">${esc(p.copy_en)}</p>
           <p class="description bn" lang="bn">${esc(p.copy_bn)}</p>
           <div class="separator"></div>
           <div id="detailSize"></div>
           <button id="purchaseBtn" class="btn purchase-btn" type="button" style="width:100%;margin-top:20px;">${isPublishedLive ? `Add to Bag — ৳${Number(p.price_bdt).toLocaleString('en-BD')}` : 'Check Availability'}</button>
-          <p id="purchaseStatus" class="hint">${isPublishedLive ? `In stock (${Number(firstDocVariant.stock_quantity || 25)} units) · Cash on Delivery across Bangladesh` : 'Checking publication and stock readiness…'}</p>
+          <p id="purchaseStatus" class="hint">${isPublishedLive ? `In stock (${Number(firstDocVariant.stock_quantity || 25)} units) · Cash on Delivery across Bangladesh` : 'Checking stock availability…'}</p>
           <div style="margin-top:10px;">
             <a id="whatsappBtn" href="https://wa.me/8801778307704" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width:100%;border-color:#15803d;color:#15803d;">Inquire via WhatsApp (01778307704)</a>
           </div>
@@ -452,8 +437,7 @@ ${renderHead({
 </html>`;
 
   fs.writeFileSync(path.join(PRODUCTS_DIR, `${p.slug}.html`), pdpHtml, 'utf8');
-  if (isHoodie) hoodiePages++;
-  else accessoryPages++;
+  hoodiePages++;
 }
 
 // 3. Sitemap & robots.txt
@@ -482,4 +466,4 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemapXml, 'utf8');
 const robotsTxt = `User-agent: *\nAllow: /\nDisallow: /admin.html\nDisallow: /api/\nSitemap: https://starkit-drop01-store.vercel.app/sitemap.xml\n`;
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), robotsTxt, 'utf8');
 
-console.log(`Generated ${INFO_PAGES.length} info pages, ${hoodiePages} hoodie PDPs, ${accessoryPages} accessory PDPs, sitemap.xml, and robots.txt.`);
+console.log(`Generated ${INFO_PAGES.length} info pages, ${hoodiePages} hoodie PDPs, sitemap.xml, and robots.txt.`);

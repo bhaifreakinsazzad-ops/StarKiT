@@ -59,7 +59,7 @@ test('Orders API fails closed with 503 when STARKIT_ORDERS_ENABLED !== true', as
   else process.env.STARKIT_ORDERS_ENABLED = prev;
 });
 
-test('Orders API blocks PROVISIONAL / unapproved SKUs with 409 even if ordering is enabled', async () => {
+test('Orders API blocks unapproved or non-catalog SKUs with 409 even if ordering is enabled', async () => {
   const prevEnabled = process.env.STARKIT_ORDERS_ENABLED;
   const prevUrl = process.env.SUPABASE_URL;
   const prevKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -169,8 +169,8 @@ test('Admin public_storefront_state hydrates non-PII catalog/settings without ex
     assert.equal(res.state.body.audit_logs, undefined);
     assert.equal(Array.isArray(res.state.body.settings), true);
     assert.equal(Array.isArray(res.state.body.promotions), true);
-    assert.equal(res.state.body.products.length, 50);
-    assert.equal(res.state.body.variants.length, 95);
+    assert.equal(res.state.body.products.length, 11);
+    assert.equal(res.state.body.variants.length, 15);
   } finally {
     if (prevUrl !== undefined) process.env.SUPABASE_URL = prevUrl;
     if (prevSrv !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;

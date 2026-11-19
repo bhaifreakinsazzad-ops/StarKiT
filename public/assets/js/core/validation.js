@@ -3,7 +3,7 @@
  */
 
 export const BD_PHONE_REGEX = /^(?:\+?880|0)1[3-9]\d{8}$/;
-export const SKU_REGEX = /^(?:STK-H\d{3}-(BLK|CRM|MRN|BRN)|FT-(?:HM|JWL|BA)-\d{3})$/;
+export const SKU_REGEX = /^STK-H\d{3}-(BLK|CRM|MRN|BRN)$/;
 export const ORDER_REF_REGEX = /^STK-[A-Z0-9]{8,16}$/;
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const ALLOWED_ORDER_STATUSES = new Set([

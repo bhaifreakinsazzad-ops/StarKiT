@@ -150,7 +150,7 @@ export function initAdminManager() {
     document.getElementById('kpiPending').textContent = String(pendingCount);
     document.getElementById('kpiShipped').textContent = String(shippedCount);
     document.getElementById('kpiSkus').textContent = `${hoodies.length} / ${hoodieVariants.length}`;
-    document.getElementById('kpiSkusSub').textContent = `${documentedSlots} Doc · ${hoodieVariants.length - documentedSlots} Pending · ${liveApproved} Live SKUs`;
+    document.getElementById('kpiSkusSub').textContent = `${documentedSlots} Studio Ready · ${liveApproved} Live SKUs`;
     document.getElementById('ordersCountBadge').textContent = String(state.orders.length);
 
     renderOrdersTable();
@@ -361,7 +361,7 @@ export function initAdminManager() {
     if (!modal || !titleEl) return;
     const prod = state.catalog.find((p) => p.id === productId);
     const ev = state.approvals.find((a) => a.product_id === productId);
-    const currentStatus = prod?.approval_status || (String(productId).startsWith('FT-') ? 'PUBLISHED' : 'DRAFT');
+    const currentStatus = prod?.approval_status || 'DRAFT';
     titleEl.textContent = `${productId} / ${sku} (Current: ${currentStatus})`;
     modal.dataset.productId = productId;
     modal.dataset.sku = sku;

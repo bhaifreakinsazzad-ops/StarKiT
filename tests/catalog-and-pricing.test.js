@@ -25,17 +25,17 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-test('Catalog satisfies 15 hoodie / 60 colorway slot + 35 accessory architecture with STK-H012 excluded', () => {
+test('Catalog satisfies 11 Drop 01 hoodie / 15 studio colorway architecture with STK-H012 excluded', () => {
   const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/catalog.json'), 'utf8'));
   const masterHoodies = JSON.parse(fs.readFileSync(path.join(ROOT, 'catalog/starkit_products.json'), 'utf8'));
   const result = validateCatalogArchitecture(catalog.products);
   assert.equal(result.valid, true, result.errors.join('; '));
-  assert.equal(result.summary.hoodies, 15);
-  assert.equal(result.summary.hoodieVariants, 60);
+  assert.equal(result.summary.hoodies, 11);
+  assert.equal(result.summary.hoodieVariants, 15);
   assert.equal(result.summary.documentedVariants, 15);
-  assert.equal(result.summary.provisionalVariants, 45);
-  assert.equal(result.summary.accessories, 35);
-  assert.equal(catalog.products.length, 50);
+  assert.equal(result.summary.provisionalVariants, 0);
+  assert.equal(result.summary.accessories, 0);
+  assert.equal(catalog.products.length, 11);
   assert.equal(masterHoodies.discrepancy_reconciliation?.html_extra_design_id, 'STK-H012');
   assert.equal(masterHoodies.discrepancy_reconciliation?.authoritative_catalog_inclusion, false);
 });
@@ -100,8 +100,9 @@ test('Variant purchasability fails closed in preview mode or when gates are inco
   assert.equal(isVariantPurchasable(liveVariant, liveProd, { mode: 'public', cod_enabled: true }), true);
 
   const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/catalog.json'), 'utf8'));
-  const accessory = catalog.products.find((p) => p.id === 'FT-BA-008');
-  assert.equal(isVariantPurchasable(accessory, accessory.variants[0], { mode: 'public', cod_enabled: true }), true);
+  const hoodie = catalog.products.find((p) => p.id === 'STK-H008');
+  assert.equal(hoodie.variants.length, 4);
+  assert.equal(isVariantPurchasable(hoodie, hoodie.variants[0], { mode: 'public', cod_enabled: true }), true);
 });
 
 test('Pricing engine applies 0 unapproved bundle discount by default, and exact discount once activated', () => {

@@ -1,7 +1,6 @@
 -- OPTIONAL SANDBOX TESTING SEED ONLY
 -- Activates Cash on Delivery and populates sandbox inventory ONLY for DOCUMENTED
--- non-concept SKUs. NEVER runs automatically in production and NEVER activates
--- PROVISIONAL colorways or concept-stage designs (STK-H013..STK-H016) or held STK-H012.
+-- Drop 01 hoodie SKUs (STK-H001..STK-H011), keeping held STK-H012 excluded.
 
 begin;
 
@@ -19,8 +18,6 @@ update public.store_variants
 set
   sizes = case
     when jsonb_array_length(sizes) > 0 then sizes
-    when sku like 'FT-BA-%' then '["2.4", "2.6", "2.8"]'::jsonb
-    when sku like 'FT-%' then '["Standard"]'::jsonb
     else '["M", "L", "XL", "XXL"]'::jsonb
   end,
   stock_quantity = 25,
@@ -32,7 +29,7 @@ set
   approved_for_publication = true,
   updated_at = now()
 where status = 'DOCUMENTED'
-  and product_id not in ('STK-H012', 'STK-H013', 'STK-H014', 'STK-H015', 'STK-H016');
+  and product_id ~ '^STK-H0(0[1-9]|1[01])$';
 
 do $$
 begin
@@ -47,7 +44,7 @@ begin
       stock_verified = true,
       commercial_terms_verified = true,
       updated_at = now()
-    where id not in ('STK-H012', 'STK-H013', 'STK-H014', 'STK-H015', 'STK-H016');
+    where id ~ '^STK-H0(0[1-9]|1[01])$';
 
     if to_regclass('public.store_product_approvals') is not null then
       insert into public.store_product_approvals (
@@ -61,7 +58,7 @@ begin
         'sandbox_demo',
         now()
       from public.store_products
-      where id not in ('STK-H012', 'STK-H013', 'STK-H014', 'STK-H015', 'STK-H016')
+      where id ~ '^STK-H0(0[1-9]|1[01])$'
       on conflict (product_id) do update set
         artwork_rights_ok = true,
         garment_specs_ok = true,

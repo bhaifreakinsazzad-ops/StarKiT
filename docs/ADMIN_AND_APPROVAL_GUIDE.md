@@ -29,7 +29,7 @@
 
 | Tab | Purpose | Key Actions |
 |---|---|---|
-| **Overview** | Live COD KPIs, architectural snapshot (`15 / 60` Drop 01 + `35` Drop 02), `STK-H012` IP hold reminder | Inspect recent customer orders |
+| **Overview** | Live COD KPIs, architectural snapshot (`11` Drop 01 hoodie designs / `15` verified variants), `STK-H012` IP hold reminder | Inspect recent customer orders |
 | **Orders** | Customer fulfillment queue | Search by reference/phone/district; transition statuses (`pending_confirmation` → `confirmed` → `processing` → `shipped` → `delivered` / `cancelled`); print COD invoices with applied promo discounts; export courier CSV |
 | **Inventory & 7-Gate** | SKU stock table + Approval workflow panel | Update variant stock counts; run the **7-Gate Approval** submission with pre-populated checklist & reviewer evidence notes |
 | **Tiers & Offers** | Manage draft 4-tier retail prices (`BDT 1,099–1,499`) and multi-piece promotional rules | Inspect per-tier approval counts; edit `discount_type` (`NONE`, `FIXED_BDT`, `PERCENT`, `INQUIRY`), `discount_value`, and `free_shipping`, then Save or Approve & Activate `DUO_SELECTION`, `TRIO_PLUS`, or `WHOLESALE_RESELLER` |
@@ -67,8 +67,8 @@ No Drop 01 hoodie or colorway can become purchasable online until all 7 evidence
 ## 5. Uploading Variant Photography (`Media & Drive`)
 
 - Accepted binary formats: **WebP, JPEG, PNG** (verified via magic-byte header inspection in `api/admin.js`; SVG uploads are rejected for XSS safety; max payload limit enforced).
-- Assign each uploaded file to a target `sku` (e.g., `STK-H013-BLK`) and `view_type` (`front`, `back`, `detail_01`, `detail_02`, `reference_composite`).
-- Files are stored in the Supabase Storage bucket `STARKIT_MEDIA_BUCKET` (`starkit-media` by default) and indexed in `public.store_media_assets`, automatically promoting `PROVISIONAL` SKUs to `DOCUMENTED` once verified studio media is uploaded.
+- Assign each uploaded file to a target `sku` (e.g., `STK-H001-BLK`) and `view_type` (`front`, `back`, `detail_01`, `detail_02`, `reference_composite`).
+- Files are stored in the Supabase Storage bucket `STARKIT_MEDIA_BUCKET` (`starkit-media` by default) and indexed in `public.store_media_assets` for verified SKU galleries.
 - For Google Drive imports, open **Media & Drive**, authenticate via **Sign in with Google** (self-hosted Firebase Auth SDK) or paste a short-lived `drive.readonly` OAuth access token, browse folders, and import directly.
 
 ---

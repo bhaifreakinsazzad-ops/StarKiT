@@ -5,7 +5,8 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC = path.join(ROOT, 'public');
-if (!fs.existsSync(PUBLIC)) fs.mkdirSync(PUBLIC, { recursive: true });
+fs.rmSync(PUBLIC, { recursive: true, force: true });
+fs.mkdirSync(PUBLIC, { recursive: true });
 
 // Helper to copy a file if it exists
 function copyFile(src) {
@@ -39,7 +40,7 @@ const generatedFiles = [
 generatedFiles.forEach(copyFile);
 
 // Copy all HTML pages in root
-fs.readdirSync(ROOT).forEach(file => {
+fs.readdirSync(ROOT).forEach((file) => {
   if (file.endsWith('.html')) {
     copyFile(path.join(ROOT, file));
   }
@@ -48,7 +49,7 @@ fs.readdirSync(ROOT).forEach(file => {
 // Copy assets directory (images, css, js, catalog.json, etc.)
 copyDir(path.join(ROOT, 'assets'), path.join(PUBLIC, 'assets'));
 
-// Copy products directory containing all 50 PDP HTML files
+// Copy products directory containing all 11 Drop 01 hoodie PDP HTML files
 copyDir(path.join(ROOT, 'products'), path.join(PUBLIC, 'products'));
 
-console.log('Public directory prepared.');
+console.log('Public directory prepared cleanly.');

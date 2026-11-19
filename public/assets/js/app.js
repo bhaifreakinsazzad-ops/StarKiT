@@ -144,20 +144,16 @@ function setupLookbook({ products, base }) {
 
   const order = [
     'STK-H007',
-    'FT-HM-001',
     'STK-H009',
-    'FT-JWL-001',
     'STK-H001',
-    'FT-BA-001',
     'STK-H004',
-    'FT-JWL-006',
     'STK-H003',
-    'FT-HM-002',
     'STK-H005',
-    'FT-JWL-010',
     'STK-H011',
     'STK-H010',
-    'STK-H008'
+    'STK-H008',
+    'STK-H006',
+    'STK-H002'
   ];
 
   const byId = new Map(products.map((p) => [p.id, p]));
