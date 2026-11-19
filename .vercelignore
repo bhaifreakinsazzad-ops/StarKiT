@@ -5,7 +5,6 @@ catalog/**
 scripts/**
 tests/**
 StarkiT_DROP01_Hoodies_Complete_Store/**
-StarkiT_DROP01_44_Variant_Complete_Store/**
 verify_package.js
 verify_package.py
 README.md

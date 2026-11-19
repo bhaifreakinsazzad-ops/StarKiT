@@ -73,8 +73,8 @@ META_TEST_EVENT_CODE=<optional-test-code>
 2. Push code to `notrealenginellc/StarKiT:main` or deploy via `vercel --prod`.
 3. In Vercel Project Settings:
    - **Framework Preset**: `Other`
-   - **Build Command**: *(leave empty / None)*
-   - **Output Directory**: `.`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `public`
 4. Configure all environment variables from Section 2 and redeploy.
 
 ---

@@ -264,7 +264,12 @@ begin
   end if;
 
   select value into v_free_threshold from public.store_settings where key = 'free_shipping_threshold';
-  if v_promo_free_ship or (v_free_threshold is not null and (v_free_threshold::text)::int > 0 and (v_subtotal - v_discount) >= (v_free_threshold::text)::int) then
+  if v_promo_free_ship
+     or (v_free_threshold is not null
+         and jsonb_typeof(v_free_threshold) = 'number'
+         and round((v_free_threshold::text)::numeric)::int > 0
+         and (v_subtotal - v_discount) >= round((v_free_threshold::text)::numeric)::int)
+  then
     v_shipping := 0;
   end if;
 

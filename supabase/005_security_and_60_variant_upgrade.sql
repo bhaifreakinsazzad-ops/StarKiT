@@ -22,6 +22,31 @@ alter table public.store_variants add column if not exists price_tier text;
 alter table public.store_variants add column if not exists draft_price_bdt integer;
 alter table public.store_variants add column if not exists price_approved boolean not null default false;
 
+-- 1b. Safe store_settings free_shipping_threshold seed (key-value schema; guarded against legacy column-based schemas)
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'store_settings' and column_name = 'key'
+  ) and exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'store_settings' and column_name = 'value'
+  ) then
+    insert into public.store_settings (key, value) values
+      ('cod_enabled', 'false'::jsonb),
+      ('store_mode', '"preview"'::jsonb),
+      ('delivery_dhaka_bdt', '80'::jsonb),
+      ('delivery_outside_bdt', '150'::jsonb),
+      ('free_shipping_threshold', '3000'::jsonb)
+    on conflict (key) do nothing;
+  elsif exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'store_settings' and column_name = 'free_delivery_threshold'
+  ) then
+    execute 'alter table public.store_settings alter column free_delivery_threshold set default 3000.00';
+  end if;
+end $$;
+
 -- 2. Add promotion & discount columns on store_orders
 alter table public.store_orders add column if not exists discount_bdt integer not null default 0 check(discount_bdt >= 0);
 alter table public.store_orders add column if not exists applied_promotions jsonb not null default '[]'::jsonb;

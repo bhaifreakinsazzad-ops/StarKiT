@@ -1,7 +1,7 @@
 // server.js – Express server for StarkiT storefront
 import fs from 'fs';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import ordersHandler from './api/orders.js';
@@ -38,11 +38,43 @@ const app = express();
 const PORT = 3000;
 const HOST = '0.0.0.0';
 
+// Running behind Cloud Run / Vercel / reverse proxies (1 hop)
+app.set('trust proxy', 1);
+
+function extractForwardedForIp(forwardedHeader) {
+  if (typeof forwardedHeader !== 'string' || !forwardedHeader.trim()) return '';
+  const firstHop = forwardedHeader.split(',')[0] || '';
+  for (const part of firstHop.split(';')) {
+    const trimmed = part.trim();
+    if (!/^for=/i.test(trimmed)) continue;
+    let raw = trimmed.slice(4).trim();
+    if (raw.startsWith('"') && raw.endsWith('"')) raw = raw.slice(1, -1);
+    if (!raw || raw.startsWith('_') || raw.toLowerCase() === 'unknown') return '';
+    if (raw.startsWith('[')) {
+      const endBracket = raw.indexOf(']');
+      return endBracket > 1 ? raw.slice(1, endBracket) : '';
+    }
+    const colonCount = (raw.match(/:/g) || []).length;
+    if (colonCount === 1) {
+      return raw.split(':')[0];
+    }
+    return raw;
+  }
+  return '';
+}
+
+function getClientRateLimitKey(req) {
+  const fwdIp = extractForwardedForIp(req.headers.forwarded);
+  const rawIp = fwdIp || req.ip || req.socket?.remoteAddress || '127.0.0.1';
+  return ipKeyGenerator(rawIp);
+}
+
 const pageLimiter = rateLimit({
   windowMs: 60_000,
   limit: 600,
   standardHeaders: 'draft-8',
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: getClientRateLimitKey
 });
 
 const apiLimiter = rateLimit({
@@ -50,6 +82,7 @@ const apiLimiter = rateLimit({
   limit: 120,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
+  keyGenerator: getClientRateLimitKey,
   message: { error: 'Too many API requests. Please wait a minute and retry.' }
 });
 
@@ -112,10 +145,10 @@ app.use((req, res, next) => {
 
 // Serve vendored Firebase ESM bundles safely without exposing node_modules
 app.use(pageLimiter);
-app.get('/vendor/firebase/firebase-app.js', pageLimiter, (req, res) => {
+app.get('/vendor/firebase/firebase-app.js', (req, res) => {
   res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-app.js'));
 });
-app.get('/vendor/firebase/firebase-auth.js', pageLimiter, (req, res) => {
+app.get('/vendor/firebase/firebase-auth.js', (req, res) => {
   res.type('application/javascript').sendFile(path.join(__dirname, 'assets/js/vendor/firebase-auth.js'));
 });
 
@@ -123,16 +156,16 @@ app.get('/vendor/firebase/firebase-auth.js', pageLimiter, (req, res) => {
 app.use(express.static(__dirname, { extensions: ['html'], dotfiles: 'ignore' }));
 
 // Root route
-app.get('/', pageLimiter, (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // API endpoints
 app.use('/api', apiLimiter);
-app.all('/api/orders', apiLimiter, (req, res, next) => {
+app.all('/api/orders', (req, res, next) => {
   Promise.resolve(ordersHandler(req, res)).catch(next);
 });
-app.all('/api/admin', apiLimiter, (req, res, next) => {
+app.all('/api/admin', (req, res, next) => {
   Promise.resolve(adminHandler(req, res)).catch(next);
 });
 app.use('/api', (req, res) => {
