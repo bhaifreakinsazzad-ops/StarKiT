@@ -34,6 +34,7 @@ desktop.ini
 
 # Distribution Build Folder & Archives
 StarkiT_DROP01_Hoodies_Complete_Store/
+StarkiT_DROP01_*_Complete_Store/
 *.zip
 .vercel
 .env*
