@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import orderHandler from '../api/orders.js';
 import adminHandler from '../api/admin.js';
@@ -325,5 +327,75 @@ test('Runtime admin 7-gate approval & promo activation unlock live storefront CO
     else process.env.SUPABASE_SERVICE_ROLE_KEY = prevSrv;
     if (prevEnabled === undefined) delete process.env.STARKIT_ORDERS_ENABLED;
     else process.env.STARKIT_ORDERS_ENABLED = prevEnabled;
+  }
+});
+
+test('firebase-applet-config.json contains no hardcoded Google/Gemini API keys', () => {
+  const cfgPath = path.resolve(process.cwd(), 'firebase-applet-config.json');
+  const raw = fs.readFileSync(cfgPath, 'utf8');
+  assert.equal(/AIza[0-9A-Za-z_-]{20,}/.test(raw), false);
+  const parsed = JSON.parse(raw);
+  assert.equal(parsed.apiKey, '');
+});
+
+test('Admin API get_drive_config fails closed when unauthenticated and reads strictly from env when authenticated', async () => {
+  const prevKey = process.env.STARKIT_ADMIN_API_KEY;
+  const prevFbKey = process.env.FIREBASE_API_KEY;
+  const prevFbDomain = process.env.FIREBASE_AUTH_DOMAIN;
+  const prevFbProj = process.env.FIREBASE_PROJECT_ID;
+
+  const adminKey = 'd'.repeat(40);
+  process.env.STARKIT_ADMIN_API_KEY = adminKey;
+  delete process.env.FIREBASE_API_KEY;
+  delete process.env.FIREBASE_AUTH_DOMAIN;
+  delete process.env.FIREBASE_PROJECT_ID;
+
+  try {
+    const unauthRes = createMockRes();
+    await adminHandler(
+      { method: 'GET', url: '/api/admin?action=get_drive_config', headers: { 'x-forwarded-for': '10.10.30.1' } },
+      unauthRes
+    );
+    assert.equal(unauthRes.state.statusCode, 401);
+
+    const emptyCfgRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'GET',
+        url: '/api/admin?action=get_drive_config',
+        headers: { 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.30.2' }
+      },
+      emptyCfgRes
+    );
+    assert.equal(emptyCfgRes.state.statusCode, 200);
+    assert.equal(emptyCfgRes.state.body.configured, false);
+    assert.equal(emptyCfgRes.state.body.config, null);
+
+    process.env.FIREBASE_API_KEY = 'test-env-only-key';
+    process.env.FIREBASE_AUTH_DOMAIN = 'example.firebaseapp.com';
+    process.env.FIREBASE_PROJECT_ID = 'example-proj';
+
+    const envCfgRes = createMockRes();
+    await adminHandler(
+      {
+        method: 'GET',
+        url: '/api/admin?action=get_drive_config',
+        headers: { 'x-admin-key': adminKey, 'x-forwarded-for': '10.10.30.2' }
+      },
+      envCfgRes
+    );
+    assert.equal(envCfgRes.state.statusCode, 200);
+    assert.equal(envCfgRes.state.body.configured, true);
+    assert.equal(envCfgRes.state.body.config.apiKey, 'test-env-only-key');
+    assert.equal(envCfgRes.state.body.config.projectId, 'example-proj');
+  } finally {
+    if (prevKey === undefined) delete process.env.STARKIT_ADMIN_API_KEY;
+    else process.env.STARKIT_ADMIN_API_KEY = prevKey;
+    if (prevFbKey === undefined) delete process.env.FIREBASE_API_KEY;
+    else process.env.FIREBASE_API_KEY = prevFbKey;
+    if (prevFbDomain === undefined) delete process.env.FIREBASE_AUTH_DOMAIN;
+    else process.env.FIREBASE_AUTH_DOMAIN = prevFbDomain;
+    if (prevFbProj === undefined) delete process.env.FIREBASE_PROJECT_ID;
+    else process.env.FIREBASE_PROJECT_ID = prevFbProj;
   }
 });

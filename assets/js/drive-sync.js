@@ -37,14 +37,23 @@ export function extractDriveFolderId(input) {
 
 async function ensureFirebaseInitialized() {
   if (firebaseAuth) return { auth: firebaseAuth, authSdk: firebaseAuthSdk };
+  const adminHeaders = window.__STARKIT_ADMIN_HEADERS || {};
+  if (!Object.keys(adminHeaders).length) {
+    throw new Error('Authenticate in the Operations Portal first to initialize Google Sign-In.');
+  }
   const [appSdk, authSdk, res] = await Promise.all([
     import('firebase/app'),
     import('firebase/auth'),
-    fetch('firebase-applet-config.json')
+    fetch('api/admin?action=get_drive_config', { headers: adminHeaders })
   ]);
-  if (!res.ok) throw new Error('Unable to load Firebase configuration.');
-  const config = await res.json();
-  firebaseApp = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(config);
+  if (!res.ok) throw new Error('Unable to load server-side Google Sign-In configuration.');
+  const payload = await res.json();
+  if (!payload?.configured || !payload?.config?.apiKey) {
+    throw new Error(
+      'Google Sign-In OAuth is not configured on the server (set FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, and FIREBASE_PROJECT_ID in environment variables), or paste a short-lived Drive OAuth2 token below.'
+    );
+  }
+  firebaseApp = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(payload.config);
   firebaseAuthSdk = authSdk;
   firebaseAuth = authSdk.getAuth(firebaseApp);
   googleProvider = new authSdk.GoogleAuthProvider();
@@ -632,23 +641,28 @@ export async function initDriveSyncUI() {
     }
   }
 
-  try {
-    const { auth, authSdk } = await ensureFirebaseInitialized();
-    authSdk.onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      if (user && cachedAccessToken) {
-        state.needsAuth = false;
-        loadFolder(state.breadcrumbs[state.breadcrumbs.length - 1].id);
-      } else if (!isSigningIn && !cachedAccessToken) {
-        cachedAccessToken = null;
-        state.needsAuth = true;
-        render();
-      }
-    });
-  } catch (err) {
-    // Non-fatal: manual OAuth token mode in #driveTokenForm remains operational even offline
-    console.warn('[StarkiT] Firebase OAuth init unavailable; manual Drive token flow ready.');
+  async function attachFirebaseAuthListener() {
+    if (!Object.keys(window.__STARKIT_ADMIN_HEADERS || {}).length) return;
+    try {
+      const { auth, authSdk } = await ensureFirebaseInitialized();
+      authSdk.onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user && cachedAccessToken) {
+          state.needsAuth = false;
+          loadFolder(state.breadcrumbs[state.breadcrumbs.length - 1].id);
+        } else if (!isSigningIn && !cachedAccessToken) {
+          cachedAccessToken = null;
+          state.needsAuth = true;
+          render();
+        }
+      });
+    } catch {
+      // Non-fatal: manual OAuth token mode in #driveTokenForm remains operational even without Firebase env vars
+    }
   }
+
+  window.addEventListener('starkit:admin-authenticated', attachFirebaseAuthListener);
+  attachFirebaseAuthListener();
 
   render();
 }

@@ -86,7 +86,6 @@ const rootConfigs = [
   'sitemap.xml',
   'robots.txt',
   'metadata.json',
-  'firebase-applet-config.json',
   'verify_package.js',
   'verify_package.py',
   'README.md',

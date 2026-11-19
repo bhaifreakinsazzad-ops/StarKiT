@@ -76,6 +76,7 @@ const BLOCKED_EXACT = new Set([
   '/vercel.json',
   '/bun.lock',
   '/metadata.json',
+  '/firebase-applet-config.json',
   '/readme.md',
   '/readme_bn.md',
   '/verify_package.js',

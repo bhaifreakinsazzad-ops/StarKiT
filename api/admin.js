@@ -485,6 +485,26 @@ export default async function handler(req, res) {
     return send(res, auth.status, { error: auth.error });
   }
 
+  if (req.method === 'GET' && action === 'get_drive_config') {
+    const apiKey = String(process.env.FIREBASE_API_KEY || '').trim();
+    const authDomain = String(process.env.FIREBASE_AUTH_DOMAIN || '').trim();
+    const projectId = String(process.env.FIREBASE_PROJECT_ID || '').trim();
+    if (!apiKey || !authDomain || !projectId) {
+      return send(res, 200, { configured: false, config: null });
+    }
+    return send(res, 200, {
+      configured: true,
+      config: {
+        apiKey,
+        authDomain,
+        projectId,
+        storageBucket: String(process.env.FIREBASE_STORAGE_BUCKET || '').trim(),
+        messagingSenderId: String(process.env.FIREBASE_MESSAGING_SENDER_ID || '').trim(),
+        appId: String(process.env.FIREBASE_APP_ID || '').trim()
+      }
+    });
+  }
+
   try {
     // ------------------------------------------------------------------
     // LOCAL / RUNTIME FALLBACK MODE (when Supabase is not provisioned)

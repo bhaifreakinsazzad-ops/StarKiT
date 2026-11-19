@@ -15,5 +15,6 @@ README_BN.md
 .env
 .env*.local
 .env.example
+firebase-applet-config.json
 bun.lock
 *.zip

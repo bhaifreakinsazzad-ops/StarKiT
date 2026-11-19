@@ -573,6 +573,7 @@ export function initAdminManager() {
       const data = await response.json();
       state.authenticated = true;
       window.__STARKIT_ADMIN_HEADERS = authHeaders;
+      window.dispatchEvent(new CustomEvent('starkit:admin-authenticated'));
       applyDashboardData(data);
       populateSkuSelectors();
       setSyncStatus('Authenticated Session', true);
