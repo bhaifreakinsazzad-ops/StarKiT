@@ -123,7 +123,7 @@ export function calculateOrderPricing({
     if (!entry) continue;
 
     const product = entry.product || entry;
-    const unitPrice = Number(product.price_bdt || 0);
+    const unitPrice = Number(entry.variant?.price_bdt ?? product.price_bdt ?? 0);
     const lineTotal = unitPrice * qty;
 
     subtotalBdt += lineTotal;

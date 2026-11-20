@@ -47,6 +47,26 @@ export function formatBdt(amount) {
   return `৳${Math.round(num).toLocaleString('en-BD')}`;
 }
 
+export function resolveAssetUrl(rawUrl, base = './') {
+  const raw = String(rawUrl == null ? '' : rawUrl).trim();
+  if (!raw) return '';
+  if (/^(?:javascript|vbscript):/i.test(raw)) return '';
+  if (/^data:/i.test(raw)) {
+    return /^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(raw) ? raw : '';
+  }
+  if (/^(?:https?:\/\/|blob:)/i.test(raw)) {
+    return raw;
+  }
+  const cleanBase = typeof base === 'string' && base ? base : './';
+  return `${cleanBase}${raw.replace(/^\/+/, '')}`;
+}
+
+export function sanitizeCsvCell(value) {
+  const normalized = String(value == null ? '' : value).replace(/[\r\n]+/g, ' ');
+  const neutralized = /^[=+\-@\t]/.test(normalized) ? `'${normalized}` : normalized;
+  return `"${neutralized.replace(/"/g, '""')}"`;
+}
+
 export function sanitizeStorageFilename(sku, view, ext) {
   const cleanSku = String(sku || 'ASSET').toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32) || 'ASSET';
   const cleanView = String(view || 'view').toLowerCase().replace(/[^a-z0-9_-]/g, '_').slice(0, 24) || 'view';

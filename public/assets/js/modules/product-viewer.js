@@ -1,4 +1,4 @@
-import { escapeHtml, formatBdt } from '../core/validation.js';
+import { escapeHtml, formatBdt, resolveAssetUrl } from '../core/validation.js';
 import { getPrimaryVariant, isVariantPurchasable } from '../core/catalog-schema.js';
 import { animateGallerySwap } from '../interactive-anime.js';
 
@@ -58,7 +58,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
     }
 
     const item = gallery[activeGalleryIndex] || gallery[0];
-    const src = base + String(item.url || item.path || '').replace(/^\//, '');
+    const src = resolveAssetUrl(item.url || item.path || '', base);
 
     galleryEl.innerHTML = `
       <img src="${escapeHtml(src)}" alt="${escapeHtml(product.name)} — ${escapeHtml(activeVariant.color)} (${escapeHtml(viewLabel(item.view))})" referrerpolicy="no-referrer">
@@ -86,7 +86,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
 
     thumbsEl.innerHTML = gallery
       .map((g, idx) => {
-        const thumbSrc = base + String(g.url || g.path || '').replace(/^\//, '');
+        const thumbSrc = resolveAssetUrl(g.url || g.path || '', base);
         return `
           <button type="button" class="thumb ${idx === activeGalleryIndex ? 'active' : ''}" data-thumb-idx="${idx}" aria-label="Show ${escapeHtml(viewLabel(g.view))}">
             <img src="${escapeHtml(thumbSrc)}" alt="" loading="lazy" referrerpolicy="no-referrer">
@@ -198,24 +198,28 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
   function updatePurchaseState() {
     if (!purchaseBtn || !activeVariant) return;
     const purchasable = isVariantPurchasable(product, activeVariant, storeConfig);
+    const activePrice = Number(activeVariant.price_bdt ?? product.price_bdt ?? 0);
+
+    const priceEl = detailRoot.querySelector('.detail-price');
+    if (priceEl) priceEl.textContent = formatBdt(activePrice);
 
     if (whatsappBtn) {
       const msg = encodeURIComponent(
-        `Hello StarkiT! I am inquiring about "${product.name}" (SKU: ${activeVariant.sku}, Color: ${activeVariant.color}, Size: ${selectedSize || 'Standard'}, Tier Price: ${formatBdt(product.price_bdt)}).`
+        `Hello StarkiT! I am inquiring about "${product.name}" (SKU: ${activeVariant.sku}, Color: ${activeVariant.color}, Size: ${selectedSize || 'Standard'}, Tier Price: ${formatBdt(activePrice)}).`
       );
       whatsappBtn.href = `https://wa.me/8801778307704?text=${msg}`;
     }
 
     if (mobileStickyLabel) {
-      mobileStickyLabel.textContent = `${activeVariant.color} · ${formatBdt(product.price_bdt)}`;
+      mobileStickyLabel.textContent = `${activeVariant.color} · ${formatBdt(activePrice)}`;
     }
 
     if (purchasable) {
       purchaseBtn.disabled = false;
-      purchaseBtn.textContent = `Add to Bag · ${formatBdt(product.price_bdt)}`;
+      purchaseBtn.textContent = `Add to Bag · ${formatBdt(activePrice)}`;
       if (mobileStickyBtn) {
         mobileStickyBtn.disabled = false;
-        mobileStickyBtn.textContent = `Add · ${formatBdt(product.price_bdt)}`;
+        mobileStickyBtn.textContent = `Add · ${formatBdt(activePrice)}`;
       }
       if (purchaseStatus) {
         purchaseStatus.textContent = `${Number(activeVariant.stock_quantity)} units in stock · Cash on Delivery nationwide.`;
@@ -287,13 +291,13 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
           .map((item) => {
             const pv = getPrimaryVariant(item);
             const imgObj = pv?.gallery?.[0];
-            const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+            const imgPath = imgObj?.url ? resolveAssetUrl(imgObj.url, base) : '';
             const href = `${base}products/${escapeHtml(item.slug)}.html`;
             return `
               <article class="card">
                 <div class="card-media">
                   <a href="${href}" aria-label="Inspect ${escapeHtml(item.name)}" style="position:absolute;inset:0;display:block;">
-                    <img class="front single-view" src="${base}${escapeHtml(imgPath)}" alt="${escapeHtml(item.name)}" loading="lazy" referrerpolicy="no-referrer">
+                    <img class="front single-view" src="${escapeHtml(imgPath)}" alt="${escapeHtml(item.name)}" loading="lazy" referrerpolicy="no-referrer">
                   </a>
                 </div>
                 <div class="card-meta">
@@ -301,7 +305,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
                     <span class="card-kicker">${escapeHtml(item.collection || item.category || 'Archive')}</span>
                     <a href="${href}">${escapeHtml(item.name)}</a>
                   </div>
-                  <span class="price tabular">${formatBdt(item.price_bdt)}</span>
+                  <span class="price tabular">${formatBdt(pv?.price_bdt ?? item.price_bdt)}</span>
                 </div>
               </article>`;
           })
@@ -324,7 +328,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
         content_name: product.name,
         content_category: product.collection || product.category || 'Archive',
         content_type: 'product',
-        value: Number(product.price_bdt) || 0,
+        value: Number(activeVariant.price_bdt ?? product.price_bdt) || 0,
         currency: 'BDT'
       });
     } catch {}
@@ -336,7 +340,7 @@ export function initProductViewer({ products, base, storeConfig, onAddToCart, on
         activeVariant = (product.variants || []).find((v) => v.sku === activeVariant.sku) || getPrimaryVariant(product);
       }
       const priceEl = detailRoot.querySelector('.detail-price');
-      if (priceEl) priceEl.textContent = formatBdt(product.price_bdt);
+      if (priceEl) priceEl.textContent = formatBdt(activeVariant?.price_bdt ?? product.price_bdt);
       renderColors();
       renderGallery();
       renderSizes();

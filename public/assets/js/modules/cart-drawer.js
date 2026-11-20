@@ -1,4 +1,4 @@
-import { escapeHtml, formatBdt } from '../core/validation.js';
+import { escapeHtml, formatBdt, resolveAssetUrl } from '../core/validation.js';
 import { calculateOrderPricing, DEFAULT_PROMOTIONS } from '../core/pricing-engine.js';
 import { getPrimaryImage } from '../core/catalog-schema.js';
 import { animateCartOpen, animateSpringPop, luxuryToast } from '../interactive-anime.js';
@@ -70,14 +70,15 @@ export function initCartDrawer({ products, base, storeConfig }) {
         const { product, variant } = resolveCatalogPair(item.sku);
         if (!product || !variant) return null;
         const qty = Number(item.quantity) || 1;
+        const unitPrice = Number(variant.price_bdt ?? product.price_bdt ?? 0);
         return {
           sku: variant.sku,
           product_name: product.name,
           color: variant.color,
           size: item.size || 'Standard',
           quantity: qty,
-          unit_price_bdt: Number(product.price_bdt || 0),
-          line_total_bdt: Number(product.price_bdt || 0) * qty
+          unit_price_bdt: unitPrice,
+          line_total_bdt: unitPrice * qty
         };
       })
       .filter(Boolean);
@@ -125,13 +126,13 @@ export function initCartDrawer({ products, base, storeConfig }) {
       .map((item, idx) => {
         const { product, variant } = resolveCatalogPair(item.sku);
         const imgObj = product && variant ? getPrimaryImage(product, variant) : null;
-        const imgPath = imgObj?.url ? String(imgObj.url).replace(/^\//, '') : '';
+        const imgPath = imgObj?.url ? resolveAssetUrl(imgObj.url, base) : '';
         const name = product ? product.name : item.sku;
-        const unitPrice = product ? Number(product.price_bdt) : 0;
+        const unitPrice = Number(variant?.price_bdt ?? product?.price_bdt ?? 0);
         const qty = Number(item.quantity) || 1;
         return `
           <div class="cart-line">
-            <img src="${imgPath ? base + escapeHtml(imgPath) : base + 'assets/images/starkit-favicon.png'}" alt="${escapeHtml(name)}" referrerpolicy="no-referrer">
+            <img src="${imgPath ? escapeHtml(imgPath) : base + 'assets/images/starkit-favicon.png'}" alt="${escapeHtml(name)}" referrerpolicy="no-referrer">
             <div>
               <h4>${escapeHtml(name)}</h4>
               <div class="small">${escapeHtml(variant?.color || '')} · Size ${escapeHtml(item.size)} · ${escapeHtml(item.sku)}</div>
@@ -223,7 +224,7 @@ export function initCartDrawer({ products, base, storeConfig }) {
         window.fbq('track', 'AddToCart', {
           content_ids: [variant.sku],
           content_type: 'product',
-          value: Number(product.price_bdt) * qtyToAdd,
+          value: Number(variant.price_bdt ?? product.price_bdt ?? 0) * qtyToAdd,
           currency: 'BDT'
         });
       } catch {}
