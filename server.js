@@ -28,6 +28,7 @@ function loadLocalEnvFile(envPath) {
   }
 }
 
+loadLocalEnvFile(path.join(__dirname, '.env.local'));
 loadLocalEnvFile(path.join(__dirname, '.env'));
 
 if (process.env.STARKIT_ORDERS_ENABLED === undefined) {
