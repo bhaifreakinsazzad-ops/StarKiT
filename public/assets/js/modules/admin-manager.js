@@ -746,11 +746,15 @@ export function initAdminManager() {
 
   document.getElementById('storeSettingsForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const parseNonNegInt = (id, fallback) => {
+      const n = parseInt(document.getElementById(id).value, 10);
+      return Number.isInteger(n) && n >= 0 ? n : fallback;
+    };
     const payload = {
       settings: [
-        { key: 'delivery_dhaka_bdt', value: parseInt(document.getElementById('settingDhaka').value, 10) || 80 },
-        { key: 'delivery_outside_bdt', value: parseInt(document.getElementById('settingOutside').value, 10) || 150 },
-        { key: 'free_shipping_threshold', value: parseInt(document.getElementById('settingFreeThreshold').value, 10) || 3000 },
+        { key: 'delivery_dhaka_bdt', value: parseNonNegInt('settingDhaka', 80) },
+        { key: 'delivery_outside_bdt', value: parseNonNegInt('settingOutside', 150) },
+        { key: 'free_shipping_threshold', value: parseNonNegInt('settingFreeThreshold', 3000) },
         { key: 'cod_enabled', value: document.getElementById('settingCodStatus').value === 'true' },
         { key: 'support_phone', value: String(document.getElementById('settingPhone').value).trim() },
         { key: 'store_mode', value: String(document.getElementById('settingStoreMode').value).trim() }
@@ -790,7 +794,11 @@ export function initAdminManager() {
           o.total_bdt,
           o.status
         ]
-          .map((cell) => `"${String(cell || '').replace(/"/g, '""')}"`)
+          .map((cell) => {
+            const str = String(cell ?? '');
+            const safe = /^[=+\-@\t\r]/.test(str) ? `'${str}` : str;
+            return `"${safe.replace(/"/g, '""')}"`;
+          })
           .join(',')
       )
     ];

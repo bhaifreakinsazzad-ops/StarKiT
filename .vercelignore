@@ -3,6 +3,7 @@ docs/**
 supabase/**
 catalog/**
 scripts/**
+!scripts/copy_to_public.cjs
 tests/**
 StarkiT_DROP01_Hoodies_Complete_Store/**
 verify_package.js

@@ -38,4 +38,5 @@ StarkiT_DROP01_*_Complete_Store/
 *.zip
 .vercel
 .env*
+!.env.example
 firebase-applet-config.local.json

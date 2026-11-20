@@ -78,11 +78,27 @@ async function runImport() {
   if (prodErr) console.warn('store_products upsert note:', prodErr.message);
   else console.log(`✓ Synced ${productRows.length} store_products rows (preserving existing approvals).`);
 
+  const promoRows = (promotionsData.promotions || []).map((pr) => ({
+    code: pr.code,
+    title: pr.title,
+    subtitle: pr.subtitle || '',
+    tier_type: pr.tier_type,
+    min_qty: Number(pr.min_qty || 1),
+    applies_to: pr.applies_to || 'hoodies',
+    discount_type: pr.discount_type || 'NONE',
+    discount_value: Number(pr.discount_value || 0),
+    free_shipping: Boolean(pr.free_shipping),
+    combinable: Boolean(pr.combinable),
+    active: Boolean(pr.active),
+    requires_approval: Boolean(pr.requires_approval),
+    description: pr.description || ''
+  }));
+
   const { error: promoErr } = await supabase
     .from('store_promotions')
-    .upsert(promotionsData.promotions || [], { onConflict: 'code', ignoreDuplicates: true });
+    .upsert(promoRows, { onConflict: 'code', ignoreDuplicates: true });
   if (promoErr) console.warn('store_promotions upsert note:', promoErr.message);
-  else console.log(`✓ Synced ${(promotionsData.promotions || []).length} store_promotions rows.`);
+  else console.log(`✓ Synced ${promoRows.length} store_promotions rows.`);
 
   const variantRows = variantsData.variants.map((v) => ({
     slot_id: v.slot_id,

@@ -1,5 +1,6 @@
 {
   "framework": null,
+  "buildCommand": "node scripts/copy_to_public.cjs",
   "outputDirectory": "public",
   "version": 2,
   "cleanUrls": true,
